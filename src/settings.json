@@ -1,0 +1,4 @@
+{
+  "userManagement.managerPage.authorization": ["admin", "Chief Officer"],
+  "defendants.managerPage.authorization": ["admin", "Chief Officer"]
+}
