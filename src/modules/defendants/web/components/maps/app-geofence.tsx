@@ -9,7 +9,7 @@ import { EditControl } from "react-leaflet-draw";
 import EsriLeafletGeoSearch from "react-esri-leaflet/plugins/EsriLeafletGeoSearch";
 import { useRef } from "react";
 export const AppGeofence = () => {
-  const _created = (e: any) => {
+  const created = (e: any) => {
     console.log(e);
     const { layerType, layer } = e;
     if (layerType === "circle") {
@@ -34,7 +34,7 @@ export const AppGeofence = () => {
         <FeatureGroup>
           <EditControl
             position="topright"
-            onCreated={_created}
+            onCreated={created}
             draw={{
               rectangle: false,
               circle: true,
