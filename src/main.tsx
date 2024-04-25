@@ -8,10 +8,10 @@ import { NextUIProvider } from "@nextui-org/react";
 import "leaflet-draw/dist/leaflet.draw.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <NextUIProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <NextUIProvider>
         <App />
-      </BrowserRouter>
-    </NextUIProvider>
+      </NextUIProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

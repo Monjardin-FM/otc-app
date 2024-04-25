@@ -25,6 +25,9 @@ export const MapTracking = ({
       ]);
     }
   }, [trackingDetail]);
+  useEffect(() => {
+    console.log(trackingDetail);
+  }, []);
   return (
     <>
       {" "}

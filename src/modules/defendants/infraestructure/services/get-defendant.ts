@@ -31,6 +31,11 @@ export const getDefendantsService: DefendantRepository["getDefendant"] = async (
     idStatus: defendant.idStatus,
     createdAt: defendant.created_at,
     idRole: defendant.idRole,
+    caseNumber: defendant.caseNumber,
+    deviceId: defendant.deviceId,
+    idDeviceType: defendant.idDeviceType,
+    sid: defendant.sid,
+    role: defendant.role,
   }));
   return defendants;
 };

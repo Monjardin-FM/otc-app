@@ -26,6 +26,13 @@ export const ManagementUsersManagerPage = () => {
   const onClick = (search: string) => {
     getUsers({ completeName: search });
   };
+  const onDelete = () => {
+    AppToast().fire({
+      title: "User deleted",
+      icon: "success",
+      text: "The user was deleted succesfully",
+    });
+  };
   useEffect(() => {
     if (search.length > 1 || search.length === 0) {
       const timeDelay = setTimeout(() => {
@@ -93,9 +100,8 @@ export const ManagementUsersManagerPage = () => {
         <div className="container mx-auto mt-5">
           <AppManagementUsersTable
             onDelete={async (record) => {
-              if (record.record.idPerson) {
-                await deleteUser({ idPerson: record.record.idPerson });
-              }
+              await deleteUser({ idPerson: record.record.idPerson });
+              if (!errorDelete) onDelete();
               setToggleReload(!toggleReload);
             }}
             onEdit={({ record }) => {

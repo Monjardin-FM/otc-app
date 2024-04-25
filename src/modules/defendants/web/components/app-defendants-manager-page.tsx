@@ -11,8 +11,9 @@ import { AppAuthorizationGuard } from "../../../../presentation/Components/AppAu
 import { UserRole } from "../../../user/domain/entities/user-role";
 import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
-import { AppButton } from "../../../../presentation/Components/AppButton";
-import { Tooltip } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
+import { useDeleteDefendant } from "../hooks/use-delete-defendant";
+import { AppToast } from "../../../../presentation/Components/AppToast";
 export const AppDefendantsManagerPage = () => {
   const {
     defendants,
@@ -23,8 +24,16 @@ export const AppDefendantsManagerPage = () => {
   const [visibleNewDefendantModal, setVisibleNewDefendantModal] =
     useToggle(false);
   const [search, setSearch] = useState<string>("");
+  const { deleteDefendant, error: errorDelete } = useDeleteDefendant();
   const onClick = (search: string) => {
     getDefendants({ completeName: search });
+  };
+  const onDelete = () => {
+    AppToast().fire({
+      title: "Defendant deleted",
+      icon: "success",
+      text: "The defendant was deleted succesfully",
+    });
   };
   useEffect(() => {
     if (search.length > 1 || search.length === 0) {
@@ -37,6 +46,15 @@ export const AppDefendantsManagerPage = () => {
   useEffect(() => {
     getDefendants({ completeName: "" });
   }, [toggleReload]);
+  useEffect(() => {
+    if (errorDelete) {
+      AppToast().fire({
+        title: "Error",
+        icon: "error",
+        text: "An error occurred while trying to delete the user",
+      });
+    }
+  }, [errorDelete]);
   return (
     <AppAuthorizationGuard
       roles={
@@ -53,7 +71,7 @@ export const AppDefendantsManagerPage = () => {
         }}
       />
       <AppPageTransition>
-        <div className="items-center mx-auto mb-5">
+        <div className="items-center mx-auto mb-10">
           <AppDefendantsHeader
             onClick={onClick}
             loadingDefendants={loadingDefendants}
@@ -61,18 +79,38 @@ export const AppDefendantsManagerPage = () => {
             setSearch={setSearch}
           />
         </div>
-        <div className="container mx-auto flex flex-col items-end jusitfy-center">
-          <Tooltip content={"New Defendant"} color="primary">
-            <AppButton
-              colorScheme="warn"
+        <div className="container mx-auto flex flex-col items-end jusitfy-center mt-5">
+          <Tooltip
+            content={"New Defendant"}
+            color="primary"
+            offset={1}
+            showArrow
+            closeDelay={10}
+            style={{
+              zIndex: 0,
+            }}
+            disableAnimation
+          >
+            <Button
+              color="warning"
               onClick={() => setVisibleNewDefendantModal(true)}
+              isIconOnly
+              size="md"
             >
-              <Icon.PlusCircle />
-            </AppButton>
+              <Icon.PlusCircle color="white" />
+            </Button>
           </Tooltip>
         </div>
         <div className="container mx-auto mt-5">
-          <AppDefendantsTable onEdit={() => {}} items={defendants} />
+          <AppDefendantsTable
+            onEdit={() => {}}
+            items={defendants}
+            onDelete={async (record) => {
+              await deleteDefendant({ idPerson: record.record.idPerson });
+              if (!errorDelete) onDelete();
+              setToggleReload(!toggleReload);
+            }}
+          />
         </div>
       </AppPageTransition>
     </AppAuthorizationGuard>

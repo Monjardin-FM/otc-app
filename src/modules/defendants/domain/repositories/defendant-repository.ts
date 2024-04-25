@@ -1,5 +1,6 @@
-import { DefendantById } from '../entities/defendant-by-id';
-import { Defendant } from '../entities/defendant';
+import { DefendantById } from "../entities/defendant-by-id";
+import { Defendant } from "../entities/defendant";
+import { DefendantDevice } from "../entities/defendant-device";
 export type createDefendantParams = {
   completeName: string;
   name: string;
@@ -38,6 +39,9 @@ export type DefendantRepository = {
     password: string;
   }): Promise<void>;
   deleteDefendant(parms: { idPerson: number }): Promise<Boolean>;
+  getDeviceDefendant(params: {
+    idDefendant: number;
+  }): Promise<DefendantDevice[]>;
   assignDeviceDefendant(params: {
     idPerson: number;
     idDevice: number;
