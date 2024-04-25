@@ -44,11 +44,20 @@ export const AppTrackingModal = ({
     });
   };
   useEffect(() => {
-    if (personId) {
-      getTrackingDetail({ personId: personId });
-      getUsers({ completeName: "" });
-    }
+    getUsers({ completeName: "" });
   }, [personId]);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (personId) {
+        getTrackingDetail({ personId: personId });
+      }
+    }, 30000);
+
+    // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
   useEffect(() => {
     if (trackingDetail) {
       setAlertPerson(trackingDetail.personAlert);
