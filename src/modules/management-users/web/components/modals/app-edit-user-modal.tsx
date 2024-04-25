@@ -80,7 +80,7 @@ export const AppEditUserModal = ({
         idRole: Number(data.role),
         idStatus: status ? 1 : 0,
         password: data.password,
-        phone: data.phone,
+        phone: String(data.phone),
       });
       onClose();
       onReload();
