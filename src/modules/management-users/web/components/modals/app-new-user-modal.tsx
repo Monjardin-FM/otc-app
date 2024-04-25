@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { useGetCounties } from "../../hooks/use-get-county";
 import { useGetGenders } from "../../hooks/use-get-genders";
 import { useGetRoles } from "../../hooks/use-get-roles";
@@ -133,7 +132,7 @@ export const AppNewUserModal = ({
                         onChange={handleChange}
                       />
                       {errors.name && (
-                        <AppFormHelperText colorSchema="danger">
+                        <AppFormHelperText colorSchema="red">
                           {errors.name}
                         </AppFormHelperText>
                       )}
@@ -146,7 +145,7 @@ export const AppNewUserModal = ({
                         onChange={handleChange}
                       />
                       {errors.lastName && (
-                        <AppFormHelperText colorSchema="danger">
+                        <AppFormHelperText colorSchema="red">
                           {errors.lastName}
                         </AppFormHelperText>
                       )}
@@ -159,7 +158,7 @@ export const AppNewUserModal = ({
                         onChange={handleChange}
                       />
                       {errors.eMail && (
-                        <AppFormHelperText colorSchema="danger">
+                        <AppFormHelperText colorSchema="red">
                           {errors.eMail}
                         </AppFormHelperText>
                       )}
@@ -179,7 +178,7 @@ export const AppNewUserModal = ({
                         ))}
                       </AppSelect>
                       {errors.role && (
-                        <AppFormHelperText colorSchema="danger">
+                        <AppFormHelperText colorSchema="red">
                           {errors.role}
                         </AppFormHelperText>
                       )}
@@ -199,7 +198,7 @@ export const AppNewUserModal = ({
                         ))}
                       </AppSelect>
                       {errors.county && (
-                        <AppFormHelperText colorSchema="danger">
+                        <AppFormHelperText colorSchema="red">
                           {errors.county}
                         </AppFormHelperText>
                       )}
@@ -219,7 +218,7 @@ export const AppNewUserModal = ({
                         ))}
                       </AppSelect>
                       {errors.gender && (
-                        <AppFormHelperText colorSchema="danger">
+                        <AppFormHelperText colorSchema="red">
                           {errors.gender}
                         </AppFormHelperText>
                       )}
@@ -232,7 +231,7 @@ export const AppNewUserModal = ({
                         value={values.phone}
                       />
                       {/* {errors.password && (
-                        <AppFormHelperText colorSchema="danger">
+                        <AppFormHelperText colorSchema="red">
                           {errors.password}
                         </AppFormHelperText>
                       )} */}
@@ -246,7 +245,7 @@ export const AppNewUserModal = ({
                         type="password"
                       />
                       {errors.password && (
-                        <AppFormHelperText colorSchema="danger">
+                        <AppFormHelperText colorSchema="red">
                           {errors.password}
                         </AppFormHelperText>
                       )}

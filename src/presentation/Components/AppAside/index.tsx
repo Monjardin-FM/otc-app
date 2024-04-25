@@ -149,7 +149,7 @@ export const AppAsideV2 = ({
               onClick={() => {
                 signOut.execute();
               }}
-              colorScheme="danger"
+              colorScheme="red"
               variant="solid"
             >
               <div className="text-white">

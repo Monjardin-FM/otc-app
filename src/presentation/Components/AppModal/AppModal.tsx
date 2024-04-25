@@ -1,19 +1,20 @@
-import React, { ReactNode } from 'react';
-import { useLockBodyScroll } from 'react-use';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { ReactNode } from "react";
+import { useLockBodyScroll } from "react-use";
+import { motion, AnimatePresence } from "framer-motion";
 
 export type AppModalSize =
-  | 'xs'
-  | 'sm'
-  | 'md'
-  | 'lg'
-  | 'xl'
-  | '2xl'
-  | '3xl'
-  | '4xl'
-  | '5xl'
-  | '6xl'
-  | '7xl';
+  | "xs"
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "2xl"
+  | "3xl"
+  | "4xl"
+  | "5xl"
+  | "6xl"
+  | "7xl"
+  | "full";
 
 export type AppModalContextType = {
   onClose: () => void;
@@ -22,7 +23,7 @@ export type AppModalContextType = {
 
 export const AppModalContext = React.createContext<AppModalContextType>({
   onClose: () => {},
-  size: 'md',
+  size: "md",
 });
 
 export interface AppModalProps {
@@ -36,7 +37,7 @@ export const AppModal = ({
   children,
   onClose = () => {},
   isVisible = false,
-  size = 'md',
+  size = "md",
 }: AppModalProps) => {
   useLockBodyScroll(isVisible);
 

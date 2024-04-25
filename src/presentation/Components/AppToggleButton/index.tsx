@@ -1,7 +1,7 @@
-import clsx from 'clsx';
-import React from 'react';
+import clsx from "clsx";
+import React from "react";
 
-export type AppToggleButtonProps = React.ComponentPropsWithoutRef<'input'>;
+export type AppToggleButtonProps = React.ComponentPropsWithoutRef<"input">;
 
 export const AppToggleButton = ({
   children,
@@ -9,7 +9,7 @@ export const AppToggleButton = ({
   ...props
 }: AppToggleButtonProps) => {
   const BUTTON_DEFAULT_STYLES =
-    'cursor-pointer h-5 w-10 rounded-full appearance-none bg-gray-0 border border-gray-400 checked:bg-gray-200 transition duration-200 relative flex';
+    "cursor-pointer h-5 w-10 rounded-full appearance-none bg-gray-0 border border-gray-400 checked:bg-gray-200 transition duration-200 relative flex";
 
   return (
     <div className="w-11 h-6 my-0 mx-2">

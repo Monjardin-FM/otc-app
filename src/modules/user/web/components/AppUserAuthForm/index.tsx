@@ -46,7 +46,7 @@ export const AppUserAuthForm = () => {
         </AppFormLabel>
         <AppTextField
           colorSchema={
-            formik.touched.email && formik.errors.email ? "danger" : "gray"
+            formik.touched.email && formik.errors.email ? "red" : "gray"
           }
           id="email"
           name="email"
@@ -56,7 +56,7 @@ export const AppUserAuthForm = () => {
           value={formik.values.email}
         />
         {formik.touched.email && formik.errors.email && (
-          <AppFormHelperText colorSchema="danger">
+          <AppFormHelperText colorSchema="red">
             {formik.errors.email}
           </AppFormHelperText>
         )}
@@ -68,9 +68,7 @@ export const AppUserAuthForm = () => {
         </AppFormLabel>
         <AppTextField
           colorSchema={
-            formik.touched.password && formik.errors.password
-              ? "danger"
-              : "gray"
+            formik.touched.password && formik.errors.password ? "red" : "gray"
           }
           id="password"
           name="password"
@@ -80,7 +78,7 @@ export const AppUserAuthForm = () => {
           value={formik.values.password}
         />
         {formik.touched.password && formik.errors.password && (
-          <AppFormHelperText colorSchema="danger">
+          <AppFormHelperText colorSchema="red">
             {formik.errors.password}
           </AppFormHelperText>
         )}

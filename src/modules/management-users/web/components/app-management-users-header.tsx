@@ -1,6 +1,7 @@
 import { AppButton } from "../../../../presentation/Components/AppButton";
 import { AppHero } from "../../../../presentation/Components/AppHero";
 import AppTextField from "../../../../presentation/Components/AppTextField";
+import * as Icon from "react-feather";
 
 export type AppManagemenetUsersHeaderProps = {
   onClick: (search: string) => void;
@@ -41,7 +42,7 @@ export const AppManagemenetUsersHeader = ({
               onClick(search);
             }}
           >
-            {/* <Icon.Search /> */}
+            <Icon.Search />
           </AppButton>
         </div>
       </div>

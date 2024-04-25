@@ -26,7 +26,7 @@ export const AppFormLabel = ({
       className={clsx(defaultStyles, colorText, className)}
       {...props}
     >
-      {children} {isRequired && <span className="text-danger-500">*</span>}
+      {children} {isRequired && <span className="text-red-500">*</span>}
     </label>
   );
 };

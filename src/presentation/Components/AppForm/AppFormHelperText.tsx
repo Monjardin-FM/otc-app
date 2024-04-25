@@ -15,14 +15,15 @@ export const AppFormHelperText = ({
 }: AppFormHelperTextProps) => (
   <span
     className={classNames(
-      "block mt-2 text-sm pl-1 leading-snug font-medium text-gray-500",
+      "block mt-0 text-sm pl-1 leading-snug font-medium text-gray-500 border ",
       {
         "text-gray-500": colorSchema === "gray",
         "text-primary-500": colorSchema === "primary",
         "text-success-500": colorSchema === "success",
         "text-info-500": colorSchema === "info",
         "text-warn-500": colorSchema === "warn",
-        "text-danger-500": colorSchema === "danger",
+        "text-red-500 border-red-100 rounded-md bg-red-200 p-2":
+          colorSchema === "red",
       },
       className
     )}

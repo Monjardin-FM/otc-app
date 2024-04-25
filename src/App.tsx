@@ -1,4 +1,3 @@
-import "leaflet-control-geocoder/dist/Control.Geocoder.js";
 import { Provider } from "react-redux";
 import {
   AppContext,

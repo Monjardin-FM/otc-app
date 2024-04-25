@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
-import clsx from 'clsx';
-import es from 'date-fns/locale/es';
+import { useContext } from "react";
+import clsx from "clsx";
+import es from "date-fns/locale/es";
 import DatePicker, {
   ReactDatePickerProps,
   registerLocale,
-} from 'react-datepicker';
-import { AppFormContext } from 'presentation/components/AppForm';
-import { AppInputProps, AppInput } from 'presentation/components/AppInput';
+} from "react-datepicker";
+import { AppInput, AppInputProps } from "../AppInput";
+import { AppFormContext } from "../AppForm";
 
-registerLocale('es', es);
+registerLocale("es", es);
 
 export type AppDatePickerProps = ReactDatePickerProps & AppInputProps;
 
@@ -17,7 +17,7 @@ const AppDatePicker = ({
   rightIcon,
   className,
   required,
-  colorSchema = 'gray',
+  colorSchema = "gray",
   wrapperClassName,
   ...props
 }: AppDatePickerProps) => {
@@ -26,9 +26,9 @@ const AppDatePicker = ({
     <DatePicker
       locale="es"
       dateFormat="dd/MM/yyyy"
-      className={clsx('form-input', className)}
+      className={clsx("form-input", className)}
       required={isRequired || required}
-      wrapperClassName={clsx('w-full', wrapperClassName)}
+      wrapperClassName={clsx("w-full", wrapperClassName)}
       {...props}
     />
   );

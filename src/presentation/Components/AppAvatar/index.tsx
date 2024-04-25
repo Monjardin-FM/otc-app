@@ -19,7 +19,7 @@ export const AppAvatar = ({
       "border-success-600": colorSchema === "success",
       "border-info-600": colorSchema === "info",
       "border-warn-600": colorSchema === "warn",
-      "border-danger-600": colorSchema === "danger",
+      "border-red-600": colorSchema === "red",
     })}
   >
     <div
@@ -31,7 +31,7 @@ export const AppAvatar = ({
           "text-success-100 bg-success-600": colorSchema === "success",
           "text-info-100 bg-info-600": colorSchema === "info",
           "text-warn-100 bg-warn-600": colorSchema === "warn",
-          "text-danger-100 bg-danger-600": colorSchema === "danger",
+          "text-red-100 bg-red-600": colorSchema === "red",
         },
         className
       )}

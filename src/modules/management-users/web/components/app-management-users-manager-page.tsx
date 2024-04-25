@@ -14,6 +14,7 @@ import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
 import { AppButton } from "../../../../presentation/Components/AppButton";
 import { AppTooltip } from "../../../../presentation/Components/AppTooltip";
+import * as Icon from "react-feather";
 export const ManagementUsersManagerPage = () => {
   const [visibleNewUserModal, setVisibleNewUserModal] = useToggle(false);
   const [visibleEditUserModal, setVisibleEditUserModal] = useToggle(false);
@@ -84,7 +85,7 @@ export const ManagementUsersManagerPage = () => {
               colorScheme="warn"
               onClick={() => setVisibleNewUserModal(true)}
             >
-              {/* <Icon.PlusCircle /> */}
+              <Icon.PlusCircle />
             </AppButton>
             <AppTooltip>New User</AppTooltip>
           </div>

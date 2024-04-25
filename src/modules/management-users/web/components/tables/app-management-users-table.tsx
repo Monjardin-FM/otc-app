@@ -9,7 +9,7 @@ import {
 import { AppTooltip } from "../../../../../presentation/Components/AppTooltip";
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { UserManage } from "../../../domain/entities/userManage";
-import * as Icon from "react-icons";
+import * as Icon from "react-feather";
 
 export type ManagementUsersTableProps = {
   items?: UserManage[];
@@ -23,7 +23,7 @@ const getRandomColorSchema = (params: { length: number }) => {
     "success",
     "info",
     "warn",
-    "danger",
+    "red",
   ];
   return colors[params.length % colors.length] || "gray";
 };
@@ -37,7 +37,7 @@ const NamUserColumn = (params: RenderFnParams<UserManage>) => {
             length: params.record.name.length,
           })}
         >
-          <Icon.IconBase size={20} />
+          <Icon.User size={20} />
         </AppAvatar>
       </div>
       <div>
@@ -84,7 +84,7 @@ const ActionsColumn = ({
           size="sm"
           variant="ghost"
         >
-          <Icon.IconBase size={18} />
+          <Icon.Edit size={18} />
         </AppButton>
         <AppTooltip>Edit User</AppTooltip>
       </div>
@@ -92,12 +92,12 @@ const ActionsColumn = ({
         <AppButton
           size="sm"
           variant="ghost"
-          colorScheme="danger"
+          colorScheme="red"
           onClick={() => {
             onDelete();
           }}
         >
-          <Icon.IconBase size={18} />
+          <Icon.Trash size={18} />
         </AppButton>
         <AppTooltip>Delete User</AppTooltip>
       </div>

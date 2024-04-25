@@ -33,7 +33,7 @@ export const AppAlert = ({
                 "text-success-500": colorSchema === "success",
                 "text-info-500": colorSchema === "info",
                 "text-warn-700": colorSchema === "warn",
-                "text-danger-500": colorSchema === "danger",
+                "text-red-500": colorSchema === "red",
               },
               {
                 "border-gray-500": colorSchema === "gray",
@@ -41,7 +41,7 @@ export const AppAlert = ({
                 "border-success-500": colorSchema === "success",
                 "border-info-500": colorSchema === "info",
                 "border-warn-700": colorSchema === "warn",
-                "border-danger-500": colorSchema === "danger",
+                "border-red-500": colorSchema === "red",
               },
               className
             )}

@@ -1,57 +1,58 @@
-import {
-  FeatureGroup,
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-} from "react-leaflet";
-import { EditControl } from "react-leaflet-draw";
+import { useEffect, useState } from "react";
+import AppConfig from "../../../../settings.json";
+import { AppTrackingHeader } from "./app-tracking-header";
+import { AppTrackingsTable } from "./tables/app-tracking-table";
+import { AppTrackingModal } from "./modals/app-tracking-modal";
+import { useToggle } from "react-use";
+import { useGetTracking } from "../hooks/use-get-tracking";
+import { AppAuthorizationGuard } from "../../../../presentation/Components/AppAuthorizationGuard";
+import { UserRole } from "../../../user/domain/entities/user-role";
+import { AppLoading } from "../../../../presentation/Components/AppLoading";
+import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
 
-export const App = () => {
-  const _created = (e: any) => {
-    console.log(e);
-    const { layerType, layer } = e;
-    if (layerType === "circle") {
-      const center = layer.getLatLng();
-      const centerPt = [center.lng, center.lat];
-      console.log(centerPt);
-      const radius = layer.getRadius();
-      console.log(radius);
-    }
-  };
+export const AppTrackingManagerPage = () => {
+  const [visibleTrackingModal, setVisibleTrackingModal] = useToggle(false);
+  const { tracking, getTracking } = useGetTracking();
+  const [trackingId, setTrackingId] = useState<number>();
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getTracking();
+    }, 3000);
+
+    // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   return (
-    <>
-      <MapContainer
-        center={[51.505, -0.09]}
-        zoom={13}
-        scrollWheelZoom={false}
-        style={{ height: "100vh", width: "100wh" }}
-        id="map"
-      >
-        <FeatureGroup>
-          <EditControl
-            position="topright"
-            onCreated={_created}
-            draw={{
-              rectangle: false,
-              circle: true,
-              circlemarker: false,
-              marker: false,
-              polyline: false,
+    <AppAuthorizationGuard
+      roles={
+        AppConfig["userManagement.managerPage.authorization"] as UserRole[]
+      }
+      redirect={{ to: "/" }}
+    >
+      {!tracking && <AppLoading />}
+      <AppTrackingModal
+        isVisible={visibleTrackingModal}
+        onClose={() => setVisibleTrackingModal(false)}
+        personId={trackingId}
+      />
+      <AppPageTransition>
+        <div className="items-center mx-auto mb-5">
+          <AppTrackingHeader />
+        </div>
+        <div className="container mx-auto flex flex-col items-end jusitfy-center"></div>
+        <div className="container mx-auto mt-5">
+          <AppTrackingsTable
+            onEdit={({ record }) => {
+              setTrackingId(record.personId);
+              setVisibleTrackingModal(true);
             }}
+            items={tracking}
           />
-        </FeatureGroup>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={[51.505, -0.09]}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
-      </MapContainer>
-    </>
+        </div>
+      </AppPageTransition>
+    </AppAuthorizationGuard>
   );
 };

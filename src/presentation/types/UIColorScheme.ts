@@ -4,4 +4,4 @@ export type UIColorScheme =
   | "success"
   | "info"
   | "warn"
-  | "danger";
+  | "red";

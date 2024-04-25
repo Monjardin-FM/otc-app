@@ -1,7 +1,7 @@
-import clsx from 'clsx';
-import React from 'react';
+import clsx from "clsx";
+import React from "react";
 
-export type AppCheckboxProps = React.ComponentPropsWithoutRef<'input'>;
+export type AppCheckboxProps = React.ComponentPropsWithoutRef<"input">;
 
 export const AppCheckbox = ({
   children,
@@ -11,7 +11,7 @@ export const AppCheckbox = ({
   <label>
     <input
       type="checkbox"
-      className={clsx('form-checkbox rounded', className)}
+      className={clsx("form-checkbox rounded", className)}
       {...props}
     />
     <span className="ml-2 text-primary-900 font-medium text-sm">

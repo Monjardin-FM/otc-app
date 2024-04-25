@@ -27,7 +27,7 @@ export function AppInput<P>(WrappedComponent: React.ComponentType<P>) {
           "border-success-500": props.colorSchema === "success",
           "border-info-500": props.colorSchema === "info",
           "border-warn-500": props.colorSchema === "warn",
-          "border-danger-500": props.colorSchema === "danger",
+          "border-red-500": props.colorSchema === "red",
         },
         props.className
       ),
