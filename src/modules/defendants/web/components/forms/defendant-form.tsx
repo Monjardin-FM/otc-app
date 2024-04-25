@@ -394,7 +394,7 @@ export const DefendantForm = ({
       )}
       <div className="col-span-12 mt-5 border flex">
         <div className="w-full">
-          <div className="w-full rounded-2xl bg-white p-2">
+          <div className="flex flex-col w-full rounded-2xl bg-white p-2 gap-3">
             <Disclosure>
               {({ open }) => (
                 <>

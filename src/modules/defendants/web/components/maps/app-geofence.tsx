@@ -10,15 +10,26 @@ import EsriLeafletGeoSearch from "react-esri-leaflet/plugins/EsriLeafletGeoSearc
 import { useRef } from "react";
 export const AppGeofence = () => {
   const created = (e: any) => {
-    console.log(e);
-    const { layerType, layer } = e;
-    if (layerType === "circle") {
-      const center = layer.getLatLng();
-      const centerPt = [center.lng, center.lat];
-      console.log(centerPt);
-      const radius = layer.getRadius();
-      console.log(radius);
-    }
+    if (e.layerType === "circle") {
+      console.log(
+        "circle center, radius =",
+        e.layer.getLatLng(),
+        e.layer.getRadius()
+      );
+    } else {
+      // polygon & rectangle
+      console.log("polygon coordinates =", e.layer.getLatLngs()); // array of LatLng objects
+    } // marker or lines, etc.
+    // map.addLayer(e.layer) // might need?
+    // console.log(e);
+    // const { layerType, layer } = e;
+    // if (layerType === "circle") {
+    //   const center = layer.getLatLng();
+    //   const centerPt = [center.lng, center.lat];
+    //   console.log(centerPt);
+    //   const radius = layer.getRadius();
+    //   console.log(radius);
+    // }
   };
   const mapRef = useRef<any>();
   return (
