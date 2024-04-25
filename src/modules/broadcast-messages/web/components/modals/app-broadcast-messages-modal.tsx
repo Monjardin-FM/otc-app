@@ -24,7 +24,7 @@ export const AppNewBroadcastMessagesModal = ({
     <AppModal isVisible={isVisible} onClose={onClose} size="lg">
       <AppModalOverlay>
         <AppModalContent>
-          <AppModalHeader>New BroadcastMessages</AppModalHeader>
+          <AppModalHeader>New Broadcast Messages</AppModalHeader>
           <AppModalBody>
             <div className="grid grid-cols-12 gap-y-4 gap-x-3">
               <span className="col-span-12">

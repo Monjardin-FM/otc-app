@@ -141,7 +141,7 @@ export const AppDevicessTable = ({
     {
       key: "DevicesNumber",
       dataIndex: "DevicesNumber",
-      title: "Number/EMAI",
+      title: "Number/IMEI",
       render: NumberDevicesColumn,
     },
 

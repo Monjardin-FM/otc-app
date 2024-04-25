@@ -114,7 +114,7 @@ export const AppManagementUsersTable = ({
     {
       key: "userName",
       dataIndex: "userName",
-      title: "Name User",
+      title: "User Name",
       render: NamUserColumn,
     },
     {

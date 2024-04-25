@@ -28,7 +28,7 @@ export const AppManagemenetUsersHeader = ({
         </h1>
         <div className="w-2/3 flex flex-row items-center bg-white rounded-lg ">
           <AppTextField
-            placeholder="Name,  email"
+            placeholder="Search by name or email"
             type="text"
             onChange={(e: any) => {
               setSearch(e.target.value);

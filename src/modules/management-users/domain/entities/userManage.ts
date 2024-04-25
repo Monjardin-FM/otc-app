@@ -13,4 +13,5 @@ export type UserManage = {
   createdAt: string;
   idRole: number;
   role: string;
+  phone: string;
 };

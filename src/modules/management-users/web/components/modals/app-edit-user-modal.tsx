@@ -19,6 +19,7 @@ import {
 import {
   AppFormField,
   AppFormLabel,
+  AppFormHelperText,
 } from "../../../../../presentation/Components/AppForm";
 import AppTextField from "../../../../../presentation/Components/AppTextField";
 import { AppToggleButton } from "../../../../../presentation/Components/AppToggleButton";
@@ -39,6 +40,7 @@ type UserUpdateFormValues = {
   county: number;
   gender: number;
   password: string;
+  phone: string;
 };
 export const AppEditUserModal = ({
   isVisible,
@@ -64,6 +66,7 @@ export const AppEditUserModal = ({
       .moreThan(0, "Select a gender")
       .required("Select a gender"),
     password: Yup.string().required("Required password"),
+    phone: Yup.number().required("Required cell phone number"),
   });
   const onSubmitHandler = async (data: UserUpdateFormValues) => {
     if (user) {
@@ -77,6 +80,7 @@ export const AppEditUserModal = ({
         idRole: Number(data.role),
         idStatus: status ? 1 : 0,
         password: data.password,
+        phone: data.phone,
       });
       onClose();
       onReload();
@@ -119,11 +123,12 @@ export const AppEditUserModal = ({
               gender: user?.idGender ? user.idGender : 0,
               // status: user?.idStatus ? user.idStatus : 0,
               password: "",
+              phone: user?.phone ? user.phone : "",
             }}
             validationSchema={validationSchemaUpdateUser}
             onSubmit={onSubmitHandler}
           >
-            {({ handleSubmit, handleChange, values }) => (
+            {({ handleSubmit, handleChange, values, errors }) => (
               <form autoComplete="off" onSubmit={handleSubmit}>
                 <AppModalHeader>Edit User</AppModalHeader>
                 <AppModalBody>
@@ -135,6 +140,11 @@ export const AppEditUserModal = ({
                         value={values.name}
                         onChange={handleChange}
                       />
+                      {errors.name && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.name}
+                        </AppFormHelperText>
+                      )}
                     </AppFormField>
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Last Name</AppFormLabel>
@@ -143,15 +153,26 @@ export const AppEditUserModal = ({
                         value={values.lastName}
                         onChange={handleChange}
                       />
+                      {errors.lastName && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.lastName}
+                        </AppFormHelperText>
+                      )}
                     </AppFormField>
                     <AppFormField className="col-span-12">
                       <AppFormLabel>Email</AppFormLabel>
                       <AppTextField
                         name="eMail"
                         value={values.eMail}
+                        type="email"
                         onChange={handleChange}
                         disabled
                       />
+                      {errors.eMail && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.eMail}
+                        </AppFormHelperText>
+                      )}
                     </AppFormField>
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Role</AppFormLabel>
@@ -167,6 +188,11 @@ export const AppEditUserModal = ({
                           </option>
                         ))}
                       </AppSelect>
+                      {errors.role && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.role}
+                        </AppFormHelperText>
+                      )}
                     </AppFormField>
                     <AppFormField className="col-span-6">
                       <AppFormLabel>County</AppFormLabel>
@@ -182,6 +208,11 @@ export const AppEditUserModal = ({
                           </option>
                         ))}
                       </AppSelect>
+                      {errors.county && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.county}
+                        </AppFormHelperText>
+                      )}
                     </AppFormField>
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Gender</AppFormLabel>
@@ -197,6 +228,25 @@ export const AppEditUserModal = ({
                           </option>
                         ))}
                       </AppSelect>
+                      {errors.gender && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.gender}
+                        </AppFormHelperText>
+                      )}
+                    </AppFormField>
+                    <AppFormField className="col-span-6">
+                      <AppFormLabel>Phone Number</AppFormLabel>
+                      <AppTextField
+                        name="phone"
+                        type="number"
+                        onChange={handleChange}
+                        value={values.phone}
+                      />
+                      {errors.phone && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.phone}
+                        </AppFormHelperText>
+                      )}
                     </AppFormField>
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Password</AppFormLabel>

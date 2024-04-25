@@ -40,7 +40,7 @@ export const ManagementUsersManagerPage = () => {
     }
   }, [error]);
   useEffect(() => {
-    getUsers({ completeName: "Christian" });
+    getUsers({ completeName: "" });
   }, [toggleReload]);
   useEffect(() => {
     if (errorDelete) {

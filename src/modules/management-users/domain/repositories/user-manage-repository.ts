@@ -1,7 +1,7 @@
-import { County } from '../entities/county';
-import { Gender } from '../entities/gender';
-import { Role } from '../entities/role';
-import { UserManage } from '../entities/userManage';
+import { County } from "../entities/county";
+import { Gender } from "../entities/gender";
+import { Role } from "../entities/role";
+import { UserManage } from "../entities/userManage";
 
 export type UserManageRepository = {
   getUsers(params: { completeName: string }): Promise<UserManage[]>;
@@ -34,6 +34,7 @@ export type UserManageRepository = {
     idStatus: number;
     password: string;
     idRole: number;
+    phone: string;
   }): Promise<void>;
-  deleteUser(params: { idPerson: number }): Promise<Boolean>;
+  deleteUser(params: { idPerson: number }): Promise<boolean>;
 };
