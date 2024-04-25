@@ -45,7 +45,7 @@ export const AppEditDeviceModal = ({
   const { deviceType, getDeviceType } = useGetDeviceType();
   const [status, setStatus] = useState(false);
   const validationSchemaSaveDevice = Yup.object().shape({
-    description: Yup.string().required("Required Phone Number/EMAI"),
+    description: Yup.string().required("Required Phone Number/IMEI"),
     idDeviceType: Yup.number()
       .moreThan(0, "Select device type")
       .required("Select device type"),

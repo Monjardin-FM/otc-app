@@ -62,6 +62,7 @@ export const AppNewUserModal = ({
       .moreThan(0, "Select a gender")
       .required("Select a gender"),
     password: Yup.string().required("Required password"),
+    phone: Yup.number().required("Required cell phone number"),
   });
   const onSubmitHandler = async (data: UserCreateFormValues) => {
     await createUser({
@@ -154,8 +155,10 @@ export const AppNewUserModal = ({
                       <AppFormLabel>Email</AppFormLabel>
                       <AppTextField
                         name="eMail"
+                        type="email"
                         value={values.eMail}
                         onChange={handleChange}
+                        autoComplete="new-mail"
                       />
                       {errors.eMail && (
                         <AppFormHelperText colorSchema="red">
@@ -227,14 +230,15 @@ export const AppNewUserModal = ({
                       <AppFormLabel>Phone Number</AppFormLabel>
                       <AppTextField
                         name="phone"
+                        type="number"
                         onChange={handleChange}
                         value={values.phone}
                       />
-                      {/* {errors.password && (
+                      {errors.phone && (
                         <AppFormHelperText colorSchema="red">
-                          {errors.password}
+                          {errors.phone}
                         </AppFormHelperText>
-                      )} */}
+                      )}
                     </AppFormField>
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Password</AppFormLabel>
@@ -243,6 +247,7 @@ export const AppNewUserModal = ({
                         onChange={handleChange}
                         value={values.password}
                         type="password"
+                        autoComplete="new-password"
                       />
                       {errors.password && (
                         <AppFormHelperText colorSchema="red">

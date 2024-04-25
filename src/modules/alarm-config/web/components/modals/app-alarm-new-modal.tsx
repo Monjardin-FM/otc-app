@@ -191,7 +191,7 @@ export const AppNewAlarmModal = ({
                         />
                       </AppFormField>
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Geocordinate Timeout</AppFormLabel>
+                        <AppFormLabel>Geocoordinate Timeout</AppFormLabel>
                         <AppTextField
                           name="geocordinateTimeout"
                           value={values.geocordinateTimeout}
