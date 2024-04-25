@@ -230,7 +230,7 @@ export const AppTrackingsTable = ({
     {
       key: "TrackingCardio",
       dataIndex: "TrackingCardio",
-      title: "Caradio",
+      title: "Cardio",
       render: CardioTrackingColumn,
     },
     {

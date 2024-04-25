@@ -13,7 +13,7 @@ import { AppPageTransition } from "../../../../presentation/Components/AppPageTr
 export const AppTrackingManagerPage = () => {
   const [visibleTrackingModal, setVisibleTrackingModal] = useToggle(false);
   const { tracking, getTracking } = useGetTracking();
-  const [trackingId, setTrackingId] = useState<number>();
+  const [trackingId, setTrackingId] = useState<number | null>();
   useEffect(() => {
     const intervalId = setInterval(() => {
       getTracking();
@@ -24,6 +24,9 @@ export const AppTrackingManagerPage = () => {
       clearInterval(intervalId);
     };
   }, []);
+  useEffect(() => {
+    console.log(trackingId);
+  }, [trackingId]);
 
   return (
     <AppAuthorizationGuard
@@ -40,7 +43,13 @@ export const AppTrackingManagerPage = () => {
       />
       <AppPageTransition>
         <div className="items-center mx-auto mb-5">
-          <AppTrackingHeader />
+          <AppTrackingHeader
+            // setTrackingId={setTrackingId}
+            onSearch={(id: number | undefined) => {
+              setTrackingId(id);
+              setVisibleTrackingModal(true);
+            }}
+          />
         </div>
         <div className="container mx-auto flex flex-col items-end jusitfy-center"></div>
         <div className="container mx-auto mt-5">

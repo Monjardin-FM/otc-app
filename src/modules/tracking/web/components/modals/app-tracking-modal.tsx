@@ -40,7 +40,7 @@ export const AppTrackingModal = ({
     findHistoricPosition({
       dateInit: "2024-04-23T00:08:46.000Z",
       dateFin: "2024-04-23T17:08:46.000Z",
-      idPerson: 1,
+      idPerson: personId ? personId : 0,
     });
   };
   useEffect(() => {
@@ -90,7 +90,10 @@ export const AppTrackingModal = ({
           </AppModalHeader>
           <AppModalBody>
             <div className="w-full  rounded-lg bg-gray-200">
-              <MapTracking historicPosition={historicPosition} />
+              <MapTracking
+                historicPosition={historicPosition}
+                trackingDetail={trackingDetail}
+              />
             </div>
 
             <div className="w-full flex flex-col items-center justify-center gap-5">

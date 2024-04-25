@@ -1,8 +1,29 @@
-import * as Icon from "react-feather";
 import { AppHero } from "../../../../presentation/Components/AppHero";
-import AppTextField from "../../../../presentation/Components/AppTextField";
-import { AppButton } from "../../../../presentation/Components/AppButton";
-export const AppTrackingHeader = () => {
+import Select from "react-select";
+import { useGetDefendants } from "../../../defendants/web/hooks/use-get-defendants";
+import { useEffect, useState } from "react";
+type AppTrackingHeaderProps = {
+  // setTrackingId: (trackingId: number | undefined) => void;
+  onSearch: (id: number | undefined) => void;
+};
+export const AppTrackingHeader = ({ onSearch }: AppTrackingHeaderProps) => {
+  const { defendants, getDefendants } = useGetDefendants();
+  const [defendantsList, setDefendantsList] =
+    useState<{ value: number; label: string }[]>();
+
+  useEffect(() => {
+    getDefendants({ completeName: "" });
+  }, []);
+  useEffect(() => {
+    if (defendants) {
+      setDefendantsList(
+        defendants.map((item) => ({
+          value: item.idPerson,
+          label: `${item.name} ${item.lastName}`,
+        }))
+      );
+    }
+  }, [defendants]);
   return (
     <AppHero
       size="base"
@@ -15,7 +36,14 @@ export const AppTrackingHeader = () => {
           Tracking
         </h1>
         <div className="w-2/3 flex flex-row items-center bg-white rounded-lg ">
-          <AppTextField
+          <Select
+            placeholder="Defendant name"
+            className="w-full"
+            options={defendantsList}
+            onChange={(e) => onSearch(e?.value)}
+            isSearchable={true}
+          />
+          {/* <AppTextField
             placeholder="Name"
             type="text"
             onChange={() => {
@@ -23,8 +51,8 @@ export const AppTrackingHeader = () => {
               //   setVisible(true);
             }}
             // value={searchUser}
-          ></AppTextField>
-          <AppButton
+          ></AppTextField> */}
+          {/* <AppButton
             variant="ghost"
             isLoading={false}
             onClick={() => {
@@ -32,7 +60,7 @@ export const AppTrackingHeader = () => {
             }}
           >
             <Icon.Search />
-          </AppButton>
+          </AppButton> */}
         </div>
       </div>
     </AppHero>
