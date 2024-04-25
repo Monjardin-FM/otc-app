@@ -14,12 +14,13 @@ export const AppTrackingManagerPage = () => {
   const [visibleTrackingModal, setVisibleTrackingModal] = useToggle(false);
   const { tracking, getTracking } = useGetTracking();
   const [trackingId, setTrackingId] = useState<number | null>();
+  // const [toggle, setToggle] = useState(false);
   useEffect(() => {
     const intervalId = setInterval(() => {
       getTracking();
     }, 3000);
 
-    // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
+    // Retorna una función de limpieza para detener el=intervalo cuando el componente se desmonte o la dependencia cambie
     return () => {
       clearInterval(intervalId);
     };
@@ -39,15 +40,19 @@ export const AppTrackingManagerPage = () => {
       <AppTrackingModal
         isVisible={visibleTrackingModal}
         onClose={() => setVisibleTrackingModal(false)}
-        personId={trackingId}
+        // toggle={toggle}
       />
       <AppPageTransition>
         <div className="items-center mx-auto mb-5">
           <AppTrackingHeader
             // setTrackingId={setTrackingId}
             onSearch={(id: number | undefined) => {
+              if (id) {
+                localStorage.setItem("trackingId", String(id));
+              }
               setTrackingId(id);
               setVisibleTrackingModal(true);
+              // setToggle(!toggle);
             }}
           />
         </div>

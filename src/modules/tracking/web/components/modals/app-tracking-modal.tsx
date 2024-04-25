@@ -23,46 +23,44 @@ import { AppButton } from "../../../../../presentation/Components/AppButton";
 export type AppTrackingModalProps = {
   isVisible: boolean;
   onClose: () => void;
-  personId?: number | null;
+  // toggle: boolean;
+  // personId?: number | null;
 };
 export const AppTrackingModal = ({
   isVisible,
   onClose,
-  personId,
-}: AppTrackingModalProps) => {
+}: // toggle,
+// personId,
+AppTrackingModalProps) => {
   const { trackingDetail, getTrackingDetail } = useGetDetailTracking();
   const { getUsers, users } = useGetUsers();
   const [officer, setOfficer] = useState<UserManage[]>();
   const [alertPerson, setAlertPerson] = useState<PersonAlert[]>();
   const { findHistoricPosition, historicPosition } = useFindHistoricPosition();
-
+  const [userId, setUserId] = useState<number>();
   const onClick = () => {
-    findHistoricPosition({
-      dateInit: "2024-04-23T00:08:46.000Z",
-      dateFin: "2024-04-23T17:08:46.000Z",
-      idPerson: personId ? personId : 0,
-    });
+    if (userId)
+      findHistoricPosition({
+        dateInit: "2024-04-23T00:08:46.000Z",
+        dateFin: "2024-04-23T17:08:46.000Z",
+        idPerson: userId,
+      });
   };
   useEffect(() => {
     getUsers({ completeName: "" });
-  }, [personId]);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (personId) {
-        getTrackingDetail({ personId: personId });
-      }
-    }, 30000);
+  }, [userId]);
 
-    // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
-    return () => {
-      clearInterval(intervalId);
-    };
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("trackingId");
+    if (storedUserId) {
+      setUserId(Number(storedUserId)); // Parseamos el valor a número
+    }
   }, []);
   useEffect(() => {
     if (trackingDetail) {
       setAlertPerson(trackingDetail.personAlert);
     }
-  }, [trackingDetail, personId]);
+  }, [trackingDetail, userId]);
   useEffect(() => {
     if (users) {
       const officerFilter = users.filter(
@@ -71,7 +69,19 @@ export const AppTrackingModal = ({
       if (officerFilter) setOfficer(officerFilter);
     }
   }, [users]);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const storedUserId = localStorage.getItem("trackingId");
 
+      if (storedUserId) {
+        getTrackingDetail({ personId: Number(storedUserId) });
+      }
+    }, 30000);
+    // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
   return (
     <AppModal isVisible={isVisible} onClose={onClose} size="full">
       <AppModalOverlay>
