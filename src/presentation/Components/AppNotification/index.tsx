@@ -1,23 +1,23 @@
-import React, { useEffect } from 'react';
-import { ToastContainer, toast, Slide } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from "react";
+import { ToastContainer, toast, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export type AppNotificationProps = {
   notificationText?: string;
   icon?: any;
-  theme?: 'dark' | 'light' | 'colored';
-  type?: 'default' | 'error' | 'info' | 'success' | 'warning';
+  theme?: "dark" | "light" | "colored";
+  type?: "default" | "error" | "info" | "success" | "warning";
 };
 
 export const AppNotification = ({
   notificationText,
-  theme = 'light',
-  icon,
-  type = 'default',
+  // theme = "light",
+  // icon,
+  type = "default",
 }: AppNotificationProps) => {
   useEffect(() => {
     toast(`${notificationText}`, {
-      position: 'top-right',
+      position: "top-right",
       autoClose: false,
       hideProgressBar: true,
       closeOnClick: false,
@@ -38,7 +38,7 @@ export const AppNotification = ({
       pauseOnFocusLoss
       draggable={false}
       transition={Slide}
-      style={{ width: '300px' }}
+      style={{ width: "300px" }}
       // theme={theme}
     />
   );

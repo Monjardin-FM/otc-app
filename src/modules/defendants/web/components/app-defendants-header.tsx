@@ -2,7 +2,19 @@ import * as Icon from "react-feather";
 import { AppHero } from "../../../../presentation/Components/AppHero";
 import AppTextField from "../../../../presentation/Components/AppTextField";
 import { AppButton } from "../../../../presentation/Components/AppButton";
-export const AppDefendantsHeader = () => {
+
+export type AppDefendantsHeaderProps = {
+  onClick: (search: string) => void;
+  loadingDefendants: boolean;
+  search: string;
+  setSearch: (search: string) => void;
+};
+export const AppDefendantsHeader = ({
+  loadingDefendants,
+  onClick,
+  search,
+  setSearch,
+}: AppDefendantsHeaderProps) => {
   return (
     <AppHero
       size="base"
@@ -18,17 +30,17 @@ export const AppDefendantsHeader = () => {
           <AppTextField
             placeholder="Search by name or email"
             type="text"
-            onChange={() => {
-              //   setSearchUser(e.target.value);
-              //   setVisible(true);
+            onChange={(e: any) => {
+              setSearch(e.target.value);
             }}
-            // value={searchUser}
+            value={search}
           ></AppTextField>
           <AppButton
+            isDisabled={loadingDefendants}
             variant="ghost"
-            isLoading={false}
+            isLoading={loadingDefendants}
             onClick={() => {
-              //   handleClick(fullNameUser);
+              onClick(search);
             }}
           >
             <Icon.Search />

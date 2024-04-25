@@ -1,7 +1,7 @@
-import React, { useContext, ReactNode } from 'react';
-import classNames from 'classnames';
-import { motion, AnimatePresence } from 'framer-motion';
-import { AppMenuContext } from './AppMenuContext';
+import { useContext, ReactNode } from "react";
+import classNames from "classnames";
+import { motion, AnimatePresence } from "framer-motion";
+import { AppMenuContext } from "./AppMenuContext";
 
 export interface AppMenuListProps {
   children?: ReactNode;
@@ -19,8 +19,8 @@ export const AppMenuList = ({ children, className }: AppMenuListProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={classNames(
-            'z-50 absolute mt-3 right-0 bg-white shadow-lg rounded-lg bg-opacity-80 filter backdrop-filter backdrop-blur w-48 overflow-hidden',
-            className,
+            "z-50 absolute mt-3 right-0 bg-white shadow-lg rounded-lg bg-opacity-80 filter backdrop-filter backdrop-blur w-48 overflow-hidden",
+            className
           )}
         >
           {children}

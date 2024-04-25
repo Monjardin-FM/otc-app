@@ -1,5 +1,4 @@
-import React from 'react';
-import { Player } from '@lottiefiles/react-lottie-player';
+import { Player } from "@lottiefiles/react-lottie-player";
 
 export type AppMessageAnimationProps = {
   src: string | object;

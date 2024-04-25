@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { AppButton, AppButtonProps } from 'presentation/components/AppButton';
-import { AppMenuContext } from './AppMenuContext';
+import { useContext } from "react";
+import { AppMenuContext } from "./AppMenuContext";
+import { AppButton, AppButtonProps } from "../AppButton";
 
 export interface AppMenuButtonProps extends AppButtonProps {}
 

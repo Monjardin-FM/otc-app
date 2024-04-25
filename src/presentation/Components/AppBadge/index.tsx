@@ -1,6 +1,6 @@
 import React from "react";
 import clsx from "clsx";
-import { UIColorScheme } from "presentation/types/ui-color-schema";
+import { UIColorScheme } from "../../types/UIColorScheme";
 
 export interface AppBadgeProps extends React.ComponentPropsWithoutRef<"span"> {
   colorScheme?: UIColorScheme;

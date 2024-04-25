@@ -22,10 +22,10 @@ export const ManagementUsersManagerPage = () => {
   const [toggleReload, setToggleReload] = useToggle(false);
   const [userId, setUserId] = useState<number | null>(1);
   const { deleteUser, error: errorDelete } = useDeleteUser();
+  const [search, setSearch] = useState<string>("");
   const onClick = (search: string) => {
     getUsers({ completeName: search });
   };
-  const [search, setSearch] = useState<string>("");
   useEffect(() => {
     if (search.length > 1 || search.length === 0) {
       const timeDelay = setTimeout(() => {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AppConfig from "../../../../settings.json";
 
 import { AppDefendantsHeader } from "./app-defendants-header";
@@ -12,12 +12,28 @@ import { UserRole } from "../../../user/domain/entities/user-role";
 import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
 import { AppButton } from "../../../../presentation/Components/AppButton";
-import { AppTooltip } from "../../../../presentation/Components/AppTooltip";
+import { Tooltip } from "@nextui-org/react";
 export const AppDefendantsManagerPage = () => {
-  const { defendants, getDefendants } = useGetDefendants();
+  const {
+    defendants,
+    getDefendants,
+    loading: loadingDefendants,
+  } = useGetDefendants();
   const [toggleReload, setToggleReload] = useToggle(false);
   const [visibleNewDefendantModal, setVisibleNewDefendantModal] =
     useToggle(false);
+  const [search, setSearch] = useState<string>("");
+  const onClick = (search: string) => {
+    getDefendants({ completeName: search });
+  };
+  useEffect(() => {
+    if (search.length > 1 || search.length === 0) {
+      const timeDelay = setTimeout(() => {
+        onClick(search);
+      }, 500);
+      return () => clearTimeout(timeDelay);
+    }
+  }, [search, toggleReload]);
   useEffect(() => {
     getDefendants({ completeName: "" });
   }, [toggleReload]);
@@ -38,18 +54,22 @@ export const AppDefendantsManagerPage = () => {
       />
       <AppPageTransition>
         <div className="items-center mx-auto mb-5">
-          <AppDefendantsHeader />
+          <AppDefendantsHeader
+            onClick={onClick}
+            loadingDefendants={loadingDefendants}
+            search={search}
+            setSearch={setSearch}
+          />
         </div>
         <div className="container mx-auto flex flex-col items-end jusitfy-center">
-          <div className="group relative inline-block text-center">
+          <Tooltip content={"New Defendant"} color="primary">
             <AppButton
               colorScheme="warn"
               onClick={() => setVisibleNewDefendantModal(true)}
             >
               <Icon.PlusCircle />
             </AppButton>
-            <AppTooltip>New Defendant</AppTooltip>
-          </div>
+          </Tooltip>
         </div>
         <div className="container mx-auto mt-5">
           <AppDefendantsTable onEdit={() => {}} items={defendants} />

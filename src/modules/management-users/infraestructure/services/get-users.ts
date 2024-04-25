@@ -32,6 +32,7 @@ export const getUsersService: UserManageRepository["getUsers"] = async (
     createdAt: user.created_at,
     idRole: user.idRole,
     role: user.role,
+    phone: user.phone,
   }));
   return users;
 };

@@ -42,6 +42,9 @@ export const MapTracking = ({
             attribution="&copy; OpenStreetMap</a> "
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          {/* <Marker>
+
+          </Marker> */}
           <Marker
             position={[
               trackingDetail?.person[0].personPosition.lat ?? 0,

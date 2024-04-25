@@ -36,6 +36,7 @@ export const AppManagemenetUsersHeader = ({
             value={search}
           ></AppTextField>
           <AppButton
+            isDisabled={loadingUsers}
             variant="ghost"
             isLoading={loadingUsers}
             onClick={() => {

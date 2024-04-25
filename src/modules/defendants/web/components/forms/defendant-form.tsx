@@ -9,7 +9,7 @@ import Select from "react-select";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import dayjs from "dayjs";
-import { Disclosure } from "@headlessui/react";
+import { Disclosure, Switch } from "@headlessui/react";
 import { createDefendantParams } from "../../../domain/repositories/defendant-repository";
 import { useGetUsers } from "../../../../management-users/web/hooks/use-get-users";
 import { useGetGenders } from "../../../../management-users/web/hooks/use-get-genders";
@@ -21,7 +21,6 @@ import {
   AppFormHelperText,
   AppFormLabel,
 } from "../../../../../presentation/Components/AppForm";
-import { AppToggleButton } from "../../../../../presentation/Components/AppToggleButton";
 import AppTextField from "../../../../../presentation/Components/AppTextField";
 import AppSelect from "../../../../../presentation/Components/AppSelect";
 import { AppButton } from "../../../../../presentation/Components/AppButton";
@@ -167,21 +166,22 @@ export const DefendantForm = ({
                 <AppFormField className="col-span-1">
                   <AppFormLabel>Status</AppFormLabel>
                   <div className="flex flex-row items-center justify-start gap-3">
-                    <span>Inactive</span>
-
-                    {statusOfficer ? (
-                      <AppToggleButton
-                        name="status"
-                        onChange={() => setStatusOfficer(!statusOfficer)}
-                        checked={statusOfficer}
-                      ></AppToggleButton>
-                    ) : (
-                      <AppToggleButton
-                        name="status"
-                        onChange={() => setStatusOfficer(!statusOfficer)}
-                        checked={statusOfficer}
-                      ></AppToggleButton>
-                    )}
+                    <span>Inactive</span>{" "}
+                    <Switch
+                      checked={statusOfficer}
+                      onChange={setStatusOfficer}
+                      className={`${
+                        statusOfficer
+                          ? "bg-primaryColor-600"
+                          : "bg-primaryColor-200"
+                      } relative inline-flex h-6 w-11 items-center rounded-full`}
+                    >
+                      <span
+                        className={`${
+                          statusOfficer ? "translate-x-6" : "translate-x-1"
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                      />
+                    </Switch>
                     <span>Active</span>
                   </div>
                 </AppFormField>

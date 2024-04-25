@@ -1,9 +1,9 @@
-import React, { ComponentPropsWithoutRef } from 'react';
+import { ComponentPropsWithoutRef } from "react";
 
 export interface AppTooltipProps
-  extends Omit<ComponentPropsWithoutRef<'button'>, 'disabled'> {}
+  extends Omit<ComponentPropsWithoutRef<"button">, "disabled"> {}
 
-export const AppTooltip = ({ children, ...props }: AppTooltipProps) => {
+export const AppTooltip = ({ children }: AppTooltipProps) => {
   return (
     <div className="flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none">
       <div className="relative z-30 inline-flex">

@@ -76,7 +76,7 @@ AppTrackingModalProps) => {
       if (storedUserId) {
         getTrackingDetail({ personId: Number(storedUserId) });
       }
-    }, 30000);
+    }, 3000);
     // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
     return () => {
       clearInterval(intervalId);
