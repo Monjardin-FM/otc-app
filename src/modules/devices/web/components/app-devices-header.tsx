@@ -18,7 +18,7 @@ export const AppDevicesHeader = ({
     <AppHero
       size="base"
       style={{
-        background: "linear-gradient(to right, #133a94, #919bff)",
+        background: "linear-gradient(to right,#091970, #133a94)",
       }}
     >
       <div className=" flex flex-row items-center justify-between mx-auto gap-5 w-2/3">
@@ -27,7 +27,7 @@ export const AppDevicesHeader = ({
         </h1>
         <div className="w-2/3 flex flex-row items-center bg-white rounded-lg ">
           <AppTextField
-            placeholder="Search by name or email"
+            placeholder="Search by Number or IMEI"
             type="text"
             onChange={(e) => {
               setSearch(e.target.value);

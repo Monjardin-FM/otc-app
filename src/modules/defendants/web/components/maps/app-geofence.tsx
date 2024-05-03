@@ -1,51 +1,66 @@
-import {
-  FeatureGroup,
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-} from "react-leaflet";
+import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import EsriLeafletGeoSearch from "react-esri-leaflet/plugins/EsriLeafletGeoSearch";
 import { useRef } from "react";
-export const AppGeofence = () => {
-  const created = (e: any) => {
-    if (e.layerType === "circle") {
-      console.log(
-        "circle center, radius =",
-        e.layer.getLatLng(),
-        e.layer.getRadius()
-      );
-    } else {
-      // polygon & rectangle
-      console.log("polygon coordinates =", e.layer.getLatLngs()); // array of LatLng objects
-    } // marker or lines, etc.
-    // map.addLayer(e.layer) // might need?
-    // console.log(e);
-    // const { layerType, layer } = e;
-    // if (layerType === "circle") {
-    //   const center = layer.getLatLng();
-    //   const centerPt = [center.lng, center.lat];
-    //   console.log(centerPt);
-    //   const radius = layer.getRadius();
-    //   console.log(radius);
-    // }
-  };
+import { FullscreenControl } from "react-leaflet-fullscreen";
+export type AppGeofenceProps = {
+  handleVisibleException: (param: boolean) => void;
+  setPoints: (params: [number, number][]) => void;
+};
+export const AppGeofence = ({
+  handleVisibleException,
+  setPoints,
+}: AppGeofenceProps) => {
   const mapRef = useRef<any>();
+  const created = (e: any) => {
+    handleVisibleException(true);
+    if (e.layerType === "circle") {
+      const latlng = e.layer.getLatLng();
+      const d2r = Math.PI / 180;
+      const r2d = 180 / Math.PI;
+      const earthRadius = 6371000;
+      const points = 60;
+      const rLat = (e.layer.getRadius() / earthRadius) * r2d;
+      const rLng = rLat / Math.cos(latlng.lat * d2r);
+      const extP: [number, number][] = [];
+
+      for (let i = 0; i < points + 1; i++) {
+        let theta = Math.PI * 2 * (i / points);
+        let ex: number = latlng.lng + rLng * Math.cos(theta);
+        let ey: number = latlng.lat + rLat * Math.sin(theta);
+        extP.push([ex, ey]);
+      }
+      setPoints(extP);
+    } else {
+      console.log("polygon coordinates =", e.layer.getLatLngs()); // array of LatLng objects
+    }
+  };
+  const deleted = () => {
+    handleVisibleException(false);
+    setPoints([]);
+  };
+
   return (
     <>
       <MapContainer
         ref={mapRef}
         center={[51.505, -0.09]}
         zoom={13}
-        scrollWheelZoom={false}
-        style={{ height: "100vh", width: "100wh" }}
+        scrollWheelZoom={true}
+        style={{ height: "60vh", width: "100wh" }}
         id="map"
       >
+        <FullscreenControl
+          position="topright"
+          title="Fullscreen mode"
+          titleCancel="Exit fullscreen mode"
+          content={"[ ]"}
+        />
         <FeatureGroup>
           <EditControl
             position="topright"
             onCreated={created}
+            onDeleted={deleted}
             draw={{
               rectangle: false,
               circle: true,
@@ -74,11 +89,6 @@ export const AppGeofence = () => {
             "AAPK8dc805f8e8f24210bf4fefcfb9d5cc92vWrwGctqdzYnfO41yhFJ9iLw90RNaJwPM8FEaYlh91ctycL2ZrR2pYrVNAaMSzBs"
           }
         />
-        <Marker position={[51.505, -0.09]}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
       </MapContainer>
     </>
   );

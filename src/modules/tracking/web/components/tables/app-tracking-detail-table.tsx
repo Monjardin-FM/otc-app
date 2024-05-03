@@ -13,7 +13,7 @@ import { AppButton } from "../../../../../presentation/Components/AppButton";
 export type TrackingDetailsTableProps = {
   // onToggleStatus?: (index: Client) => void;
   // onUpdateClient: (data: Client) => void;
-  items?: PersonAlert[];
+  items?: PersonAlert[] | null;
   onEdit: (params: RenderFnParams<PersonAlert>) => void;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
@@ -129,7 +129,7 @@ export const AppTrackingDetailsTable = ({
   return (
     <AppDataGrid<PersonAlert>
       columns={columns}
-      dataSource={items}
+      dataSource={items ? items : []}
       itemKey="id"
     />
   );

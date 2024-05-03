@@ -7,9 +7,8 @@ import {
 } from "../../../../../presentation/Components/AppDataGrid";
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
-import { AppBadge } from "../../../../../presentation/Components/AppBadge";
-import { AppTooltip } from "../../../../../presentation/Components/AppTooltip";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Button, Chip, Tooltip } from "@nextui-org/react";
+// import dayjs from "dayjs";
 export type DefendantsTableProps = {
   // onToggleStatus?: (index: Client) => void;
   // onUpdateClient: (data: Client) => void;
@@ -44,8 +43,17 @@ const NamDefendantColumn = (params: RenderFnParams<Defendant>) => {
           <Icon.User size={20} />
         </AppAvatar>
       </div>
-      <div>
-        <div className="font-semibold tracking-wider">{params.record.name}</div>
+      <div className="flex flex-col items-start justify-center">
+        <span className="font-semibold tracking-wider">
+          {`${params.record.name} ${params.record.lastName}`}
+        </span>
+        {/* <Chip color="primary" variant="dot" radius="md">
+          <span className="text-xs">
+            {dayjs(dayjs(params.record.birthDate).toDate()).format(
+              "DD-MM-YYYY"
+            )}
+          </span>
+        </Chip> */}
       </div>
     </div>
   );
@@ -53,47 +61,53 @@ const NamDefendantColumn = (params: RenderFnParams<Defendant>) => {
 
 const EmailDefendantColumn = (params: RenderFnParams<Defendant>) => {
   return (
-    <AppBadge colorScheme="primary">
+    <Chip color="primary" variant="shadow">
       <div className="font-medium text-sm">{params.record.eMail}</div>
-    </AppBadge>
+    </Chip>
   );
 };
 const SIDDefendantColumn = (params: RenderFnParams<Defendant>) => {
   return (
-    <AppBadge>
+    <Chip color="danger" variant="dot">
       <div className="font-semibold text-sm text-primary-600 tracking-wider">
         {params.record.sid}
       </div>
-    </AppBadge>
+    </Chip>
   );
 };
 
 const CaseNumberDefendantColumn = (params: RenderFnParams<Defendant>) => {
   return (
-    <AppBadge>
+    <Chip color="success" variant="dot">
       <div className="font-semibold text-sm text-primary-600 tracking-wider">
         {params.record.caseNumber}
       </div>
-    </AppBadge>
+    </Chip>
   );
 };
 
 const StatusDefendantColumn = (params: RenderFnParams<Defendant>) => {
   return (
-    <div className="font-medium text-sm">
-      {}
-      {params.record.idStatus === 1 ? (
-        <div className="bg-success-300 rounded-lg p-2 text-success-600 group relative inline-block text-center">
-          <Icon.Circle size={18} />
-          <AppTooltip>Active</AppTooltip>
-        </div>
-      ) : (
-        <div className="bg-red-300 rounded-lg p-2 text-red-600  group relative inline-block text-center">
-          <Icon.AlertTriangle size={18} />
-          <AppTooltip>Inactive</AppTooltip>
-        </div>
-      )}
-    </div>
+    <Tooltip
+      content={params.record.idStatus === 1 ? "Active" : "Inactive"}
+      color="primary"
+      offset={15}
+      showArrow
+      closeDelay={10}
+      disableAnimation
+    >
+      <Chip
+        color={params.record.idStatus === 1 ? "success" : "danger"}
+        variant="shadow"
+        radius="full"
+      >
+        {params.record.idStatus === 1 ? (
+          <Icon.Circle size={12} />
+        ) : (
+          <Icon.AlertTriangle size={12} />
+        )}
+      </Chip>
+    </Tooltip>
   );
 };
 
@@ -124,15 +138,16 @@ RenderFnParams<Defendant> & {
           }}
           title="Edit Defendant"
           size="sm"
-          variant="light"
+          variant="shadow"
           isIconOnly
+          color="primary"
         >
-          <Icon.Eye size={18} />
+          <Icon.Edit size={18} />
         </Button>
       </Tooltip>
       <Tooltip
         content={"Delete Defendant"}
-        color="primary"
+        color="danger"
         style={{
           zIndex: 0,
         }}
@@ -147,7 +162,7 @@ RenderFnParams<Defendant> & {
           }}
           title="Delete Defendant"
           size="sm"
-          variant="light"
+          variant="shadow"
           color="danger"
           isIconOnly
         >
@@ -161,7 +176,6 @@ RenderFnParams<Defendant> & {
 export const AppDefendantsTable = ({
   items = [],
   onEdit,
-
   onDelete,
 }: DefendantsTableProps) => {
   const columns: AppDataGridColumn<Defendant>[] = [

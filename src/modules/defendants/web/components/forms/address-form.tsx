@@ -18,8 +18,8 @@ import { AppButton } from "../../../../../presentation/Components/AppButton";
 import { Switch } from "@headlessui/react";
 
 export type AddressFormProps = {
-  onClose: () => void;
-  idDefendant?: number;
+  onClose?: () => void;
+  idDefendant?: number | null;
   onReload: () => void;
 };
 type createAddressDefendantFormValue = {
@@ -29,7 +29,7 @@ type createAddressDefendantFormValue = {
 };
 export const AddressForm = ({
   onClose,
-  // idDefendant,
+  idDefendant,
   onReload,
 }: AddressFormProps) => {
   const { cities, getCities } = useGetCity();
@@ -41,7 +41,7 @@ export const AddressForm = ({
     error: errorAddress,
   } = useAssignAddress();
   const [idCity, setIdCity] = useState<number>();
-  const [idStatus, setIdStatus] = useState(false);
+  const [idStatus, setIdStatus] = useState(true);
 
   const validationSchemaDefendant = Yup.object().shape({
     idAddressType: Yup.number()
@@ -52,6 +52,7 @@ export const AddressForm = ({
   });
   const onSubmitHandler = async (data: createAddressDefendantFormValue) => {
     await assignAddress({
+      idPerson: Number(idDefendant),
       idAddressType: Number(data.idAddressType),
       idCity: Number(idCity),
       idStatus: idStatus ? 1 : 0,
@@ -168,13 +169,13 @@ export const AddressForm = ({
                   checked={idStatus}
                   onChange={setIdStatus}
                   className={`${
-                    status ? "bg-primaryColor-600" : "bg-primaryColor-200"
+                    idStatus ? "bg-primaryColor-600" : "bg-primaryColor-200"
                   } relative inline-flex h-6 w-11 items-center rounded-full`}
                 >
                   <span className="sr-only">Enable notifications</span>
                   <span
                     className={`${
-                      status ? "translate-x-6" : "translate-x-1"
+                      idStatus ? "translate-x-6" : "translate-x-1"
                     } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                   />
                 </Switch>

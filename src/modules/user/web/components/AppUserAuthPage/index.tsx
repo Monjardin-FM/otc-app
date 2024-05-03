@@ -11,7 +11,7 @@ export const AppUserAuth = () => {
   return (
     <>
       {user ? (
-        <Navigate to="/" />
+        <Navigate to="/tracking" />
       ) : (
         <AppPageTransition>
           <div className="flex min-h-screen min-w-full">

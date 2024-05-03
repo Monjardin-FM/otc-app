@@ -4,7 +4,7 @@ import { getVictimsService } from "../../infraestructure/services/get-victims";
 
 export const useGetVictims = () => {
   const [{ value: victims, loading, error }, getVictims] = useAsyncFn<
-    VictimRepository["getVictim"]
+    VictimRepository["getVictimDefendant"]
   >(getVictimsService, [getVictimsService]);
   return {
     victims,

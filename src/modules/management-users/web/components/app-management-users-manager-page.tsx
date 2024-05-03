@@ -12,9 +12,8 @@ import { AppAuthorizationGuard } from "../../../../presentation/Components/AppAu
 import { UserRole } from "../../../user/domain/entities/user-role";
 import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
-import { AppButton } from "../../../../presentation/Components/AppButton";
-import { AppTooltip } from "../../../../presentation/Components/AppTooltip";
 import * as Icon from "react-feather";
+import { Button, Tooltip } from "@nextui-org/react";
 export const ManagementUsersManagerPage = () => {
   const [visibleNewUserModal, setVisibleNewUserModal] = useToggle(false);
   const [visibleEditUserModal, setVisibleEditUserModal] = useToggle(false);
@@ -87,17 +86,28 @@ export const ManagementUsersManagerPage = () => {
           />
         </div>
         <div className="container mx-auto flex flex-col items-end jusitfy-center">
-          <div className="group relative inline-block text-center">
-            <AppButton
-              colorScheme="warn"
+          <Tooltip
+            content={"New User"}
+            color="warning"
+            offset={1}
+            showArrow
+            closeDelay={10}
+            style={{
+              zIndex: 0,
+            }}
+            disableAnimation
+          >
+            <Button
+              color="warning"
               onClick={() => setVisibleNewUserModal(true)}
+              isIconOnly
+              size="md"
             >
-              <Icon.PlusCircle />
-            </AppButton>
-            <AppTooltip>New User</AppTooltip>
-          </div>
+              <Icon.PlusCircle color="white" />
+            </Button>
+          </Tooltip>
         </div>
-        <div className="container mx-auto mt-5">
+        <div className="container mx-auto mt-5 mb-16">
           <AppManagementUsersTable
             onDelete={async (record) => {
               await deleteUser({ idPerson: record.record.idPerson });

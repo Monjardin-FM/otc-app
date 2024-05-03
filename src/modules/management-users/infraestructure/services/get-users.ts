@@ -32,7 +32,11 @@ export const getUsersService: UserManageRepository["getUsers"] = async (
     createdAt: user.created_at,
     idRole: user.idRole,
     role: user.role,
-    phone: user.phone,
+    caseNumber: user.caseNumber,
+    deviceId: user.deviceId,
+    idDeviceType: user.idDeviceType,
+    sid: user.sid,
+    // phone: user.phone,
   }));
   return users;
 };

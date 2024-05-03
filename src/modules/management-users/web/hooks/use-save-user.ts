@@ -3,12 +3,8 @@ import { UserManageRepository } from "../../domain/repositories/user-manage-repo
 import { saveUserService } from "../../infraestructure/services/save-user";
 
 export const useSaveUser = () => {
-  const [{ loading, error }, createUser] = useAsyncFn<
+  const [{ value, loading, error }, createUser] = useAsyncFn<
     UserManageRepository["saveUser"]
   >(saveUserService, [saveUserService]);
-  return {
-    createUser,
-    loading,
-    error,
-  };
+  return { value, createUser, loading, error };
 };

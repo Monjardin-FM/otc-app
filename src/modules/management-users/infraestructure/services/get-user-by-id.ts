@@ -19,20 +19,21 @@ export const getUserByIdService: UserManageRepository["getUserById"] = async (
   const data = body.data as any;
 
   const users = {
-    idDefendant: data.idDefendant,
-    idPerson: data.idPerson,
-    idOfficer: data.idOfficer,
-    name: data.name,
-    lastName: data.lastName,
-    idCounty: data.idCounty,
-    eMail: data.eMail,
     birthDate: data.birthDate,
-    idGender: data.idGender,
-    idPersonType: data.idPersonType,
-    idStatus: data.idStatus,
     createdAt: data.created_at,
+    deviceId: data.deviceId,
+    eMail: data.eMail,
+    idCounty: data.idCounty,
+    idDefendant: data.idDefendant,
+    idDeviceType: data.idDeviceType,
+    idGender: data.idGender,
+    idOfficer: data.idOfficer,
+    idPerson: data.idPerson,
+    idPersonType: data.idPersonType,
     idRole: data.idRole,
-    role: data.role,
+    idStatus: data.idStatus,
+    lastName: data.lastName,
+    name: data.name,
     phone: data.phone,
   };
   return users;

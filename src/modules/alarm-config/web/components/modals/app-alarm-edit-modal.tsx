@@ -59,9 +59,8 @@ export const AppEditAlarmModal = ({
   const [selectedDeviceTypeValues, setSelectedDeviceType] = useState<
     Omit<DeviceType, "deviceType">[]
   >([]);
-  // Uncomment when the response have the list devices
-  // const [selectedDeviceDefault, setSelectedDeviceDefault] =
-  //   useState<DeviceType>();
+  const [selectedDeviceDefault, setSelectedDeviceDefault] =
+    useState<DeviceType[]>();
   const [status, setStatus] = useState(false);
 
   const onSubmitHandler = async (data: AlarmEditFormValues) => {
@@ -99,7 +98,7 @@ export const AppEditAlarmModal = ({
   useEffect(() => {
     if (alarm) {
       setSelectedResponseDefault(alarm.lResponseDevice);
-      // setSelectedDeviceDefault(alarm.);
+      setSelectedDeviceDefault(alarm.lAssignedDevice);
       setStatus(alarm?.automatic);
     }
   }, [idAlarm, alarm]);
@@ -180,7 +179,7 @@ export const AppEditAlarmModal = ({
                       <AppFormField className="col-span-6">
                         <AppFormLabel>Assigned Devices</AppFormLabel>
                         <Multiselect
-                          // selectedValues={selectedDeviceDefault}
+                          selectedValues={selectedDeviceDefault}
                           displayValue="deviceType"
                           showCheckbox={true}
                           options={deviceType}

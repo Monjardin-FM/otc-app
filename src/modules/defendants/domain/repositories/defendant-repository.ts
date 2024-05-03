@@ -1,6 +1,8 @@
 import { DefendantById } from "../entities/defendant-by-id";
 import { Defendant } from "../entities/defendant";
 import { DefendantDevice } from "../entities/defendant-device";
+import { Address } from "../entities/address";
+import { SpecificAlarmParams } from "../entities/alarm-defendant-params";
 export type createDefendantParams = {
   completeName: string;
   name: string;
@@ -15,6 +17,7 @@ export type createDefendantParams = {
   idGender: number;
   idStatus: number;
   password: string;
+  notes: string;
 };
 export type DefendantRepository = {
   getDefendant(params: { completeName: string }): Promise<Defendant[]>;
@@ -22,7 +25,16 @@ export type DefendantRepository = {
     // completeName: string;
     idPerson: number;
   }): Promise<DefendantById>;
-  createDefendant(params: createDefendantParams): Promise<number>;
+  createDefendant(params: createDefendantParams): Promise<{
+    statusCode: number;
+    isSuccess: boolean;
+    data: number;
+    error: {
+      code: string;
+      message: string;
+      errors: {};
+    };
+  }>;
   updateDefendant(params: {
     idPerson: number;
     completeName: string;
@@ -37,7 +49,16 @@ export type DefendantRepository = {
     idGender: number;
     idStatus: number;
     password: string;
-  }): Promise<void>;
+    notes: string;
+  }): Promise<{
+    statusCode: number;
+    isSuccess: boolean;
+    error?: {
+      code?: string;
+      message?: string;
+      errors?: {};
+    };
+  }>;
   deleteDefendant(parms: { idPerson: number }): Promise<Boolean>;
   getDeviceDefendant(params: {
     idDefendant: number;
@@ -47,11 +68,25 @@ export type DefendantRepository = {
     idDevice: number;
     idDeviceType: number;
   }): Promise<void>;
+  deleteDeviceDefendant(params: { idDevice: number }): Promise<Boolean>;
   assignAddress(params: {
+    idPerson: number;
     idAddressType: number;
     idCity: number;
     zipCode: string;
     streetAvenue: string;
     idStatus: number;
   }): Promise<void>;
+  getAddressPerson(params: { idPerson: number }): Promise<Address[]>;
+  getAddressById(params: { idAddress: number }): Promise<Address>;
+  editAddressPerson(params: {
+    idAddress: number;
+    idAddressType: number;
+    idCity: number;
+    zipCode: string;
+    streetAvenue: string;
+    idStatus: number;
+  }): Promise<void>;
+  deleteAddressPerson(params: { idAddress: number }): Promise<Boolean>;
+  assignAlarmDefendant(params: SpecificAlarmParams): Promise<void>;
 };

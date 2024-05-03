@@ -1,30 +1,25 @@
 import { useEffect, useState } from "react";
-
 import { useGetDetailTracking } from "../../hooks/use-get-detail-tracking";
 import { AppTrackingDetailsTable } from "../tables/app-tracking-detail-table";
 import { MapTracking } from "../maps/map-tracking";
-import { useFindHistoricPosition } from "../../hooks/use-find-hsitoric-position";
 import { useGetUsers } from "../../../../management-users/web/hooks/use-get-users";
 import { UserManage } from "../../../../management-users/domain/entities/userManage";
 import { PersonAlert } from "../../../domain/entities/tracking-detail";
+
 import {
-  AppModal,
-  AppModalBody,
-  AppModalCloseButton,
-  AppModalContent,
-  AppModalFooter,
-  AppModalHeader,
-  AppModalOverlay,
-} from "../../../../../presentation/Components/AppModal";
-import { AppBadge } from "../../../../../presentation/Components/AppBadge";
-import { AppFormField } from "../../../../../presentation/Components/AppForm";
-import AppDatePicker from "../../../../../presentation/Components/AppDatePicker";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
+  Chip,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  Tab,
+  Tabs,
+} from "@nextui-org/react";
+import * as Icon from "react-feather";
+import { AppHistoricPositionTab } from "./app-historic-position-tab";
 export type AppTrackingModalProps = {
   isVisible: boolean;
   onClose: () => void;
-  // toggle: boolean;
-  // personId?: number | null;
 };
 export const AppTrackingModal = ({
   isVisible,
@@ -34,120 +29,147 @@ export const AppTrackingModal = ({
 AppTrackingModalProps) => {
   const { trackingDetail, getTrackingDetail } = useGetDetailTracking();
   const { getUsers, users } = useGetUsers();
-  const [officer, setOfficer] = useState<UserManage[]>();
-  const [alertPerson, setAlertPerson] = useState<PersonAlert[]>();
-  const { findHistoricPosition, historicPosition } = useFindHistoricPosition();
-  const [userId, setUserId] = useState<number>();
-  const onClick = () => {
-    if (userId)
-      findHistoricPosition({
-        dateInit: "2024-04-23T00:08:46.000Z",
-        dateFin: "2024-04-23T17:08:46.000Z",
-        idPerson: userId,
-      });
+  const [officer, setOfficer] = useState<UserManage | null>();
+  const [alertPerson, setAlertPerson] = useState<PersonAlert[] | null>();
+  // const { findHistoricPosition, historicPosition } = useFindHistoricPosition();
+  const [userId, setUserId] = useState<number | null>();
+  // Search Historic Position
+
+  const handleClose = () => {
+    setUserId(null);
+    setAlertPerson([]);
+    setOfficer(null);
+    onClose();
   };
+
+  // Get users to find the officer assigned to defendant
   useEffect(() => {
     getUsers({ completeName: "" });
   }, [userId]);
+  // Filter to find the officer assigned to defendant
+  useEffect(() => {
+    if (users) {
+      const officerFilter = users.find(
+        (item) => item.idPerson === trackingDetail?.person[0].idOfficer
+      );
+      if (officerFilter) setOfficer(officerFilter);
+    }
+  }, [users]);
 
+  // get the idDefendant
   useEffect(() => {
     const storedUserId = localStorage.getItem("trackingId");
     if (storedUserId) {
       setUserId(Number(storedUserId)); // Parseamos el valor a número
     }
   }, []);
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("trackingId");
+    // getTrackingDetail({ personId: Number(storedUserId) });
+    const fetchData = () => {
+      if (storedUserId) {
+        getTrackingDetail({ personId: Number(storedUserId) });
+      }
+    };
+    if (isVisible) {
+      // Realiza la petición inmediatamente al abrir el modal
+      fetchData();
+      const intervalId = setInterval(fetchData, 30000);
+      // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [isVisible]);
+
+  // Function to assign the defendant alerts and pass to the table to display
   useEffect(() => {
     if (trackingDetail) {
       setAlertPerson(trackingDetail.personAlert);
     }
   }, [trackingDetail, userId]);
-  useEffect(() => {
-    if (users) {
-      const officerFilter = users.filter(
-        (item) => item.idPerson === trackingDetail?.person[0].idOfficer
-      );
-      if (officerFilter) setOfficer(officerFilter);
-    }
-  }, [users]);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const storedUserId = localStorage.getItem("trackingId");
 
-      if (storedUserId) {
-        getTrackingDetail({ personId: Number(storedUserId) });
-      }
-    }, 3000);
-    // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
   return (
-    <AppModal isVisible={isVisible} onClose={onClose} size="full">
-      <AppModalOverlay>
-        <AppModalContent>
-          <AppModalHeader className="w-full">
-            Tracking Info
-            <div className="w-full flex flex-row items-center justify-center absolute top-4">
-              <AppBadge colorScheme="warn">
-                Defendant Name:{" "}
-                <b>{`${trackingDetail?.person[0].name} ${trackingDetail?.person[0].lastName} `}</b>{" "}
-              </AppBadge>
-              <AppBadge colorScheme="warn">
-                Phone: <b>{}</b>
-              </AppBadge>
-              <AppBadge colorScheme="warn">
-                Officer:
-                <b>
-                  {officer
-                    ? ` ${officer[0]?.name} ${officer[0]?.lastName}`
-                    : ""}
-                </b>
-              </AppBadge>
-            </div>
-            <AppModalCloseButton />
-          </AppModalHeader>
-          <AppModalBody>
-            <div className="w-full  rounded-lg bg-gray-200">
-              <MapTracking
-                historicPosition={historicPosition}
-                trackingDetail={trackingDetail}
-              />
-            </div>
-
-            <div className="w-full flex flex-col items-center justify-center gap-5">
-              <div className="flex flex-col items-start justify-start gap-3 border">
-                <span className="font-bold ml-3 text-primary-700">
-                  Historic Position
-                </span>
-                <div className="grid grid-cols-12 px-10 w-full  gap-3">
-                  <AppFormField className="col-span-2">
-                    <AppDatePicker
-                      onChange={() => {}}
-                      className="col-span-4"
-                      placeholderText="From"
-                    />
-                  </AppFormField>
-                  <AppFormField className="col-span-2">
-                    <AppDatePicker
-                      onChange={() => {}}
-                      className="col-span-4"
-                      placeholderText="To"
-                    />
-                  </AppFormField>
-                  <AppButton colorScheme="primary" onClick={onClick}>
-                    Search
-                  </AppButton>
-                </div>
+    <Modal
+      isOpen={isVisible}
+      onClose={handleClose}
+      size="5xl"
+      backdrop="blur"
+      scrollBehavior="outside"
+      isDismissable={false}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="grid grid-cols-12">
+              <span className="col-span-3">Tracking Info</span>
+            </ModalHeader>
+            <ModalBody>
+              <div className="w-full flex flex-row items-center justify-evenly mb-2">
+                <Chip color="success" variant="shadow">
+                  Defendant Name:{" "}
+                  <b>
+                    {trackingDetail &&
+                      `${trackingDetail?.person[0].name} ${trackingDetail?.person[0].lastName} `}
+                  </b>{" "}
+                </Chip>
+                <Chip color="primary" variant="dot">
+                  Phone: <b>{}</b>
+                </Chip>
+                <Chip color="success" variant="dot">
+                  Officer:
+                  <b>{officer && ` ${officer?.name} ${officer?.lastName}`}</b>
+                </Chip>
               </div>
-            </div>
-            <div className="w-full mt-5">
-              <AppTrackingDetailsTable onEdit={() => {}} items={alertPerson} />
-            </div>
-          </AppModalBody>
-          <AppModalFooter></AppModalFooter>
-        </AppModalContent>
-      </AppModalOverlay>
-    </AppModal>
+              <Tabs
+                aria-label="options"
+                variant="bordered"
+                fullWidth
+                color="primary"
+              >
+                <Tab
+                  key="livePosition"
+                  title={
+                    <div className="flex items-center space-x-2">
+                      <Icon.MapPin size={18} />
+                      <span>Live Position</span>
+                    </div>
+                  }
+                >
+                  <div>
+                    <div className="w-full  rounded-lg bg-gray-200 mb-5">
+                      <MapTracking
+                        // historicPosition={historicPosition}
+                        trackingDetail={trackingDetail}
+                        onClose={onClose}
+                      />
+                    </div>
+
+                    <div className="w-full mt-5">
+                      <AppTrackingDetailsTable
+                        onEdit={() => {}}
+                        items={alertPerson}
+                      />
+                    </div>
+                  </div>
+                </Tab>
+                <Tab
+                  key="historicPosition"
+                  title={
+                    <div className="flex items-center space-x-2">
+                      <Icon.Clock size={18} />
+                      <span>Historic Position</span>
+                    </div>
+                  }
+                >
+                  <AppHistoricPositionTab />
+                </Tab>
+              </Tabs>
+            </ModalBody>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
   );
 };

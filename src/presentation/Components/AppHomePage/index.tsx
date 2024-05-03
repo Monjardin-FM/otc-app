@@ -1,7 +1,8 @@
-import { Player } from "@lottiefiles/react-lottie-player";
-import Blogging from "../../../assets/json/pharmacy.json";
+// import { Player } from "@lottiefiles/react-lottie-player";
+// import Blogging from "../../../assets/json/pharmacy.json";
 import { AppPageTransition } from "../AppPageTransition";
 import OTCImage from "../../../assets/img/otcLogo-small.png";
+import MainImage from "../../../assets/img/otc-main.png";
 
 export const AppHomePage = () => (
   <AppPageTransition>
@@ -10,13 +11,22 @@ export const AppHomePage = () => (
         <div className=" bg-primary-500 bg-opacity-5 rounded-lg mx-2">
           <div className="flex items-center justify-center flex-col bg-clip-padding backdrop-filter backdrop-blur-md border p-14 max-w-3xl rounded-lg border-gray-500 border-opacity-30">
             <div className="w-full max-w-md">
-              <Player
+              {/* <Player
                 autoplay
                 loop
                 src={Blogging}
                 style={{
                   height: "100%",
                   width: "100%",
+                }}
+              /> */}
+              <img
+                title="Farmaleal "
+                className="mx-auto w-14"
+                src={MainImage}
+                alt="OTC Logo"
+                style={{
+                  width: "60%",
                 }}
               />
             </div>

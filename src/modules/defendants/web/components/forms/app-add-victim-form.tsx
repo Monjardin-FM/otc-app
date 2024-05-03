@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-
-import { useToggle } from "react-use";
-import { AddressForm } from "./address-form";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import * as Icon from "react-feather";
@@ -20,8 +17,7 @@ import { AppButton } from "../../../../../presentation/Components/AppButton";
 import AppDatePicker from "../../../../../presentation/Components/AppDatePicker";
 import { Switch } from "@headlessui/react";
 export type AddVictimFormProps = {
-  onClose: () => void;
-  idDefendant?: number;
+  idDefendant?: number | null;
   onReload: () => void;
 };
 type createVictimFormValue = {
@@ -33,18 +29,18 @@ type createVictimFormValue = {
   password: string;
 };
 export const AddVictimForm = ({
-  onClose,
   idDefendant,
   onReload,
 }: AddVictimFormProps) => {
-  const [visibleAddressForm, setVisibleAddressForm] = useToggle(false);
+  // const [visibleAddressForm, setVisibleAddressForm] = useToggle(false);
   const [birthDate, setBirthDate] = useState<Date>(new Date());
   const { genders, getGenders } = useGetGenders();
-  const [statusVictim, setStatusVictim] = useState(false);
+  const [statusVictim, setStatusVictim] = useState(true);
 
   const {
+    value: responseCreateVictim,
     createVictim,
-    error: errorVictim,
+    // error: errorVictim,
     loading: loadingVictim,
   } = useSaveVictim();
   const validationSchemaVictim = Yup.object().shape({
@@ -55,39 +51,41 @@ export const AddVictimForm = ({
     idGender: Yup.number()
       .moreThan(0, "Select a gender")
       .required("Select gender"),
-    password: Yup.string().required("Required password"),
+    password: Yup.string()
+      .required("Required password")
+      .min(10, "Minimum length 10 characters"),
   });
   const onSubmitHandler = async (data: createVictimFormValue) => {
     await createVictim({
+      completeName: `${data.name} ${data.lastName}`,
       name: data.name,
       lastName: data.lastName,
-      completeName: `${data.name} ${data.lastName}`,
-      caseNumber: data.caseNumber,
-      eMail: data.eMail,
       idDefendant: Number(idDefendant),
-      idGender: data.idGender,
-      password: data.password,
-      idStatus: statusVictim ? 1 : 0,
+      eMail: data.eMail,
+      caseNumber: data.caseNumber,
       birthDate: dayjs(birthDate).format("YYYY-MM-DD"),
+      idGender: data.idGender,
+      idStatus: statusVictim ? 1 : 0,
+      password: data.password,
     });
-    if (!errorVictim) {
+  };
+  useEffect(() => {
+    if (responseCreateVictim && responseCreateVictim.statusCode === 200) {
       AppToast().fire({
         title: "Success",
         text: "The victim was created successfully",
         icon: "success",
       });
+      onReload();
     }
-    onReload();
-  };
-  useEffect(() => {
-    if (errorVictim) {
+    if (responseCreateVictim && responseCreateVictim.statusCode !== 200) {
       AppToast().fire({
         title: "Error",
-        text: "An error occurred while saving information",
+        text: `${responseCreateVictim.error?.message}`,
         icon: "error",
       });
     }
-  }, [errorVictim]);
+  }, [responseCreateVictim]);
   useEffect(() => {
     getGenders();
   }, []);
@@ -226,15 +224,15 @@ export const AddVictimForm = ({
                 </AppFormHelperText>
               )}
             </AppFormField>
-            <div className="col-span-12">
+            {/* <div className="col-span-12">
               <AppButton
                 onClick={() => setVisibleAddressForm(true)}
                 colorScheme="primary"
               >
                 New Address
               </AppButton>
-            </div>
-            <div className="grid grid-cols-12 gap-4 col-span-12">
+            </div> */}
+            {/* <div className="grid grid-cols-12 gap-4 col-span-12">
               {visibleAddressForm && (
                 <AddressForm
                   onClose={() => setVisibleAddressForm(false)}
@@ -242,9 +240,8 @@ export const AddVictimForm = ({
                   // idDefendant={}
                 />
               )}
-            </div>
+            </div> */}
             <div className="col-span-12 flex flex-row items-center justify-end gap-4">
-              <AppButton onClick={onClose}>Cancel</AppButton>
               <AppButton
                 colorScheme="primary"
                 type="submit"

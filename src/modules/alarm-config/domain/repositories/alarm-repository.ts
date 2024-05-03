@@ -1,11 +1,13 @@
+import { DeviceType } from "../../../catalog/domain/entities/device-type";
 import { ResponseDevice } from "../../../catalog/domain/entities/response-device";
 import { Alarm } from "../entities/alarms";
 
 export type AlarmRepository = {
-  getAlarms(): Promise<Alarm[]>;
+  getAlarms(params: { completeName: string }): Promise<Alarm[]>;
   getAlarmById(params: { idAlarmType: number }): Promise<
     Alarm & {
       lResponseDevice: ResponseDevice[];
+      lAssignedDevice: DeviceType[];
       idPerson: number;
       idDevice: number;
     }

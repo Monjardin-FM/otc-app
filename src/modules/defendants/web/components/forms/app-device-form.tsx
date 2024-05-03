@@ -16,10 +16,15 @@ import { AppButton } from "../../../../../presentation/Components/AppButton";
 
 export type DeviceFormProps = {
   onClose: () => void;
-  idDefendant?: number;
+  idDefendant?: number | null;
+  onReload: () => void;
 };
 
-export const DeviceForm = ({ onClose, idDefendant }: DeviceFormProps) => {
+export const DeviceForm = ({
+  onClose,
+  idDefendant,
+  onReload,
+}: DeviceFormProps) => {
   const { deviceType, getDeviceType } = useGetDeviceType();
   const [deviceTypeOptions, setDeviceTypeOptions] = useState<DeviceType[]>();
   const { assignDeviceDefendant, error: errorSave } =
@@ -30,7 +35,6 @@ export const DeviceForm = ({ onClose, idDefendant }: DeviceFormProps) => {
   const [devicesOptions, setDevicesOptions] =
     useState<{ value: number; label: string }[]>();
 
-  console.log(setIdDevice);
   const onSubmitHandler = async () => {
     await assignDeviceDefendant({
       idDeviceType: Number(idDeviceType),
@@ -46,7 +50,7 @@ export const DeviceForm = ({ onClose, idDefendant }: DeviceFormProps) => {
       });
     }
     onClose();
-    // onReload();
+    onReload();
   };
   useEffect(() => {
     getDeviceType();
@@ -89,6 +93,7 @@ export const DeviceForm = ({ onClose, idDefendant }: DeviceFormProps) => {
       {idDeviceType !== 0 ? (
         <>
           {idDeviceType === 1 ? (
+            // && available ===1
             <AppFormField className="col-span-4">
               <AppFormLabel>Bracelet</AppFormLabel>
               <Select

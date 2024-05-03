@@ -33,7 +33,6 @@ export const AppUserAuthForm = () => {
       password: "",
     },
     onSubmit: async ({ email, password }) => {
-      console.log("login");
       signIn.execute({ email, password });
     },
   });

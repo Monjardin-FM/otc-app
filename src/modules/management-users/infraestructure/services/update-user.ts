@@ -1,5 +1,4 @@
 import { api } from "../../../../utils/api";
-import { verifyResponse } from "../../../../utils/check-response";
 import { token } from "../../../../utils/token";
 import { UserManageRepository } from "../../domain/repositories/user-manage-repository";
 
@@ -12,5 +11,24 @@ export const updateUserService: UserManageRepository["updateUser"] = async (
     },
     json: { params },
   });
-  await verifyResponse({ response });
+  const { body } = await verifyResponse({ response });
+  return body;
+};
+const verifyResponse = async ({ response }: { response?: Response }) => {
+  if (!response || !response.ok) {
+    throw new Error("An error occurred during the call to the web service");
+  }
+
+  const body = await response.json();
+  // const SUCCESS_CODE = 200;
+  // const isSuccess = body.statusCode === SUCCESS_CODE && body.isSuccess;
+  // console.log(`response service:  ${response}`);
+  // console.log(`body service:  ${body}`);
+
+  // if (!isSuccess) {
+  //   // Regresa el error original en lugar de lanzar un nuevo error
+  //   return { body };
+  // }
+
+  return { body };
 };

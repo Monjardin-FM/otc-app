@@ -84,10 +84,13 @@ export const AppEditDeviceModal = ({
   }, [errorSave]);
   useEffect(() => {
     if (idDevice) getDeviceById({ idDevice: idDevice });
+  }, [idDevice]);
+
+  useEffect(() => {
     if (idDevice) {
       setStatus(device?.idStatus === 1);
     }
-  }, [idDevice]);
+  }, [idDevice, device]);
   return (
     <AppModal isVisible={isVisible} onClose={onClose} size="3xl">
       <AppModalOverlay>

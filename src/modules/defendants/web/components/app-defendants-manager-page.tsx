@@ -14,6 +14,10 @@ import { AppPageTransition } from "../../../../presentation/Components/AppPageTr
 import { Button, Tooltip } from "@nextui-org/react";
 import { useDeleteDefendant } from "../hooks/use-delete-defendant";
 import { AppToast } from "../../../../presentation/Components/AppToast";
+import { AppEditSelectionModal } from "./modals/app-edit-selection-modal";
+import { AppEditInfoDefendantModal } from "./modals/app-edit-info-defendant-modal";
+import { AppEditVictimDefendantModal } from "./modals/app-edit-victim-defendant-modal";
+import { AppEditAlarmDefendantModal } from "./modals/app-edit-alarm-defendant-modal";
 export const AppDefendantsManagerPage = () => {
   const {
     defendants,
@@ -25,6 +29,15 @@ export const AppDefendantsManagerPage = () => {
     useToggle(false);
   const [search, setSearch] = useState<string>("");
   const { deleteDefendant, error: errorDelete } = useDeleteDefendant();
+  const [idDefendant, setIdDefendant] = useState<number | null>(null);
+  const [visibleEditSelectionModal, setVIsibleEditSelectionmodal] =
+    useToggle(false);
+  const [visibleEditDefendantInfoModal, setVisibleEditDefendantInfoModal] =
+    useToggle(false);
+  const [visibleEditVictimDefendantModal, setVisibleEditVictimDefendantModal] =
+    useToggle(false);
+  const [visibleEditAlarmDefendantModal, setVisibleEditAlarmDefendantModal] =
+    useToggle(false);
   const onClick = (search: string) => {
     getDefendants({ completeName: search });
   };
@@ -70,6 +83,63 @@ export const AppDefendantsManagerPage = () => {
           setToggleReload(!toggleReload);
         }}
       />
+      <AppEditSelectionModal
+        isVisible={visibleEditSelectionModal}
+        onClose={() => {
+          setVIsibleEditSelectionmodal(false);
+          setIdDefendant(null);
+        }}
+        onEditInfo={(param: string) => {
+          switch (param) {
+            case "editInfo": {
+              setVIsibleEditSelectionmodal(false);
+              setVisibleEditDefendantInfoModal(true);
+              break;
+            }
+
+            case "victims": {
+              setVIsibleEditSelectionmodal(false);
+              setVisibleEditVictimDefendantModal(true);
+              break;
+            }
+            case "editAlarm": {
+              setVIsibleEditSelectionmodal(false);
+              setVisibleEditAlarmDefendantModal(true);
+              break;
+            }
+            default:
+              return null;
+          }
+        }}
+        idDefendant={idDefendant}
+      />
+      <AppEditInfoDefendantModal
+        isVisible={visibleEditDefendantInfoModal}
+        onClose={() => {
+          setVisibleEditDefendantInfoModal(false);
+          setVIsibleEditSelectionmodal(true);
+          setToggleReload(!toggleReload);
+        }}
+        idDefendant={idDefendant}
+      />
+      <AppEditVictimDefendantModal
+        isVisible={visibleEditVictimDefendantModal}
+        onClose={() => {
+          setVisibleEditVictimDefendantModal(false);
+          setVIsibleEditSelectionmodal(true);
+          setToggleReload(!toggleReload);
+        }}
+        idDefendant={idDefendant}
+      />
+      <AppEditAlarmDefendantModal
+        isVisible={visibleEditAlarmDefendantModal}
+        onClose={() => {
+          setVisibleEditAlarmDefendantModal(false);
+          setVIsibleEditSelectionmodal(true);
+          setToggleReload(!toggleReload);
+        }}
+        idDefendant={idDefendant}
+      />
       <AppPageTransition>
         <div className="items-center mx-auto mb-10">
           <AppDefendantsHeader
@@ -82,7 +152,7 @@ export const AppDefendantsManagerPage = () => {
         <div className="container mx-auto flex flex-col items-end jusitfy-center mt-5">
           <Tooltip
             content={"New Defendant"}
-            color="primary"
+            color="warning"
             offset={1}
             showArrow
             closeDelay={10}
@@ -101,12 +171,15 @@ export const AppDefendantsManagerPage = () => {
             </Button>
           </Tooltip>
         </div>
-        <div className="container mx-auto mt-5">
+        <div className="container mx-auto mt-5 mb-14">
           <AppDefendantsTable
-            onEdit={() => {}}
+            onEdit={(record) => {
+              setIdDefendant(record.record.idPerson);
+              setVIsibleEditSelectionmodal(true);
+            }}
             items={defendants}
-            onDelete={async (record) => {
-              await deleteDefendant({ idPerson: record.record.idPerson });
+            onDelete={async ({ record }) => {
+              await deleteDefendant({ idPerson: record.idPerson });
               if (!errorDelete) onDelete();
               setToggleReload(!toggleReload);
             }}

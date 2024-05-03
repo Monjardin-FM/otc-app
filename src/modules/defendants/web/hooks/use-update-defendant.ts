@@ -3,10 +3,11 @@ import { DefendantRepository } from "../../domain/repositories/defendant-reposit
 import { updateDefendantService } from "../../infraestructure/services/update-defendant";
 
 export const useUpdateDefendant = () => {
-  const [{ error, loading }, updateDefendant] = useAsyncFn<
+  const [{ value, error, loading }, updateDefendant] = useAsyncFn<
     DefendantRepository["updateDefendant"]
   >(updateDefendantService, [updateDefendantService]);
   return {
+    value,
     updateDefendant,
     error,
     loading,

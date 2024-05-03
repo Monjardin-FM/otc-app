@@ -52,7 +52,12 @@ export const AppEditUserModal = ({
   const { genders, getGenders } = useGetGenders();
   const { roles, getRoles } = useGetRoles();
   const { getUserById, user } = useGetUserById();
-  const { updateUser, loading, error: errorUpdate } = useUpdateUser();
+  const {
+    updateUser,
+    loading,
+    error: errorUpdate,
+    value: responseUpdateUser,
+  } = useUpdateUser();
   const [status, setStatus] = useState(false);
   const validationSchemaUpdateUser = Yup.object().shape({
     name: Yup.string().required("Required name"),
@@ -65,8 +70,11 @@ export const AppEditUserModal = ({
     gender: Yup.number()
       .moreThan(0, "Select a gender")
       .required("Select a gender"),
-    password: Yup.string().required("Required password"),
-    phone: Yup.number().required("Required cell phone number"),
+    phone: Yup.string()
+      .required("Required cell phone number")
+      .matches(/^[0-9]+$/, "Must be only digits")
+      .max(15, "15 digits"),
+    password: Yup.string().min(10, "Minimum length 10 characters"),
   });
   const onSubmitHandler = async (data: UserUpdateFormValues) => {
     if (user) {
@@ -80,10 +88,8 @@ export const AppEditUserModal = ({
         idRole: Number(data.role),
         idStatus: status ? 1 : 0,
         password: data.password,
-        phone: String(data.phone),
+        phone: data.phone,
       });
-      onClose();
-      onReload();
     }
   };
   useEffect(() => {
@@ -100,12 +106,21 @@ export const AppEditUserModal = ({
     }
   }, [idUser]);
   useEffect(() => {
-    if (errorUpdate) {
+    if (responseUpdateUser && responseUpdateUser.statusCode !== 200) {
       AppToast().fire({
         title: "Error",
-        text: "An error occurred while saving information",
+        text: `${responseUpdateUser.error?.message}`,
         icon: "error",
       });
+    }
+    if (responseUpdateUser && responseUpdateUser.statusCode === 200) {
+      AppToast().fire({
+        title: "Success",
+        text: "Information saved successfully",
+        icon: "success",
+      });
+      onClose();
+      onReload();
     }
   }, [errorUpdate]);
   return (
@@ -121,7 +136,6 @@ export const AppEditUserModal = ({
               role: user?.idRole ? user.idRole : 0,
               county: user?.idCounty ? user.idCounty : 0,
               gender: user?.idGender ? user.idGender : 0,
-              // status: user?.idStatus ? user.idStatus : 0,
               password: "",
               phone: user?.phone ? user.phone : "",
             }}
@@ -237,8 +251,9 @@ export const AppEditUserModal = ({
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Phone Number</AppFormLabel>
                       <AppTextField
+                        id="phone"
                         name="phone"
-                        type="number"
+                        type="string"
                         onChange={handleChange}
                         value={values.phone}
                       />
@@ -256,6 +271,11 @@ export const AppEditUserModal = ({
                         value={values.password}
                         type="password"
                       />
+                      {errors.password && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.password}
+                        </AppFormHelperText>
+                      )}
                     </AppFormField>
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Status</AppFormLabel>

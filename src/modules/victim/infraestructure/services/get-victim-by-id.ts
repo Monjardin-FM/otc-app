@@ -11,7 +11,7 @@ export const getVictimByIdService: VictimRepository["getVictimById"] = async (
       Authorization: `Bearer ${token()}`,
       "Content-Type": "application/json",
     },
-    json: {
+    searchParams: {
       completeName: params.completeName,
     },
   });
@@ -23,7 +23,7 @@ export const getVictimByIdService: VictimRepository["getVictimById"] = async (
     idPerson: data.idPerson,
     idOfficer: data.idOfficer,
     name: data.name,
-    lastName: data.lasatName,
+    lastName: data.lastName,
     idCounty: data.idCounty,
     eMail: data.eMail,
     birthDate: data.birthDate,
@@ -32,9 +32,10 @@ export const getVictimByIdService: VictimRepository["getVictimById"] = async (
     idStatus: data.idStatus,
     createdAt: data.created_at,
     idRole: data.idRole,
+    phone: data.phone,
     deviceId: data.deviceId,
     idDeviceType: data.idDeviceType,
-    role: data.role,
+    showalerts: data.showalerts,
   };
   return victims;
 };

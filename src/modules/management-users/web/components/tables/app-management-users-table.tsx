@@ -1,15 +1,15 @@
+import { Button, Chip, Tooltip } from "@nextui-org/react";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
-import { AppBadge } from "../../../../../presentation/Components/AppBadge";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
 import {
   AppDataGrid,
   AppDataGridColumn,
   RenderFnParams,
 } from "../../../../../presentation/Components/AppDataGrid";
-import { AppTooltip } from "../../../../../presentation/Components/AppTooltip";
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { UserManage } from "../../../domain/entities/userManage";
 import * as Icon from "react-feather";
+// import dayjs from "dayjs";
+// import { useEffect, useState } from "react";
 
 export type ManagementUsersTableProps = {
   items?: UserManage[];
@@ -40,8 +40,17 @@ const NamUserColumn = (params: RenderFnParams<UserManage>) => {
           <Icon.User size={20} />
         </AppAvatar>
       </div>
-      <div>
-        <div className="font-semibold tracking-wider">{params.record.name}</div>
+      <div className="flex flex-col items-start justify-center">
+        <span className="font-semibold tracking-wider">
+          {`${params.record.name} ${params.record.lastName}`}
+        </span>
+        {/* <Chip color="primary" variant="dot" radius="md">
+          <span className="text-xs">
+            {dayjs(dayjs(params.record.birthDate).toDate()).format(
+              "DD-MM-YYYY"
+            )}
+          </span>
+        </Chip> */}
       </div>
     </div>
   );
@@ -49,19 +58,17 @@ const NamUserColumn = (params: RenderFnParams<UserManage>) => {
 
 const RoleUserColumn = (params: RenderFnParams<UserManage>) => {
   return (
-    <AppBadge>
-      <div className="font-semibold text-sm text-primary-600 tracking-wider">
-        {params.record.role}
-      </div>
-    </AppBadge>
+    <Chip color="primary" variant="shadow">
+      {params.record.role}
+    </Chip>
   );
 };
 
 const EmailUserColumn = (params: RenderFnParams<UserManage>) => {
   return (
-    <AppBadge colorScheme="primary">
-      <div className="font-medium text-sm">{params.record.eMail}</div>
-    </AppBadge>
+    <Chip color="warning" variant="shadow">
+      {params.record.eMail}
+    </Chip>
   );
 };
 
@@ -75,32 +82,54 @@ const ActionsColumn = ({
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-8">
-      <div className="group relative inline-block text-center">
-        <AppButton
+      <Tooltip
+        content={"Edit Defendant"}
+        color="primary"
+        style={{
+          zIndex: 0,
+        }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
           onClick={() => {
             onEdit();
           }}
-          title="Edit User"
+          title="Edit Defendant"
           size="sm"
-          variant="ghost"
+          variant="shadow"
+          isIconOnly
+          color="primary"
         >
           <Icon.Edit size={18} />
-        </AppButton>
-        <AppTooltip>Edit User</AppTooltip>
-      </div>
-      <div className="group relative inline-block text-center">
-        <AppButton
-          size="sm"
-          variant="ghost"
-          colorScheme="red"
+        </Button>
+      </Tooltip>
+      <Tooltip
+        content={"Delete Defendant"}
+        color="danger"
+        style={{
+          zIndex: 0,
+        }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
           onClick={() => {
             onDelete();
           }}
+          title="Delete Defendant"
+          size="sm"
+          variant="shadow"
+          color="danger"
+          isIconOnly
         >
           <Icon.Trash size={18} />
-        </AppButton>
-        <AppTooltip>Delete User</AppTooltip>
-      </div>
+        </Button>
+      </Tooltip>
     </div>
   );
 };

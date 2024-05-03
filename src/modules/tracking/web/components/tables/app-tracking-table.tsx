@@ -7,8 +7,7 @@ import {
 } from "../../../../../presentation/Components/AppDataGrid";
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
-import { AppTooltip } from "../../../../../presentation/Components/AppTooltip";
+import { Button, Chip, Tooltip } from "@nextui-org/react";
 
 export type TrackingsTableProps = {
   // onToggleStatus?: (index: Client) => void;
@@ -48,43 +47,43 @@ const NameTrackingColumn = (params: RenderFnParams<Tracking>) => {
   );
 };
 
-const CardioTrackingColumn = (params: RenderFnParams<Tracking>) => {
-  const cardio = params.record.alerts.find(
-    (alert) => alert.alarmName === "Bracelet Low Cardio"
-  );
-  return (
-    <div className="flex items-center space-x-3">
-      <div className="font-semibold tracking-wider">
-        {cardio && cardio.seqMachineState ? (
-          <div className="bg-danger-300 rounded-lg p-2 text-danger-600">
-            <Icon.AlertTriangle size={18} />
-          </div>
-        ) : (
-          <div className="bg-success-300 rounded-lg p-2 text-success-600">
-            <Icon.Circle size={18} />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+// const CardioTrackingColumn = (params: RenderFnParams<Tracking>) => {
+//   const cardio = params.record.alerts.find(
+//     (alert) => alert.alarmName === "Bracelet Low Cardio"
+//   );
+//   return (
+//     <div className="flex items-center space-x-3">
+//       <Chip
+//         color={cardio && cardio.seqMachineState! ? "danger" : "success"}
+//         variant="shadow"
+//         radius="md"
+//       >
+//         {cardio && cardio.seqMachineState ? (
+//           <Icon.AlertTriangle size={12} />
+//         ) : (
+//           <Icon.Circle size={12} />
+//         )}
+//       </Chip>
+//     </div>
+//   );
+// };
 const TamperingTrackingColumn = (params: RenderFnParams<Tracking>) => {
   const tampering = params.record.alerts.find(
     (alert) => alert.alarmName === "Bracelet Tampering"
   );
   return (
     <div className="flex items-center space-x-3">
-      <div className="font-semibold tracking-wider">
+      <Chip
+        color={tampering && tampering.seqMachineState! ? "danger" : "success"}
+        variant="shadow"
+        radius="md"
+      >
         {tampering && tampering.seqMachineState ? (
-          <div className="bg-danger-300 rounded-lg p-2 text-danger-600">
-            <Icon.AlertTriangle size={18} />
-          </div>
+          <Icon.AlertTriangle size={12} />
         ) : (
-          <div className="bg-success-300 rounded-lg p-2 text-success-600">
-            <Icon.Circle size={18} />
-          </div>
+          <Icon.Circle size={12} />
         )}
-      </div>
+      </Chip>
     </div>
   );
 };
@@ -95,17 +94,17 @@ const BatteryTrackingColumn = (params: RenderFnParams<Tracking>) => {
   );
   return (
     <div className="flex items-center space-x-3">
-      <div className="font-semibold tracking-wider">
+      <Chip
+        color={battery && battery.seqMachineState! ? "danger" : "success"}
+        variant="shadow"
+        radius="md"
+      >
         {battery && battery.seqMachineState ? (
-          <div className="bg-danger-300 rounded-lg p-2 text-danger-600">
-            <Icon.AlertTriangle size={18} />
-          </div>
+          <Icon.AlertTriangle size={12} />
         ) : (
-          <div className="bg-success-300 rounded-lg p-2 text-success-600">
-            <Icon.Circle size={18} />
-          </div>
+          <Icon.Circle size={12} />
         )}
-      </div>
+      </Chip>
     </div>
   );
 };
@@ -116,17 +115,17 @@ const ExclusionTrackingColumn = (params: RenderFnParams<Tracking>) => {
   );
   return (
     <div className="flex items-center space-x-3">
-      <div className="font-semibold tracking-wider">
+      <Chip
+        color={exclusion && exclusion.seqMachineState! ? "danger" : "success"}
+        variant="shadow"
+        radius="md"
+      >
         {exclusion && exclusion.seqMachineState ? (
-          <div className="bg-danger-300 rounded-lg p-2 text-danger-600">
-            <Icon.AlertTriangle size={18} />
-          </div>
+          <Icon.AlertTriangle size={12} />
         ) : (
-          <div className="bg-success-300 rounded-lg p-2 text-success-600">
-            <Icon.Circle size={18} />
-          </div>
+          <Icon.Circle size={12} />
         )}
-      </div>
+      </Chip>
     </div>
   );
 };
@@ -136,17 +135,17 @@ const PerimeterTrackingColumn = (params: RenderFnParams<Tracking>) => {
   );
   return (
     <div className="flex items-center space-x-3">
-      <div className="font-semibold tracking-wider">
+      <Chip
+        color={perimeter && perimeter.seqMachineState! ? "danger" : "success"}
+        variant="shadow"
+        radius="md"
+      >
         {perimeter && perimeter.seqMachineState ? (
-          <div className="bg-danger-300 rounded-lg p-2 text-danger-600">
-            <Icon.AlertTriangle size={18} />
-          </div>
+          <Icon.AlertTriangle size={12} />
         ) : (
-          <div className="bg-success-300 rounded-lg p-2 text-success-600">
-            <Icon.Circle size={18} />
-          </div>
+          <Icon.Circle size={12} />
         )}
-      </div>
+      </Chip>
     </div>
   );
 };
@@ -156,17 +155,21 @@ const PositionTrackingColumn = (params: RenderFnParams<Tracking>) => {
   );
   return (
     <div className="flex items-center space-x-3">
-      <div className="font-semibold tracking-wider">
+      <Chip
+        color={
+          positionTimeout && positionTimeout.seqMachineState!
+            ? "danger"
+            : "success"
+        }
+        variant="shadow"
+        radius="md"
+      >
         {positionTimeout && positionTimeout.seqMachineState ? (
-          <div className="bg-danger-300 rounded-lg p-2 text-danger-600">
-            <Icon.AlertTriangle size={18} />
-          </div>
+          <Icon.AlertTriangle size={12} />
         ) : (
-          <div className="bg-success-300 rounded-lg p-2 text-success-600">
-            <Icon.Circle size={18} />
-          </div>
+          <Icon.Circle size={12} />
         )}
-      </div>
+      </Chip>
     </div>
   );
 };
@@ -176,17 +179,17 @@ const ProximityTrackingColumn = (params: RenderFnParams<Tracking>) => {
   );
   return (
     <div className="flex items-center space-x-3">
-      <div className="font-semibold tracking-wider">
+      <Chip
+        color={proximity && proximity.seqMachineState! ? "danger" : "success"}
+        variant="shadow"
+        radius="md"
+      >
         {proximity && proximity.seqMachineState ? (
-          <div className="bg-danger-300 rounded-lg p-2 text-danger-600">
-            <Icon.AlertTriangle size={18} />
-          </div>
+          <Icon.AlertTriangle size={12} />
         ) : (
-          <div className="bg-success-300 rounded-lg p-2 text-success-600">
-            <Icon.Circle size={18} />
-          </div>
+          <Icon.Circle size={12} />
         )}
-      </div>
+      </Chip>
     </div>
   );
 };
@@ -199,19 +202,26 @@ RenderFnParams<Tracking> & {
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-8">
-      <div className="group relative inline-block text-center">
-        <AppButton
+      <Tooltip
+        content={"Tracking"}
+        showArrow
+        color="warning"
+        disableAnimation
+        closeDelay={100}
+      >
+        <Button
           onClick={() => {
             onEdit();
           }}
           title="Edit Tracking"
           size="sm"
-          variant="ghost"
+          variant="shadow"
+          isIconOnly
+          color="warning"
         >
           <Icon.Map size={18} />
-        </AppButton>
-        <AppTooltip>Tracking</AppTooltip>
-      </div>
+        </Button>
+      </Tooltip>
     </div>
   );
 };
@@ -227,12 +237,12 @@ export const AppTrackingsTable = ({
       title: "Name",
       render: NameTrackingColumn,
     },
-    {
-      key: "TrackingCardio",
-      dataIndex: "TrackingCardio",
-      title: "Cardio",
-      render: CardioTrackingColumn,
-    },
+    // {
+    //   key: "TrackingCardio",
+    //   dataIndex: "TrackingCardio",
+    //   title: "Cardio",
+    //   render: CardioTrackingColumn,
+    // },
     {
       key: "TrackingTampering",
       dataIndex: "TrackingTampering",
@@ -260,7 +270,7 @@ export const AppTrackingsTable = ({
     {
       key: "TrackingPosition",
       dataIndex: "TrackingPosition",
-      title: "Position",
+      title: "Time Out",
       render: PositionTrackingColumn,
     },
     {

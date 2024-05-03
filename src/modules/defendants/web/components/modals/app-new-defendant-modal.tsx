@@ -9,16 +9,17 @@ import { Tab } from "@headlessui/react";
 import { useGetDefendantsById } from "../../hooks/use-get-defendants-by-id";
 import { createDefendantParams } from "../../../domain/repositories/defendant-repository";
 import { AppToast } from "../../../../../presentation/Components/AppToast";
-// import {
-//   AppModal,
-//   AppModalBody,
-//   AppModalCloseButton,
-//   AppModalContent,
-//   AppModalHeader,
-//   AppModalOverlay,
-// } from "../../../../../presentation/Components/AppModal";
-import { AppBadge } from "../../../../../presentation/Components/AppBadge";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+// import { AppBadge } from "../../../../../presentation/Components/AppBadge";
+import {
+  Chip,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+} from "@nextui-org/react";
+import { useGetDefendantDevice } from "../../hooks/use-get-defendant-device";
+import { useToggle } from "react-use";
+import { DefendantById } from "../../../domain/entities/defendant-by-id";
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
@@ -35,63 +36,110 @@ export const AppNewDefendantModal = ({
 }: AppNewDefendantModalProps) => {
   const {
     createDefendant,
-    value,
+    value: responseCreateDefendant,
     loading: loadingDefendant,
-    error: errorDefendant,
+    // error: errorDefendant,
   } = useCreateDefendant();
-  const [isCreatedDefendant, setIsCreatedDefendant] = useState(false);
-  const [idDefendant, setIdDefendant] = useState<number>();
-  const { getDefendantById, defendant } = useGetDefendantsById();
+  const [isCreatedDefendant, setIsCreatedDefendant] = useState(true);
+  const [idDefendant, setIdDefendant] = useState<number | null>(null);
+  const { getDefendantById, defendant: defendantInfo } = useGetDefendantsById();
+  const { defendantDevice, getDefendantDevice } = useGetDefendantDevice();
+  const [toggleReload, setToggleReload] = useToggle(false);
+  const [defendantHeaderInfo, setDefendantHeaderInfo] =
+    useState<DefendantById | null>(null);
 
   const onCreateDefendant = async (params: createDefendantParams) => {
-    const id = await createDefendant(params);
-    if (!errorDefendant) {
+    await createDefendant(params);
+  };
+  useEffect(() => {
+    if (responseCreateDefendant && responseCreateDefendant.statusCode !== 200) {
+      AppToast().fire({
+        title: "Error",
+        text: `${responseCreateDefendant.error.message}`,
+        icon: "error",
+      });
+      // onReload();
+    }
+    if (
+      responseCreateDefendant &&
+      responseCreateDefendant?.statusCode === 200
+    ) {
       AppToast().fire({
         title: "Success",
         text: "The defendant was created successfully",
         icon: "success",
       });
+      setIdDefendant(Number(responseCreateDefendant.data));
+      onReload();
+      setToggleReload(!toggleReload);
     }
-    onReload();
-    if (id) setIdDefendant(id);
+  }, [responseCreateDefendant]);
+
+  const handleClose = () => {
+    onClose();
     setIsCreatedDefendant(true);
+    setIdDefendant(null);
+    setDefendantHeaderInfo(null);
   };
 
   useEffect(() => {
-    setIdDefendant(value);
-  }, [value]);
+    if (idDefendant) {
+      getDefendantById({ idPerson: idDefendant });
+      getDefendantDevice({ idDefendant: idDefendant });
+    }
+  }, [idDefendant, toggleReload]);
+
   useEffect(() => {
-    if (idDefendant) getDefendantById({ idPerson: idDefendant });
-  }, [idDefendant]);
+    const deviceType = defendantDevice?.some((item) => item.idDeviceType === 1);
+    if (deviceType) {
+      setIsCreatedDefendant(false);
+    }
+  }, [idDefendant, toggleReload, defendantDevice]);
+  useEffect(() => {
+    if (defendantInfo) setDefendantHeaderInfo(defendantInfo);
+  }, [defendantInfo]);
+
   return (
-    <Modal
-      size="full"
-      isOpen={isVisible}
-      onClose={onClose}
-      scrollBehavior={"inside"}
-    >
+    <Modal size="full" isOpen={isVisible} onClose={handleClose} backdrop="blur">
       <ModalContent>
         {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              New Defendant
-              <div className="flex flex-row items-center justify-evenly gap-5 ">
-                <span>
-                  <AppBadge colorScheme="warn">
-                    Defendant Name:{" "}
-                    {defendant
-                      ? `${defendant?.name} ${defendant?.lastName} `
+          <div className="overflow-auto">
+            <ModalHeader>
+              <div className="w-full flex flex-row items-center justify-evenly gap-5 relative">
+                <span className="text-primaryColor-700 absolute left-0">
+                  New Defendant
+                </span>
+                <Chip
+                  color="warning"
+                  variant="shadow"
+                  className="flex flex-row gap-2"
+                >
+                  <span className="text-gray-200">Defendant Name: </span>
+                  <span className="text-white font-semibold">
+                    {defendantHeaderInfo
+                      ? `${defendantHeaderInfo?.name} ${defendantHeaderInfo?.lastName} `
                       : ""}
-                  </AppBadge>
-                </span>
-                <span>
-                  <AppBadge colorScheme="warn">SID: {defendant?.sid}</AppBadge>
-                </span>
+                  </span>
+                </Chip>
+                <Chip
+                  color="warning"
+                  variant="shadow"
+                  className="flex flex-row gap-2"
+                >
+                  <span className="text-gray-200">SID: </span>
+                  <span className="text-white font-semibold">
+                    {defendantHeaderInfo?.sid}
+                  </span>
+                </Chip>
               </div>
             </ModalHeader>
             <ModalBody>
-              <div className="w-full px-2 py-16">
-                <Tab.Group>
+              <div className="w-full px-5 py-2">
+                <Tab.Group
+                  onChange={() => {
+                    setToggleReload(!toggleReload);
+                  }}
+                >
                   <Tab.List className="flex space-x-1 rounded-xl border border-primary-100 p-1">
                     <Tab
                       className={({ selected }) =>
@@ -107,7 +155,7 @@ export const AppNewDefendantModal = ({
                       Defendant
                     </Tab>
                     <Tab
-                      disabled={!isCreatedDefendant}
+                      disabled={isCreatedDefendant}
                       className={({ selected }) =>
                         classNames(
                           "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
@@ -121,7 +169,7 @@ export const AppNewDefendantModal = ({
                       Victims
                     </Tab>
                     <Tab
-                      // disabled={!isCreatedDefendant}
+                      disabled={isCreatedDefendant}
                       className={({ selected }) =>
                         classNames(
                           "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
@@ -135,7 +183,8 @@ export const AppNewDefendantModal = ({
                       Alarms
                     </Tab>
                     <Tab
-                      disabled={!isCreatedDefendant}
+                      hidden
+                      disabled={isCreatedDefendant}
                       className={({ selected }) =>
                         classNames(
                           "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
@@ -152,18 +201,19 @@ export const AppNewDefendantModal = ({
                   <Tab.Panels>
                     <Tab.Panel>
                       <DefendantForm
+                        defendantInfo={defendantInfo}
                         onCreateDefendant={onCreateDefendant}
                         onClose={onClose}
-                        isCreatedDefendant={isCreatedDefendant}
                         idDefendant={idDefendant}
                         loadingDefendant={loadingDefendant}
+                        onReload={() => setToggleReload(!toggleReload)}
                       />
                     </Tab.Panel>
                     <Tab.Panel>
                       <VictimForm idDefendant={idDefendant} />
                     </Tab.Panel>
                     <Tab.Panel>
-                      <AlarmForm />
+                      <AlarmForm idDefendant={idDefendant} />
                     </Tab.Panel>
                     <Tab.Panel>
                       <ReferenceForm />
@@ -172,115 +222,9 @@ export const AppNewDefendantModal = ({
                 </Tab.Group>
               </div>
             </ModalBody>
-          </>
+          </div>
         )}
       </ModalContent>
     </Modal>
-    // <AppModal isVisible={isVisible} onClose={onClose} size="full">
-    //   <AppModalOverlay>
-    //     <AppModalContent>
-    //       <AppModalHeader>
-    //         <AppModalCloseButton />
-    //         <div className="flex flex-row items-center justify-evenly gap-5 ">
-    //           <span>New Defendant</span>
-    //           <span>
-    //             <AppBadge colorScheme="warn">
-    //               Defendant Name:{" "}
-    //               {defendant
-    //                 ? `${defendant?.name} ${defendant?.lastName} `
-    //                 : ""}
-    //             </AppBadge>
-    //           </span>
-    //           <span>
-    //             <AppBadge colorScheme="warn">SID: {defendant?.sid}</AppBadge>
-    //           </span>
-    //         </div>
-    //       </AppModalHeader>
-    //       <AppModalBody>
-    //         <div className="w-full px-2 py-16">
-    //           <Tab.Group>
-    //             <Tab.List className="flex space-x-1 rounded-xl border border-primary-100 p-1">
-    //               <Tab
-    //                 className={({ selected }) =>
-    //                   classNames(
-    //                     "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
-    //                     "ring-white ring-offset-2 ring-offset-info-100 focus:outline-none focus:ring-2",
-    //                     selected
-    //                       ? "bg-info-500 text-white shadow"
-    //                       : "text-info-600 hover:bg-white hover:text-info-600 transition-all duration-150"
-    //                   )
-    //                 }
-    //               >
-    //                 Defendant
-    //               </Tab>
-    //               <Tab
-    //                 disabled={!isCreatedDefendant}
-    //                 className={({ selected }) =>
-    //                   classNames(
-    //                     "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
-    //                     "ring-white ring-offset-2 ring-offset-info-100 focus:outline-none focus:ring-2",
-    //                     selected
-    //                       ? "bg-info-500 text-white shadow"
-    //                       : "text-info-600 hover:bg-white hover:text-info-600 transition-all duration-150"
-    //                   )
-    //                 }
-    //               >
-    //                 Victims
-    //               </Tab>
-    //               <Tab
-    //                 // disabled={!isCreatedDefendant}
-    //                 className={({ selected }) =>
-    //                   classNames(
-    //                     "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
-    //                     "ring-white ring-offset-2 ring-offset-info-100 focus:outline-none focus:ring-2",
-    //                     selected
-    //                       ? "bg-info-500 text-white shadow"
-    //                       : "text-info-600 hover:bg-white hover:text-info-600 transition-all duration-150"
-    //                   )
-    //                 }
-    //               >
-    //                 Alarms
-    //               </Tab>
-    //               <Tab
-    //                 disabled={!isCreatedDefendant}
-    //                 className={({ selected }) =>
-    //                   classNames(
-    //                     "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
-    //                     "ring-white ring-offset-2 ring-offset-info-100 focus:outline-none focus:ring-2",
-    //                     selected
-    //                       ? "bg-info-500 text-white shadow"
-    //                       : "text-info-600 hover:bg-white hover:text-info-600 transition-all duration-150"
-    //                   )
-    //                 }
-    //               >
-    //                 Reference Contacts
-    //               </Tab>
-    //             </Tab.List>
-    //             <Tab.Panels>
-    //               <Tab.Panel>
-    //                 <DefendantForm
-    //                   onCreateDefendant={onCreateDefendant}
-    //                   onClose={onClose}
-    //                   isCreatedDefendant={isCreatedDefendant}
-    //                   idDefendant={idDefendant}
-    //                   loadingDefendant={loadingDefendant}
-    //                 />
-    //               </Tab.Panel>
-    //               <Tab.Panel>
-    //                 <VictimForm idDefendant={idDefendant} />
-    //               </Tab.Panel>
-    //               <Tab.Panel>
-    //                 <AlarmForm />
-    //               </Tab.Panel>
-    //               <Tab.Panel>
-    //                 <ReferenceForm />
-    //               </Tab.Panel>
-    //             </Tab.Panels>
-    //           </Tab.Group>
-    //         </div>
-    //       </AppModalBody>
-    //     </AppModalContent>
-    //   </AppModalOverlay>
-    // </AppModal>
   );
 };

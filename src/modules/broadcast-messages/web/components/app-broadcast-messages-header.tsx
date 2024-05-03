@@ -7,7 +7,7 @@ export const AppBroadcastMessagesHeader = () => {
     <AppHero
       size="base"
       style={{
-        background: "linear-gradient(to right, #133a94, #919bff)",
+        background: "linear-gradient(to right, #091970, #133a94)",
       }}
     >
       <div className=" flex flex-row items-center justify-between mx-auto gap-5 w-2/3">

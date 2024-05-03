@@ -26,9 +26,9 @@ const AppDatePicker = ({
     <DatePicker
       locale="es"
       dateFormat="dd/MM/yyyy"
-      className={clsx("form-input", className)}
+      className={clsx("form-input h-10", className)}
       required={isRequired || required}
-      wrapperClassName={clsx("w-full", wrapperClassName)}
+      wrapperClassName={clsx("w-full ", wrapperClassName)}
       {...props}
     />
   );

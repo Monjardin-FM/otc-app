@@ -6,12 +6,12 @@ import { DefendantRepository } from "../../domain/repositories/defendant-reposit
 
 export const getDefendantDeviceService: DefendantRepository["getDeviceDefendant"] =
   async (params) => {
-    const response = await api().get(`Defendant`, {
+    const response = await api().get(`PersonDevice/${params.idDefendant}`, {
       headers: {
         Authorization: `Bearer ${token()}`,
         // 'Content-Type': 'application/json',
       },
-      searchParams: params,
+      // searchParams: params,
     });
     const { body } = await verifyResponse({ response });
     const data = body.data as any[];

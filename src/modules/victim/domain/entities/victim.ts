@@ -6,8 +6,10 @@ export type Victim = {
   lastName: string;
   idCounty: number;
   eMail: string;
+  caseNumber: string;
   birthDate: string;
   idGender: number;
+  sid: string;
   idPersonType: number;
   idStatus: number;
   createdAt: string;

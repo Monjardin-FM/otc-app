@@ -15,7 +15,8 @@ export const AppFormLabel = ({
   ...props
 }: AppFormLabelProps) => {
   const { isRequired } = useContext(AppFormContext);
-  const defaultStyles = "block pl-1 pb-2 font-medium text-sm";
+  const defaultStyles =
+    "block pl-1 pb-1 font-medium text-sm font-medium text-lg";
   const colorText = {
     "text-gray-400": textColor === "white",
     "text-gray-600": textColor === "",

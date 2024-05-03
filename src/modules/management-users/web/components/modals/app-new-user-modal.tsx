@@ -47,8 +47,13 @@ export const AppNewUserModal = ({
   const { counties, getCounties } = useGetCounties();
   const { genders, getGenders } = useGetGenders();
   const { roles, getRoles } = useGetRoles();
-  const [status, setStatus] = useState(false);
-  const { createUser, loading, error: errorSave } = useSaveUser();
+  const [status, setStatus] = useState(true);
+  const {
+    createUser,
+    loading,
+    // error: errorSave,
+    value: responseCreateUser,
+  } = useSaveUser();
 
   const validationSchemaSaveUser = Yup.object().shape({
     name: Yup.string().required("Required name"),
@@ -61,8 +66,13 @@ export const AppNewUserModal = ({
     gender: Yup.number()
       .moreThan(0, "Select a gender")
       .required("Select a gender"),
-    password: Yup.string().required("Required password"),
-    phone: Yup.number().required("Required cell phone number"),
+    password: Yup.string()
+      .required("Required password")
+      .min(10, "Minimum length 10 characters"),
+    phone: Yup.string()
+      .required("Required cell phone number")
+      .matches(/^[0-9]+$/, "Must be only digits")
+      .max(15, "15 digits"),
   });
   const onSubmitHandler = async (data: UserCreateFormValues) => {
     await createUser({
@@ -75,17 +85,8 @@ export const AppNewUserModal = ({
       idRole: Number(data.role),
       idStatus: status ? 1 : 0,
       password: data.password,
-      phone: String(data.phone),
+      phone: data.phone,
     });
-    if (!errorSave) {
-      AppToast().fire({
-        title: "Success",
-        text: "Information saved successfully",
-        icon: "success",
-      });
-    }
-    onClose();
-    onReload();
   };
   useEffect(() => {
     getCounties();
@@ -93,14 +94,23 @@ export const AppNewUserModal = ({
     getRoles();
   }, []);
   useEffect(() => {
-    if (errorSave) {
+    if (responseCreateUser && responseCreateUser.statusCode !== 200) {
       AppToast().fire({
         title: "Error",
-        text: "An error occurred while saving information",
+        text: `${responseCreateUser.error?.message}`,
         icon: "error",
       });
     }
-  }, [errorSave]);
+    if (responseCreateUser && responseCreateUser.statusCode === 200) {
+      AppToast().fire({
+        title: "Success",
+        text: "User created successfully",
+        icon: "success",
+      });
+      onClose();
+      onReload();
+    }
+  }, [responseCreateUser]);
   return (
     <AppModal isVisible={isVisible} onClose={onClose} size="3xl">
       <AppModalOverlay>
@@ -230,7 +240,7 @@ export const AppNewUserModal = ({
                       <AppFormLabel>Phone Number</AppFormLabel>
                       <AppTextField
                         name="phone"
-                        type="number"
+                        type="string"
                         onChange={handleChange}
                         value={values.phone}
                       />

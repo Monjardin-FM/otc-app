@@ -29,6 +29,7 @@ export const getAlarmByIdService: AlarmRepository["getAlarmById"] = async (
     mailText: data.mailText,
     idStatus: data.idStatus,
     lResponseDevice: data.lResponseDevice,
+    lAssignedDevice: data.lAssignedDevice,
     idPerson: data.idPerson,
     idDevice: data.idDevice,
   };

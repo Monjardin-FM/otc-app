@@ -19,7 +19,7 @@ export const AppManagemenetUsersHeader = ({
     <AppHero
       size="base"
       style={{
-        background: "linear-gradient(to right, #133a94, #919bff)",
+        background: "linear-gradient(to right,#091970, #133a94)",
       }}
     >
       <div className=" flex flex-row items-center justify-between mx-auto gap-5 w-2/3">
@@ -28,7 +28,7 @@ export const AppManagemenetUsersHeader = ({
         </h1>
         <div className="w-2/3 flex flex-row items-center bg-white rounded-lg ">
           <AppTextField
-            placeholder="Search by name or email"
+            placeholder="Search by Name or Email"
             type="text"
             onChange={(e: any) => {
               setSearch(e.target.value);

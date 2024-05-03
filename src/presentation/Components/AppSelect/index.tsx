@@ -22,7 +22,7 @@ const AppSelect = ({
   return (
     <select
       required={isRequired || required}
-      className={clsx("form-select", className)}
+      className={clsx(" h-10 text-tiny p-0 m-0", className)}
       {...props}
     >
       {children}

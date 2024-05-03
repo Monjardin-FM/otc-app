@@ -70,7 +70,7 @@ export const AppAsideV2 = ({
                 to="/alarm-config"
               />
             </AppAuthorizationGuard>
-            <AppAuthorizationGuard
+            {/* <AppAuthorizationGuard
               roles={
                 AppConfig[
                   "userManagement.managerPage.authorization"
@@ -82,7 +82,7 @@ export const AppAsideV2 = ({
                 label="Broadcacst Messages"
                 to="/broadcast-messages"
               />
-            </AppAuthorizationGuard>
+            </AppAuthorizationGuard> */}
             <AppAuthorizationGuard
               roles={
                 AppConfig["defendants.managerPage.authorization"] as UserRole[]
@@ -119,7 +119,7 @@ export const AppAsideV2 = ({
                 to="/management-users"
               />
             </AppAuthorizationGuard>
-            <AppAuthorizationGuard
+            {/* <AppAuthorizationGuard
               roles={
                 AppConfig["defendants.managerPage.authorization"] as UserRole[]
               }
@@ -129,7 +129,7 @@ export const AppAsideV2 = ({
                 label="Request Admin"
                 to="/request-admin"
               />
-            </AppAuthorizationGuard>
+            </AppAuthorizationGuard> */}
             <AppAuthorizationGuard
               roles={
                 AppConfig["defendants.managerPage.authorization"] as UserRole[]
@@ -155,9 +155,7 @@ export const AppAsideV2 = ({
               <div className="text-white">
                 <Icon.LogOut />
               </div>
-              <div className="ml-3 text-sm font-medium text-white">
-                Cerrar sesión
-              </div>
+              <div className="ml-3 text-sm font-medium text-white">Logout</div>
             </AppButton>
           </div>
         </motion.aside>
