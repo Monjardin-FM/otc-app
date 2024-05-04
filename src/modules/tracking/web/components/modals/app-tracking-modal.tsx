@@ -17,6 +17,8 @@ import {
 } from "@nextui-org/react";
 import * as Icon from "react-feather";
 import { AppHistoricPositionTab } from "./app-historic-position-tab";
+import { useShowAlerts } from "../../../../tracking-plus/web/hooks/use-show-alerts";
+import { AppToast } from "../../../../../presentation/Components/AppToast";
 export type AppTrackingModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -34,6 +36,32 @@ AppTrackingModalProps) => {
   // const { findHistoricPosition, historicPosition } = useFindHistoricPosition();
   const [userId, setUserId] = useState<number | null>();
   // Search Historic Position
+  const {
+    showAlerts,
+    loading: loadingShowAlerts,
+    error: errorShowAlert,
+  } = useShowAlerts();
+
+  const handleShowAlert = async (idPerson: number) => {
+    await showAlerts({ idPerson: idPerson, showalerts: false });
+    if (!errorShowAlert) {
+      AppToast().fire({
+        title: "Success",
+        icon: "success",
+        text: "Action completed",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (errorShowAlert) {
+      AppToast().fire({
+        title: "Error",
+        icon: "error",
+        text: "An error has occurred",
+      });
+    }
+  }, [errorShowAlert]);
 
   const handleClose = () => {
     setUserId(null);
@@ -148,8 +176,11 @@ AppTrackingModalProps) => {
 
                     <div className="w-full mt-5">
                       <AppTrackingDetailsTable
-                        onEdit={() => {}}
+                        onShowAlerts={({ record }) => {
+                          handleShowAlert(record.personId);
+                        }}
                         items={alertPerson}
+                        loadingShowAlerts={loadingShowAlerts}
                       />
                     </div>
                   </div>

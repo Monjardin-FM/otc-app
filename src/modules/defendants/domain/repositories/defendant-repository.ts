@@ -3,6 +3,7 @@ import { Defendant } from "../entities/defendant";
 import { DefendantDevice } from "../entities/defendant-device";
 import { Address } from "../entities/address";
 import { SpecificAlarmParams } from "../entities/alarm-defendant-params";
+import { AlarmDefendant } from "../entities/alarm-defendant";
 export type createDefendantParams = {
   completeName: string;
   name: string;
@@ -89,4 +90,10 @@ export type DefendantRepository = {
   }): Promise<void>;
   deleteAddressPerson(params: { idAddress: number }): Promise<Boolean>;
   assignAlarmDefendant(params: SpecificAlarmParams): Promise<void>;
+  getSpecificAlarmDefendant: (params: {
+    idPerson: number;
+  }) => Promise<AlarmDefendant[]>;
+  deleteSpecificAlarmDefendant: (params: {
+    idAlarmDefendant: number;
+  }) => Promise<Boolean>;
 };

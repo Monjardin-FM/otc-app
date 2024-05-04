@@ -131,7 +131,7 @@ export const AppEditUserModal = ({
             enableReinitialize
             initialValues={{
               name: user?.name ? user.name : "",
-              lastName: user?.lastName ? user.name : "",
+              lastName: user?.lastName ? user.lastName : "",
               eMail: user?.eMail ? user.eMail : "",
               role: user?.idRole ? user.idRole : 0,
               county: user?.idCounty ? user.idCounty : 0,

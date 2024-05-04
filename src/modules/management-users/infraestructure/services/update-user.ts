@@ -9,7 +9,7 @@ export const updateUserService: UserManageRepository["updateUser"] = async (
     headers: {
       Authorization: `Bearer ${token()}`,
     },
-    json: { params },
+    json: params,
   });
   const { body } = await verifyResponse({ response });
   return body;

@@ -17,7 +17,7 @@ export type AlarmExceptionTableProps = {
   // onUpdateClient: (data: Client) => void;
 
   items?: AlarmException[];
-  onEdit: (params: RenderFnParams<AlarmException>) => void;
+  // onEdit: (params: RenderFnParams<AlarmException>) => void;
   onDelete: (params: RenderFnParams<AlarmException>) => void;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
@@ -76,7 +76,7 @@ const ActionsColumn = ({
   onDelete,
 }: // record,
 RenderFnParams<AlarmException> & {
-  onEdit: () => void;
+  // onEdit: () => void;
   onDelete: () => void;
 }) => {
   return (
@@ -108,7 +108,7 @@ RenderFnParams<AlarmException> & {
 
 export const AppAlarmExceptionTable = ({
   items = [],
-  onEdit,
+  // onEdit,
   onDelete,
 }: AlarmExceptionTableProps) => {
   const columns: AppDataGridColumn<
@@ -134,9 +134,9 @@ export const AppAlarmExceptionTable = ({
       render: (data) =>
         ActionsColumn({
           ...data,
-          onEdit: () => {
-            onEdit(data);
-          },
+          // onEdit: () => {
+          //   onEdit(data);
+          // },
           onDelete: () => {
             onDelete(data);
           },

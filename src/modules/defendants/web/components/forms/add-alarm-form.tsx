@@ -27,13 +27,18 @@ import { AppAlarmExceptionTable } from "../tables/app-exceptions-table";
 export type AddAlarmFormProps = {
   idDefendant?: number | null;
   onReload: () => void;
+  onClose: () => void;
 };
 type AssignAlarmDefendantFormValues = {
   name: string;
   idSpecificAlarmType: number;
 };
 dayjs.extend(utc);
-export const AddAlarmForm = ({ idDefendant, onReload }: AddAlarmFormProps) => {
+export const AddAlarmForm = ({
+  idDefendant,
+  onReload,
+  onClose,
+}: AddAlarmFormProps) => {
   const { specificAlarm, getSpecificAlarm } = useGetSpecificAlarm();
   const {
     assignAlarmDefendant,
@@ -140,9 +145,18 @@ export const AddAlarmForm = ({ idDefendant, onReload }: AddAlarmFormProps) => {
         icon: "success",
       });
       onReload();
+      onClose();
     }
   };
-
+  useEffect(() => {
+    if (errorAssignAlarm) {
+      AppToast().fire({
+        title: "Error",
+        text: "There was an error while saving information. Try again",
+        icon: "error",
+      });
+    }
+  }, [errorAssignAlarm]);
   useEffect(() => {
     getSpecificAlarm();
   }, []);
@@ -381,7 +395,7 @@ export const AddAlarmForm = ({ idDefendant, onReload }: AddAlarmFormProps) => {
                             )
                           );
                         }}
-                        onEdit={() => {}}
+                        // onEdit={() => {}}
                       />
                     </div>
                   </div>
@@ -389,7 +403,7 @@ export const AddAlarmForm = ({ idDefendant, onReload }: AddAlarmFormProps) => {
               )}
             </div>
             <div className="col-span-12 flex flex-row items-center justify-end gap-4">
-              {/* <AppButton onClick={onClose}>Cancel</AppButton> */}
+              <AppButton onClick={onClose}>Cancel</AppButton>
               <AppButton
                 colorScheme="primary"
                 type="submit"

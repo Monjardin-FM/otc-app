@@ -7,14 +7,14 @@ import {
 } from "../../../../../presentation/Components/AppDataGrid";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
 import { AppBadge } from "../../../../../presentation/Components/AppBadge";
-import { AppTooltip } from "../../../../../presentation/Components/AppTooltip";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
+import { Button, Chip, Tooltip } from "@nextui-org/react";
 
 export type TrackingDetailsTableProps = {
   // onToggleStatus?: (index: Client) => void;
   // onUpdateClient: (data: Client) => void;
   items?: PersonAlert[] | null;
-  onEdit: (params: RenderFnParams<PersonAlert>) => void;
+  onShowAlerts: (params: RenderFnParams<PersonAlert>) => void;
+  loadingShowAlerts: boolean;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
 };
@@ -47,51 +47,66 @@ const DateTrackingDetailColumn = (params: RenderFnParams<PersonAlert>) => {
 const StatusTrackingDetailColumn = (params: RenderFnParams<PersonAlert>) => {
   return (
     <div className="flex items-center space-x-3">
-      <div className="font-semibold TrackingDetail-wider">
+      <Chip
+        color={params.record.seqMachineState! ? "danger" : "success"}
+        variant="shadow"
+        radius="md"
+      >
         {params.record.seqMachineState ? (
-          <div className="bg-danger-300 rounded-lg p-2 text-danger-600">
-            <Icon.AlertTriangle size={18} />
-          </div>
+          <Icon.AlertTriangle size={12} />
         ) : (
-          <div className="bg-success-300 rounded-lg p-2 text-success-600 group relative inline-block text-center">
-            <Icon.Circle size={18} />
-            <AppTooltip>Active</AppTooltip>
-          </div>
+          <Icon.Circle size={12} />
         )}
-      </div>
+      </Chip>
     </div>
   );
 };
 
 const ActionsColumn = ({
-  onEdit,
+  onShowAlerts,
+  loadingShowAlerts,
+  record,
 }: // record,
 RenderFnParams<PersonAlert> & {
-  onEdit: () => void;
+  onShowAlerts: () => void;
+  loadingShowAlerts: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-8">
-      <div className="group relative inline-block text-center">
-        <AppButton
-          onClick={() => {
-            onEdit();
-          }}
-          title="Edit TrackingDetail"
-          size="sm"
-          variant="ghost"
-          colorScheme="red"
+      {record.alarmName.includes("Bracelet Tampering") ? (
+        <Tooltip
+          content={"Cancel Alarm"}
+          showArrow
+          color="danger"
+          disableAnimation
+          closeDelay={100}
         >
-          <Icon.XCircle size={18} />
-        </AppButton>
-        <AppTooltip>Cancel Alarm</AppTooltip>
-      </div>
+          <Button
+            onClick={() => {
+              onShowAlerts();
+            }}
+            title="Cancel Alarm"
+            size="sm"
+            variant="shadow"
+            isIconOnly
+            color="danger"
+            isDisabled={loadingShowAlerts}
+            isLoading={loadingShowAlerts}
+          >
+            <Icon.XOctagon size={18} />
+          </Button>
+        </Tooltip>
+      ) : (
+        ""
+      )}
     </div>
   );
 };
 
 export const AppTrackingDetailsTable = ({
   items = [],
-  onEdit,
+  onShowAlerts,
+  loadingShowAlerts,
 }: TrackingDetailsTableProps) => {
   const columns: AppDataGridColumn<PersonAlert>[] = [
     {
@@ -120,9 +135,10 @@ export const AppTrackingDetailsTable = ({
       render: (data) =>
         ActionsColumn({
           ...data,
-          onEdit: () => {
-            onEdit(data);
+          onShowAlerts: () => {
+            onShowAlerts(data);
           },
+          loadingShowAlerts: loadingShowAlerts,
         }),
     },
   ];

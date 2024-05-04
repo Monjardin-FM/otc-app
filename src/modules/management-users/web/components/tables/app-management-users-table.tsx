@@ -83,7 +83,7 @@ const ActionsColumn = ({
   return (
     <div className="flex flex-row items-center justify-start gap-8">
       <Tooltip
-        content={"Edit Defendant"}
+        content={"Edit User"}
         color="primary"
         style={{
           zIndex: 0,
@@ -97,7 +97,7 @@ const ActionsColumn = ({
           onClick={() => {
             onEdit();
           }}
-          title="Edit Defendant"
+          title="Edit User"
           size="sm"
           variant="shadow"
           isIconOnly
@@ -107,7 +107,7 @@ const ActionsColumn = ({
         </Button>
       </Tooltip>
       <Tooltip
-        content={"Delete Defendant"}
+        content={"Delete User"}
         color="danger"
         style={{
           zIndex: 0,
@@ -121,7 +121,7 @@ const ActionsColumn = ({
           onClick={() => {
             onDelete();
           }}
-          title="Delete Defendant"
+          title="Delete User"
           size="sm"
           variant="shadow"
           color="danger"

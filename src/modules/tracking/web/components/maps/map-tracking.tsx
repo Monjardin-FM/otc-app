@@ -58,8 +58,8 @@ export const FlyNewPosition = ({
   const legalIcon = new Icon({
     iconUrl: DefIcon,
     iconSize: [35, 35], // size of the icon
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+    iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
   });
   return positionDefendant ? (
     <Marker

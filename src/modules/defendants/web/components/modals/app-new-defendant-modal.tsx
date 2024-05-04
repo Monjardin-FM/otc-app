@@ -213,7 +213,7 @@ export const AppNewDefendantModal = ({
                       <VictimForm idDefendant={idDefendant} />
                     </Tab.Panel>
                     <Tab.Panel>
-                      <AlarmForm idDefendant={idDefendant} />
+                      <AlarmForm idDefendant={idDefendant} onClose={onClose} />
                     </Tab.Panel>
                     <Tab.Panel>
                       <ReferenceForm />
