@@ -74,6 +74,15 @@ export const AppNewDefendantModal = ({
       setToggleReload(!toggleReload);
     }
   }, [responseCreateDefendant]);
+  useEffect(() => {
+    if (loadingDefendant) {
+      AppToast().fire({
+        title: "Creating defendant",
+        text: "The defendant is being created. Please wait",
+        icon: "info",
+      });
+    }
+  }, [loadingDefendant]);
 
   const handleClose = () => {
     onClose();

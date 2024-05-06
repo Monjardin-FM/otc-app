@@ -27,8 +27,11 @@ export const DeviceForm = ({
 }: DeviceFormProps) => {
   const { deviceType, getDeviceType } = useGetDeviceType();
   const [deviceTypeOptions, setDeviceTypeOptions] = useState<DeviceType[]>();
-  const { assignDeviceDefendant, error: errorSave } =
-    useAssignDeviceDefendant();
+  const {
+    assignDeviceDefendant,
+    error: errorSave,
+    loading: loadingDeviceDefendant,
+  } = useAssignDeviceDefendant();
   const [idDeviceType, setIdDeviceType] = useState<number>();
   const [idDevice, setIdDevice] = useState<number>();
   const { devices, getDevices } = useGetDevices();
@@ -52,6 +55,22 @@ export const DeviceForm = ({
     onClose();
     onReload();
   };
+  useEffect(() => {
+    if (errorSave) {
+      AppToast().fire({
+        title: "Error",
+        text: "An error occurred while saving information",
+        icon: "error",
+      });
+    }
+    if (loadingDeviceDefendant) {
+      AppToast().fire({
+        title: "Saving Device",
+        text: "The device is being saved. Please Wait",
+        icon: "info",
+      });
+    }
+  }, [loadingDeviceDefendant, errorSave]);
   useEffect(() => {
     getDeviceType();
     getDevices({ completeName: "" });
@@ -119,7 +138,13 @@ export const DeviceForm = ({
           onClick={() => {
             onSubmitHandler();
           }}
-          isDisabled={idDeviceType === 0 || idDevice === 0 || !idDefendant}
+          isDisabled={
+            idDeviceType === 0 ||
+            idDevice === 0 ||
+            !idDefendant ||
+            loadingDeviceDefendant
+          }
+          isLoading={loadingDeviceDefendant}
         >
           Save
         </AppButton>

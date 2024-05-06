@@ -81,10 +81,16 @@ export const AppEditInfoDefendantModal = ({
   const [statusOfficer, setStatusOfficer] = useState(false);
   const [birthDate, setBirthDate] = useState<Date | null>(new Date());
   const [toggleReload, setToggleReload] = useToggle(false);
-  const { deleteDefendantDevice, error: errorDeleteDevice } =
-    useDeleteDefendantDevice();
-  const { error: errorDeleteAddress, deleteAddressPerson } =
-    useDeleteAddressPerson();
+  const {
+    deleteDefendantDevice,
+    error: errorDeleteDevice,
+    loading: loadingDeleteDefendantDevice,
+  } = useDeleteDefendantDevice();
+  const {
+    error: errorDeleteAddress,
+    deleteAddressPerson,
+    loading: loadingDeleteAddress,
+  } = useDeleteAddressPerson();
   const [parent] = useAutoAnimate();
   const {
     value: responseUpdateDefendant,
@@ -115,7 +121,6 @@ export const AppEditInfoDefendantModal = ({
   };
 
   useEffect(() => {
-    console.log(responseUpdateDefendant);
     if (responseUpdateDefendant && responseUpdateDefendant.statusCode !== 200) {
       AppToast().fire({
         title: "Error",
@@ -135,6 +140,16 @@ export const AppEditInfoDefendantModal = ({
       onClose();
     }
   }, [responseUpdateDefendant]);
+
+  useEffect(() => {
+    if (loadingDefendant) {
+      AppToast().fire({
+        title: "Updating defendant information",
+        text: "The defendant is being updated. Please wait",
+        icon: "info",
+      });
+    }
+  }, [loadingDefendant]);
   const validationSchemaDefendant = Yup.object().shape({
     name: Yup.string().required("Required name"),
     lastName: Yup.string().required("Required last name"),
@@ -194,6 +209,7 @@ export const AppEditInfoDefendantModal = ({
       text: "The device was deleted succesfully",
     });
   };
+
   useEffect(() => {
     if (errorDeleteDevice) {
       AppToast().fire({
@@ -202,12 +218,19 @@ export const AppEditInfoDefendantModal = ({
         text: "An error occurred while trying to delete the device. Try again",
       });
     }
-  }, [errorDeleteDevice]);
+    if (loadingDeleteAddress) {
+      AppToast().fire({
+        title: "Deleting address",
+        icon: "info",
+        text: "The address is being deleted. Please Wait",
+      });
+    }
+  }, [errorDeleteDevice, loadingDeleteAddress]);
   const onDeleteAddress = () => {
     AppToast().fire({
-      title: "Device deleted",
+      title: "Address deleted",
       icon: "success",
-      text: "The device was deleted succesfully",
+      text: "The address was deleted succesfully",
     });
   };
   useEffect(() => {
@@ -218,7 +241,14 @@ export const AppEditInfoDefendantModal = ({
         text: "An error occurred while trying to delete the address. Try again",
       });
     }
-  }, [errorDeleteDevice]);
+    if (loadingDeleteDefendantDevice) {
+      AppToast().fire({
+        title: "Deleting device",
+        icon: "info",
+        text: "The device is being deleted. Please Wait",
+      });
+    }
+  }, [errorDeleteDevice, loadingDeleteDefendantDevice]);
   return (
     <Modal
       size="4xl"
@@ -627,6 +657,9 @@ export const AppEditInfoDefendantModal = ({
                               }}
                               onEdit={() => {}}
                               items={defendantDevice}
+                              loadingDeleteDefendantDevice={
+                                loadingDeleteDefendantDevice
+                              }
                             />
                           </Disclosure.Panel>
                         </>
@@ -657,6 +690,7 @@ export const AppEditInfoDefendantModal = ({
                                 setToggleReload(!toggleReload);
                               }}
                               items={addressPerson}
+                              loadingDeleteAddress={loadingDeleteAddress}
                             />
                             <div ref={parent} className="w-full">
                               {visibleAddressEditForm && (

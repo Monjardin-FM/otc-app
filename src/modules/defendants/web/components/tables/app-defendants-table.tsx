@@ -12,7 +12,7 @@ import { Button, Chip, Tooltip } from "@nextui-org/react";
 export type DefendantsTableProps = {
   // onToggleStatus?: (index: Client) => void;
   // onUpdateClient: (data: Client) => void;
-
+  loadingDeleteDefendant: boolean;
   items?: Defendant[];
   onEdit: (params: RenderFnParams<Defendant>) => void;
   onDelete: (params: RenderFnParams<Defendant>) => void;
@@ -114,10 +114,12 @@ const StatusDefendantColumn = (params: RenderFnParams<Defendant>) => {
 const ActionsColumn = ({
   onEdit,
   onDelete,
+  loadingDeleteDefendant,
 }: // record,
 RenderFnParams<Defendant> & {
   onEdit: () => void;
   onDelete: () => void;
+  loadingDeleteDefendant: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
@@ -165,6 +167,7 @@ RenderFnParams<Defendant> & {
           variant="shadow"
           color="danger"
           isIconOnly
+          isDisabled={loadingDeleteDefendant}
         >
           <Icon.Trash size={18} />
         </Button>
@@ -177,6 +180,7 @@ export const AppDefendantsTable = ({
   items = [],
   onEdit,
   onDelete,
+  loadingDeleteDefendant,
 }: DefendantsTableProps) => {
   const columns: AppDataGridColumn<Defendant>[] = [
     {
@@ -222,6 +226,7 @@ export const AppDefendantsTable = ({
           onDelete: () => {
             onDelete(data);
           },
+          loadingDeleteDefendant: loadingDeleteDefendant,
         }),
     },
   ];

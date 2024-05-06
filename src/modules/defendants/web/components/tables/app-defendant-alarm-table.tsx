@@ -9,14 +9,10 @@ import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AlarmDefendant } from "../../../domain/entities/alarm-defendant";
 import * as Icon from "react-feather";
 export type AlarmDefendantsTableProps = {
-  // onToggleStatus?: (index: Client) => void;
-  // onUpdateClient: (data: Client) => void;
-
+  loadingDelete: boolean;
   items?: AlarmDefendant[];
-  // onEdit: (params: RenderFnParams<AlarmDefendant>) => void;
+  onView: (params: RenderFnParams<AlarmDefendant>) => void;
   onDelete: (params: RenderFnParams<AlarmDefendant>) => void;
-  // onNotification: (params: RenderFnParams<UserManage>) => void;
-  // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -73,17 +69,19 @@ const StatusAlarmDefendantColumn = (params: RenderFnParams<AlarmDefendant>) => {
 };
 
 const ActionsColumn = ({
-  //   onEdit,
+  onView,
   onDelete,
+  loadingDelete,
 }: // record,
 RenderFnParams<AlarmDefendant> & {
-  //   onEdit: () => void;
+  onView: () => void;
   onDelete: () => void;
+  loadingDelete: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
-      {/* <Tooltip
-        content={"Edit AlarmDefendant"}
+      <Tooltip
+        content={"View Geofence"}
         color="primary"
         offset={5}
         showArrow
@@ -92,17 +90,17 @@ RenderFnParams<AlarmDefendant> & {
       >
         <Button
           onClick={() => {
-            onEdit();
+            onView();
           }}
-          title="Edit AlarmDefendant"
+          title="View Geofence"
           size="sm"
           variant="shadow"
           isIconOnly
           color="primary"
         >
-          <Icon.Edit size={18} />
+          <Icon.Eye size={18} />
         </Button>
-      </Tooltip> */}
+      </Tooltip>
       <Tooltip
         content={"Delete Alarm Defendant"}
         color="danger"
@@ -120,6 +118,7 @@ RenderFnParams<AlarmDefendant> & {
           variant="shadow"
           color="danger"
           isIconOnly
+          isDisabled={loadingDelete}
         >
           <Icon.Trash size={18} />
         </Button>
@@ -130,8 +129,9 @@ RenderFnParams<AlarmDefendant> & {
 
 export const AppAlarmDefendantsTable = ({
   items = [],
-  //   onEdit,
+  onView,
   onDelete,
+  loadingDelete,
 }: AlarmDefendantsTableProps) => {
   const columns: AppDataGridColumn<AlarmDefendant>[] = [
     {
@@ -163,6 +163,10 @@ export const AppAlarmDefendantsTable = ({
           onDelete: () => {
             onDelete(data);
           },
+          onView: () => {
+            onView(data);
+          },
+          loadingDelete: loadingDelete,
         }),
     },
   ];

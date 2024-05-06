@@ -14,21 +14,32 @@ export type Person = {
   deviceId: number;
   idDeviceType: number;
   imei: string;
+  officer: string;
+  phone: string;
+  showAlert: false;
   personPosition: {
+    battery: number;
+    bloodOxygen: number;
+    cardioFrequency: number;
     dateInit: string;
     dateFin: string;
-    positionDate: string;
-    battery: number;
+    delta: number;
+    geofences: Geofences[];
+    idPerson: number;
+    iddeviceType: number;
     lat: number;
     lon: number;
-    type: number;
-    cardioFrequency: number;
-    bloodOxygen: number;
+    positionDate: string;
     positionType: string;
-    delta: number;
+    positiontype: number;
+    type: number;
   };
 };
 
+export type Geofences = {
+  idGeofence: number;
+  geofence: string;
+};
 export type PersonAlert = {
   timestamp: string;
   alarmName: string;

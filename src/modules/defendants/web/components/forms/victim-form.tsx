@@ -15,6 +15,7 @@ import { EditVictimForm } from "./edit-victim-form";
 import { useDeleteVictim } from "../../../../victim/web/hooks/use-delete-victim";
 import { useGetVictimById } from "../../../../victim/web/hooks/use-get-victim-by-id";
 import { DefendantById } from "../../../domain/entities/defendant-by-id";
+import { AppToast } from "../../../../../presentation/Components/AppToast";
 // import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type VictimFormProps = {
@@ -32,10 +33,34 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
   const [visibleTableAddress, setVisibleTableAddress] = useToggle(false);
   const [visibleEditAddress, setVisibleEditAddress] = useToggle(false);
   const [visibleEditVictimForm, setVisibleEditVictimForm] = useToggle(false);
-  const { deleteVictim } = useDeleteVictim();
+  const {
+    deleteVictim,
+    error: errorDeleteVictim,
+    loading: loadingDeleteVictim,
+  } = useDeleteVictim();
   const [idAddres, setIdAddress] = useState<number | null>();
   const { addressPerson, getAddressPerson } = useGetAddressPerson();
-  const { deleteAddressPerson } = useDeleteAddressPerson();
+  const {
+    deleteAddressPerson,
+    error: errorDeleteAddress,
+    loading: loadingDeleteAddress,
+  } = useDeleteAddressPerson();
+
+  const onDeleteAddress = () => {
+    AppToast().fire({
+      title: "Deleted Address",
+      text: "The address was deleted succesfully",
+      icon: "success",
+    });
+  };
+
+  const onDelete = () => {
+    AppToast().fire({
+      title: "Deleted victim",
+      text: "The victim was deleted succesfully",
+      icon: "success",
+    });
+  };
   useEffect(() => {
     if (idDefendant) getVictims({ idDefendant: idDefendant, completeName: "" });
   }, [toggleReload]);
@@ -45,6 +70,40 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
       getVictimById({ idPerson: idVictim, completeName: "" });
     }
   }, [idVictim, toggleReload]);
+
+  useEffect(() => {
+    if (errorDeleteVictim) {
+      AppToast().fire({
+        title: "Error",
+        text: "An error occurred while trying to delete the victim",
+        icon: "error",
+      });
+    }
+    if (loadingDeleteVictim) {
+      AppToast().fire({
+        title: "Deleting victim",
+        text: "The victim is being  deleted. Please wait",
+        icon: "info",
+      });
+    }
+  }, [loadingDeleteVictim, errorDeleteVictim]);
+
+  useEffect(() => {
+    if (errorDeleteAddress) {
+      AppToast().fire({
+        title: "Error",
+        text: "An error occurred while trying to delete the address",
+        icon: "error",
+      });
+    }
+    if (loadingDeleteAddress) {
+      AppToast().fire({
+        title: "Deleting address",
+        text: "The address is being  deleted. Please wait",
+        icon: "info",
+      });
+    }
+  }, [loadingDeleteAddress, errorDeleteAddress]);
   return (
     <div
       // ref={parent}
@@ -92,8 +151,12 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
                   }}
                   onDelete={async (record) => {
                     await deleteVictim({ idPerson: record.record.idPerson });
+                    if (!errorDeleteVictim) {
+                      onDelete();
+                    }
                     setToggleReload(!toggleReload);
                   }}
+                  loadingDeleteVictim={loadingDeleteVictim}
                 />
                 {visibleEditVictimForm && (
                   <EditVictimForm
@@ -121,12 +184,14 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
                           await deleteAddressPerson({
                             idAddress: record.idAddress,
                           });
+                          if (!errorDeleteAddress) onDeleteAddress();
                           setToggleReload(!toggleReload);
                         }}
                         onEdit={({ record }) => {
                           setVisibleEditAddress(true);
                           setIdAddress(Number(record.idAddress));
                         }}
+                        loadingDeleteAddress={loadingDeleteAddress}
                       />
                     </div>
                     {visibleEditAddress && (

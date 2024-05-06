@@ -44,8 +44,8 @@ export const AppGeofence = ({
     <>
       <MapContainer
         ref={mapRef}
-        center={[51.505, -0.09]}
-        zoom={13}
+        center={[29.424349, -98.491142]}
+        zoom={10}
         scrollWheelZoom={true}
         style={{ height: "60vh", width: "100wh" }}
         id="map"
@@ -67,6 +67,7 @@ export const AppGeofence = ({
               circlemarker: false,
               marker: false,
               polyline: false,
+              polygon: false,
             }}
           />
         </FeatureGroup>

@@ -18,6 +18,7 @@ export type VictimsTableProps = {
   onAddAddress: (params: RenderFnParams<Victim>) => void;
   onShowAddress: (params: RenderFnParams<Victim>) => void;
   onDelete: (params: RenderFnParams<Victim>) => void;
+  loadingDeleteVictim: boolean;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
 };
@@ -110,12 +111,14 @@ const ActionsColumn = ({
   onAddAddress,
   onShowAddress,
   onDelete,
+  loadingDeleteVictim,
 }: // record,
 RenderFnParams<Victim> & {
   onEdit: () => void;
   onAddAddress: () => void;
   onShowAddress: () => void;
   onDelete: () => void;
+  loadingDeleteVictim: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
@@ -200,6 +203,7 @@ RenderFnParams<Victim> & {
           variant="shadow"
           color="danger"
           isIconOnly
+          isDisabled={loadingDeleteVictim}
         >
           <Icon.Trash size={18} />
         </Button>
@@ -214,6 +218,7 @@ export const AppVictimssTable = ({
   onDelete,
   onAddAddress,
   onShowAddress,
+  loadingDeleteVictim,
 }: VictimsTableProps) => {
   const columns: AppDataGridColumn<Victim>[] = [
     {
@@ -259,6 +264,7 @@ export const AppVictimssTable = ({
           onShowAddress: () => {
             onShowAddress(data);
           },
+          loadingDeleteVictim: loadingDeleteVictim,
         }),
     },
   ];

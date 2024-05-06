@@ -55,15 +55,9 @@ export const AddAlarmForm = ({
   const [dateFinish, setDateFinish] = useState<Date>(new Date());
   const [days, setDays] = useState<Selection>(new Set([]));
   const [nameException, setNameException] = useState("");
-  useEffect(() => {
-    console.log(exceptionItems);
-    console.log(days);
-  }, [exceptionItems, days]);
-  // console.log(setDateUTC);
   const [status, setStatus] = useState(true);
   const [geoJSON, setGeoJSON] = useState<GeoJSONO | null>();
-  // const [cantidad, setCantidad] = useState<number>(0);
-  // console.log(setCantidad);
+
   const daysOptions = [
     { label: "Sunday", value: "Sunday" },
     { label: "Monday", value: "Monday" },
@@ -115,7 +109,6 @@ export const AddAlarmForm = ({
     }
   };
   const onSubmitHandler = async (data: AssignAlarmDefendantFormValues) => {
-    // if (geoJSON && idDefendant) {
     if (exceptionItems.length > 0) {
       await assignAlarmDefendant({
         name: data.name,
@@ -134,10 +127,8 @@ export const AddAlarmForm = ({
         idStatus: status ? 1 : 0,
         idPersonSpecificAlarm: 0,
         lGeofence: [{ geofence: JSON.stringify(geoJSON) }],
-        // alarmException: dateUTC,
       });
     }
-    // }
     if (!errorAssignAlarm) {
       AppToast().fire({
         title: "Success",
@@ -156,7 +147,14 @@ export const AddAlarmForm = ({
         icon: "error",
       });
     }
-  }, [errorAssignAlarm]);
+    if (loadingAssignAlarm) {
+      AppToast().fire({
+        title: "Creating Alarm",
+        text: "The alarm is being created. Please wait",
+        icon: "info",
+      });
+    }
+  }, [errorAssignAlarm, loadingAssignAlarm]);
   useEffect(() => {
     getSpecificAlarm();
   }, []);
@@ -348,14 +346,12 @@ export const AddAlarmForm = ({
                                 ? "MMMM d, yyyy h:mm aa"
                                 : "h:mm aa"
                             }
-                            // timeCaption="Time"
                             inline
                             className="w-full"
                           />
                         </div>
                         {alarmType === 2 ? (
                           <div className="w-1/3 flex flex-col items-start justify-start ">
-                            {/* <AppFormLabel>Days</AppFormLabel> */}
                             <Select
                               label="Days Exception"
                               selectedKeys={days}
@@ -395,7 +391,6 @@ export const AddAlarmForm = ({
                             )
                           );
                         }}
-                        // onEdit={() => {}}
                       />
                     </div>
                   </div>

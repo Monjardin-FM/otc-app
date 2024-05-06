@@ -9,14 +9,10 @@ import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { Address } from "../../../domain/entities/address";
 import * as Icon from "react-feather";
 export type AddressPersonsTableProps = {
-  // onToggleStatus?: (index: Client) => void;
-  // onUpdateClient: (data: Client) => void;
-
+  loadingDeleteAddress: boolean;
   items?: Address[];
   onEdit: (params: RenderFnParams<Address>) => void;
   onDelete: (params: RenderFnParams<Address>) => void;
-  // onNotification: (params: RenderFnParams<UserManage>) => void;
-  // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -87,10 +83,12 @@ const StatusAddressPersonColumn = (params: RenderFnParams<Address>) => {
 const ActionsColumn = ({
   onEdit,
   onDelete,
+  loadingDeleteAddress,
 }: // record,
 RenderFnParams<Address> & {
   onEdit: () => void;
   onDelete: () => void;
+  loadingDeleteAddress: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
@@ -132,6 +130,7 @@ RenderFnParams<Address> & {
           variant="shadow"
           color="danger"
           isIconOnly
+          isDisabled={loadingDeleteAddress}
         >
           <Icon.Trash size={18} />
         </Button>
@@ -144,6 +143,7 @@ export const AppAddressPersonsTable = ({
   items = [],
   onEdit,
   onDelete,
+  loadingDeleteAddress,
 }: AddressPersonsTableProps) => {
   const columns: AppDataGridColumn<Address>[] = [
     {
@@ -178,6 +178,7 @@ export const AppAddressPersonsTable = ({
           onDelete: () => {
             onDelete(data);
           },
+          loadingDeleteAddress: loadingDeleteAddress,
         }),
     },
   ];

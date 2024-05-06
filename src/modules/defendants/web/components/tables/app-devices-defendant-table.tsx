@@ -15,6 +15,7 @@ export type DefendantDevicesTableProps = {
   items?: DefendantDevice[];
   onEdit: (params: RenderFnParams<DefendantDevice>) => void;
   onDelete: (params: RenderFnParams<DefendantDevice>) => void;
+  loadingDeleteDefendantDevice: boolean;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
 };
@@ -77,10 +78,12 @@ const StatusDefendantDeviceColumn = (
 const ActionsColumn = ({
   // onEdit,
   onDelete,
+  loadingDeleteDefendantDevice,
 }: // record,
 RenderFnParams<DefendantDevice> & {
   onEdit: () => void;
   onDelete: () => void;
+  loadingDeleteDefendantDevice: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-2 static">
@@ -122,6 +125,7 @@ RenderFnParams<DefendantDevice> & {
           variant="shadow"
           color="danger"
           isIconOnly
+          isDisabled={loadingDeleteDefendantDevice}
         >
           <Icon.Trash size={18} />
         </Button>
@@ -134,6 +138,7 @@ export const AppDefendantDevicesTable = ({
   items = [],
   onEdit,
   onDelete,
+  loadingDeleteDefendantDevice,
 }: DefendantDevicesTableProps) => {
   const columns: AppDataGridColumn<DefendantDevice>[] = [
     {
@@ -162,6 +167,7 @@ export const AppDefendantDevicesTable = ({
           onDelete: () => {
             onDelete(data);
           },
+          loadingDeleteDefendantDevice: loadingDeleteDefendantDevice,
         }),
     },
   ];

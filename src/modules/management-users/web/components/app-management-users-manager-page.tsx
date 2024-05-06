@@ -13,14 +13,24 @@ import { UserRole } from "../../../user/domain/entities/user-role";
 import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
 import * as Icon from "react-feather";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Button, Tooltip, useDisclosure } from "@nextui-org/react";
 export const ManagementUsersManagerPage = () => {
-  const [visibleNewUserModal, setVisibleNewUserModal] = useToggle(false);
-  const [visibleEditUserModal, setVisibleEditUserModal] = useToggle(false);
+  // const [visibleNewUserModal, setVisibleNewUserModal] = useToggle(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isOpenEditUser,
+    onOpen: onOpenUser,
+    onOpenChange: onOpenChangeUser,
+  } = useDisclosure();
+  // const [visibleEditUserModal, setVisibleEditUserModal] = useToggle(false);
   const { users, getUsers, error, loading: loadingUsers } = useGetUsers();
   const [toggleReload, setToggleReload] = useToggle(false);
   const [userId, setUserId] = useState<number | null>(1);
-  const { deleteUser, error: errorDelete } = useDeleteUser();
+  const {
+    deleteUser,
+    error: errorDelete,
+    loading: loadingDeleteUser,
+  } = useDeleteUser();
   const [search, setSearch] = useState<string>("");
   const onClick = (search: string) => {
     getUsers({ completeName: search });
@@ -57,6 +67,15 @@ export const ManagementUsersManagerPage = () => {
       });
     }
   }, [errorDelete]);
+  useEffect(() => {
+    if (loadingDeleteUser) {
+      AppToast().fire({
+        title: "Deleting user",
+        text: "User is being deleted. Please wait",
+        icon: "info",
+      });
+    }
+  }, [loadingDeleteUser]);
   return (
     <AppAuthorizationGuard
       roles={
@@ -66,13 +85,15 @@ export const ManagementUsersManagerPage = () => {
     >
       {!users && <AppLoading />}
       <AppNewUserModal
-        isVisible={visibleNewUserModal}
-        onClose={() => setVisibleNewUserModal(false)}
+        isVisible={isOpen}
+        onOpenChange={onOpenChange}
+        // onClose={() => setVisibleNewUserModal(false)}
         onReload={() => setToggleReload(!toggleReload)}
       />
       <AppEditUserModal
-        isVisible={visibleEditUserModal}
-        onClose={() => setVisibleEditUserModal(false)}
+        isVisible={isOpenEditUser}
+        // onClose={() => setVisibleEditUserModal(false)}
+        onOpenChangeUser={onOpenChangeUser}
         onReload={() => setToggleReload(!toggleReload)}
         idUser={userId}
       />
@@ -99,7 +120,8 @@ export const ManagementUsersManagerPage = () => {
           >
             <Button
               color="warning"
-              onClick={() => setVisibleNewUserModal(true)}
+              // onClick={() => setVisibleNewUserModal(true)}
+              onPress={onOpen}
               isIconOnly
               size="md"
             >
@@ -109,6 +131,7 @@ export const ManagementUsersManagerPage = () => {
         </div>
         <div className="container mx-auto mt-5 mb-16">
           <AppManagementUsersTable
+            loadingDeleteUser={loadingDeleteUser}
             onDelete={async (record) => {
               await deleteUser({ idPerson: record.record.idPerson });
               if (!errorDelete) onDelete();
@@ -116,7 +139,7 @@ export const ManagementUsersManagerPage = () => {
             }}
             onEdit={({ record }) => {
               setUserId(record.idPerson);
-              setVisibleEditUserModal(true);
+              onOpenUser();
             }}
             items={users}
           />

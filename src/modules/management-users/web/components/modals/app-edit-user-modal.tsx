@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { useGetCounties } from "../../hooks/use-get-county";
 import { useGetGenders } from "../../hooks/use-get-genders";
 import { useGetRoles } from "../../hooks/use-get-roles";
@@ -7,29 +6,30 @@ import { useGetUserById } from "../../hooks/use-get-user-by-id";
 import { Formik } from "formik";
 import { useUpdateUser } from "../../hooks/use-update-user";
 import * as Yup from "yup";
+import * as Icon from "react-feather";
 import { AppToast } from "../../../../../presentation/Components/AppToast";
-import {
-  AppModal,
-  AppModalBody,
-  AppModalContent,
-  AppModalFooter,
-  AppModalHeader,
-  AppModalOverlay,
-} from "../../../../../presentation/Components/AppModal";
 import {
   AppFormField,
   AppFormLabel,
   AppFormHelperText,
 } from "../../../../../presentation/Components/AppForm";
 import AppTextField from "../../../../../presentation/Components/AppTextField";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
 import AppSelect from "../../../../../presentation/Components/AppSelect";
 import { Switch } from "@headlessui/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react";
 
 export type AppEditUserModalProps = {
   isVisible: boolean;
-  onClose: () => void;
+  // onClose: () => void;
   onReload: () => void;
+  onOpenChangeUser: () => void;
   idUser?: number | null;
 };
 type UserUpdateFormValues = {
@@ -44,7 +44,8 @@ type UserUpdateFormValues = {
 };
 export const AppEditUserModal = ({
   isVisible,
-  onClose,
+  // onClose,
+  onOpenChangeUser,
   onReload,
   idUser,
 }: AppEditUserModalProps) => {
@@ -119,14 +120,30 @@ export const AppEditUserModal = ({
         text: "Information saved successfully",
         icon: "success",
       });
-      onClose();
+      onOpenChangeUser();
       onReload();
     }
   }, [errorUpdate]);
+  useEffect(() => {
+    if (loading) {
+      AppToast().fire({
+        title: "Updating information user",
+        text: "User information is being updated.Please wait",
+        icon: "info",
+      });
+    }
+  }, [loading]);
   return (
-    <AppModal isVisible={isVisible} onClose={onClose} size="3xl">
-      <AppModalOverlay>
-        <AppModalContent>
+    <Modal
+      isOpen={isVisible}
+      onOpenChange={onOpenChangeUser}
+      scrollBehavior="outside"
+      backdrop="blur"
+      size="4xl"
+    >
+      {/* <AppModalOverlay> */}
+      <ModalContent>
+        {(onClose) => (
           <Formik
             enableReinitialize
             initialValues={{
@@ -144,8 +161,8 @@ export const AppEditUserModal = ({
           >
             {({ handleSubmit, handleChange, values, errors }) => (
               <form autoComplete="off" onSubmit={handleSubmit}>
-                <AppModalHeader>Edit User</AppModalHeader>
-                <AppModalBody>
+                <ModalHeader>Edit User</ModalHeader>
+                <ModalBody>
                   <div className="grid grid-cols-12 gap-y-4 gap-x-3">
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Name</AppFormLabel>
@@ -276,6 +293,10 @@ export const AppEditUserModal = ({
                           {errors.password}
                         </AppFormHelperText>
                       )}
+                      <div className="border border-warn-700 w-full bg-warn-200 text-xs p-2 rounded-lg text-warn-900">
+                        If the password is empty it will not be updated,
+                        otherwise it will be updated
+                      </div>
                     </AppFormField>
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Status</AppFormLabel>
@@ -302,23 +323,28 @@ export const AppEditUserModal = ({
                       </div>
                     </AppFormField>
                   </div>
-                </AppModalBody>
-                <AppModalFooter>
-                  <AppButton onClick={onClose}>Cancel</AppButton>
-                  <AppButton
-                    colorScheme="primary"
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="ghost" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    endContent={<Icon.Save size={18} />}
+                    color="primary"
                     type="submit"
                     isLoading={loading}
                     isDisabled={loading}
+                    variant="shadow"
                   >
-                    Save
-                  </AppButton>
-                </AppModalFooter>
+                    Update
+                  </Button>
+                </ModalFooter>
               </form>
             )}
           </Formik>
-        </AppModalContent>
-      </AppModalOverlay>
-    </AppModal>
+        )}
+      </ModalContent>
+      {/* </AppModalOverlay> */}
+    </Modal>
   );
 };

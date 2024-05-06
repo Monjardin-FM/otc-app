@@ -1,4 +1,4 @@
-type Coordinates = [number, number];
+export type Coordinates = [number, number];
 
 type Geometry = {
   type: string;

@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { useGetDetailTracking } from "../../hooks/use-get-detail-tracking";
 import { AppTrackingDetailsTable } from "../tables/app-tracking-detail-table";
 import { MapTracking } from "../maps/map-tracking";
-import { useGetUsers } from "../../../../management-users/web/hooks/use-get-users";
-import { UserManage } from "../../../../management-users/domain/entities/userManage";
-import { PersonAlert } from "../../../domain/entities/tracking-detail";
+import { Person, PersonAlert } from "../../../domain/entities/tracking-detail";
 
 import {
   Chip,
@@ -19,6 +17,7 @@ import * as Icon from "react-feather";
 import { AppHistoricPositionTab } from "./app-historic-position-tab";
 import { useShowAlerts } from "../../../../tracking-plus/web/hooks/use-show-alerts";
 import { AppToast } from "../../../../../presentation/Components/AppToast";
+import { GeoJSONO } from "../../../../defendants/domain/entities/geoJSON";
 export type AppTrackingModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -29,18 +28,62 @@ export const AppTrackingModal = ({
 }: // toggle,
 // personId,
 AppTrackingModalProps) => {
-  const { trackingDetail, getTrackingDetail } = useGetDetailTracking();
-  const { getUsers, users } = useGetUsers();
-  const [officer, setOfficer] = useState<UserManage | null>();
+  const {
+    trackingDetail,
+    getTrackingDetail,
+    loading: loadingTracking,
+  } = useGetDetailTracking();
   const [alertPerson, setAlertPerson] = useState<PersonAlert[] | null>();
-  // const { findHistoricPosition, historicPosition } = useFindHistoricPosition();
   const [userId, setUserId] = useState<number | null>();
-  // Search Historic Position
+  const [defendantInfo, setDefendantInfo] = useState<Person | null>();
   const {
     showAlerts,
     loading: loadingShowAlerts,
     error: errorShowAlert,
   } = useShowAlerts();
+  const [positionDefendant, setPositionDefendant] = useState<
+    [number, number] | null
+  >([0, 0]);
+  const [isPositionDefendant, setIspositionDefendant] = useState(false);
+  const [defendantItem, setDefendantItem] = useState<Person | null>();
+  const [victims, setVictims] = useState<Person[] | null>();
+  const [geofences, setGeofences] =
+    useState<{ idGeofence: number; geofence: GeoJSONO }[]>();
+  useEffect(() => {
+    if (trackingDetail) {
+      const defendantPos = trackingDetail.person.find(
+        (person) => person.idPersonType === 2
+      );
+      if (defendantPos && defendantPos.personPosition) {
+        const geofencesList = defendantPos?.personPosition.geofences;
+        const geofencesJSON = geofencesList?.map((geo) => ({
+          idGeofence: geo.idGeofence,
+          geofence: JSON.parse(geo.geofence),
+        }));
+
+        setGeofences(geofencesJSON);
+      }
+      const victimsDefendant = trackingDetail.person.filter(
+        (person) => person.idPersonType === 3
+      );
+      if (defendantPos && defendantPos.personPosition) {
+        setDefendantItem(defendantPos);
+        setPositionDefendant([
+          defendantPos.personPosition.lat,
+          defendantPos.personPosition.lon,
+        ]);
+        setIspositionDefendant(true);
+      } else {
+        setPositionDefendant(null);
+        setIspositionDefendant(false);
+      }
+      if (victimsDefendant && victimsDefendant.length > 0) {
+        setVictims(victimsDefendant);
+      } else {
+        setVictims(null);
+      }
+    }
+  }, [trackingDetail]);
 
   const handleShowAlert = async (idPerson: number) => {
     await showAlerts({ idPerson: idPerson, showalerts: false });
@@ -66,45 +109,34 @@ AppTrackingModalProps) => {
   const handleClose = () => {
     setUserId(null);
     setAlertPerson([]);
-    setOfficer(null);
+    setDefendantInfo(null);
+    setPositionDefendant(null);
+    setVictims(null);
+    setDefendantItem(null);
     onClose();
+    // setIspositionDefendant(false);
   };
-
-  // Get users to find the officer assigned to defendant
-  useEffect(() => {
-    getUsers({ completeName: "" });
-  }, [userId]);
-  // Filter to find the officer assigned to defendant
-  useEffect(() => {
-    if (users) {
-      const officerFilter = users.find(
-        (item) => item.idPerson === trackingDetail?.person[0].idOfficer
-      );
-      if (officerFilter) setOfficer(officerFilter);
-    }
-  }, [users]);
 
   // get the idDefendant
   useEffect(() => {
-    const storedUserId = localStorage.getItem("trackingId");
-    if (storedUserId) {
-      setUserId(Number(storedUserId)); // Parseamos el valor a número
+    if (isVisible) {
+      const storedUserId = localStorage.getItem("trackingId");
+      if (storedUserId) {
+        setUserId(Number(storedUserId)); // Parseamos el valor a número
+      }
     }
-  }, []);
+  }, [isVisible]);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("trackingId");
-    // getTrackingDetail({ personId: Number(storedUserId) });
     const fetchData = () => {
       if (storedUserId) {
         getTrackingDetail({ personId: Number(storedUserId) });
       }
     };
     if (isVisible) {
-      // Realiza la petición inmediatamente al abrir el modal
       fetchData();
       const intervalId = setInterval(fetchData, 30000);
-      // Retorna una función de limpieza para detener el intervalo cuando el componente se desmonte o la dependencia cambie
       return () => {
         clearInterval(intervalId);
       };
@@ -115,6 +147,9 @@ AppTrackingModalProps) => {
   useEffect(() => {
     if (trackingDetail) {
       setAlertPerson(trackingDetail.personAlert);
+      setDefendantInfo(
+        trackingDetail?.person.find((item) => item.idPersonType === 2)
+      );
     }
   }, [trackingDetail, userId]);
 
@@ -137,17 +172,14 @@ AppTrackingModalProps) => {
               <div className="w-full flex flex-row items-center justify-evenly mb-2">
                 <Chip color="success" variant="shadow">
                   Defendant Name:{" "}
-                  <b>
-                    {trackingDetail &&
-                      `${trackingDetail?.person[0].name} ${trackingDetail?.person[0].lastName} `}
-                  </b>{" "}
+                  <b>{`${defendantInfo?.name} ${defendantInfo?.lastName} `}</b>{" "}
                 </Chip>
                 <Chip color="primary" variant="dot">
-                  Phone: <b>{}</b>
+                  Phone: <b>{defendantInfo?.phone}</b>
                 </Chip>
                 <Chip color="success" variant="dot">
                   Officer:
-                  <b>{officer && ` ${officer?.name} ${officer?.lastName}`}</b>
+                  <b>{defendantInfo?.officer}</b>
                 </Chip>
               </div>
               <Tabs
@@ -168,16 +200,21 @@ AppTrackingModalProps) => {
                   <div>
                     <div className="w-full  rounded-lg bg-gray-200 mb-5">
                       <MapTracking
-                        // historicPosition={historicPosition}
-                        trackingDetail={trackingDetail}
+                        loadingTracking={loadingTracking}
+                        isPositionDefendant={isPositionDefendant}
+                        defendantItem={defendantItem}
+                        positionDefendant={positionDefendant}
+                        victims={victims}
+                        geofences={geofences}
                         onClose={onClose}
                       />
                     </div>
 
                     <div className="w-full mt-5">
                       <AppTrackingDetailsTable
-                        onShowAlerts={({ record }) => {
-                          handleShowAlert(record.personId);
+                        onShowAlerts={() => {
+                          if (defendantInfo)
+                            handleShowAlert(defendantInfo?.idPerson);
                         }}
                         items={alertPerson}
                         loadingShowAlerts={loadingShowAlerts}

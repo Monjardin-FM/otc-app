@@ -76,7 +76,14 @@ export const AddressForm = ({
         icon: "error",
       });
     }
-  }, [errorAddress]);
+    if (loadingAddress) {
+      AppToast().fire({
+        title: "Saving Address",
+        text: "The address is being saved. Please wait",
+        icon: "info",
+      });
+    }
+  }, [errorAddress, loadingAddress]);
   useEffect(() => {
     getCities();
   }, []);

@@ -1,11 +1,7 @@
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Popup, useMap, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Popup, Marker, GeoJSON } from "react-leaflet";
 import * as IconFeather from "react-feather";
-import { HistoricPosition } from "../../../domain/entities/historic-position";
-import {
-  Person,
-  TrackingDetail,
-} from "../../../domain/entities/tracking-detail";
+// import { HistoricPosition } from "../../../domain/entities/historic-position";
+import { Person } from "../../../domain/entities/tracking-detail";
 import "dayjs/locale/es"; // Importa el idioma local si es necesario
 import { Card, Skeleton } from "@nextui-org/react";
 import { Player } from "@lottiefiles/react-lottie-player";
@@ -16,132 +12,37 @@ import utc from "dayjs/plugin/utc"; // Importa el plugin UTC de Day.js
 import timezone from "dayjs/plugin/timezone"; // Importa el plugin de zona horaria de Day.js
 import { Icon } from "leaflet";
 import DefIcon from "../../../../../assets/icons/defendant-marker.png";
-import { useEffectOnce } from "react-use";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
 type MapTrackingProps = {
-  historicPosition?: HistoricPosition[];
-  trackingDetail?: TrackingDetail;
+  loadingTracking: boolean;
+  positionDefendant?: [number, number] | null;
+  isPositionDefendant: boolean;
+  defendantItem?: Person | null;
+  victims?: Person[] | null;
   onClose: () => void;
+  geofences?: { idGeofence: number; geofence: any }[];
 };
-type FlyNewPositionProps = {
-  positionDefendant: number[];
-  defendantItem?: Person;
-};
-export const FlyNewPosition = ({
+
+export const MapTracking = ({
   defendantItem,
   positionDefendant,
-}: FlyNewPositionProps) => {
-  const map = useMap();
-  // useEffect(() => {
-  //   map.flyTo([positionDefendant[0], positionDefendant[1]], 18);
-
-  //   console.log("Running effect once on mount");
-  //   if (
-  //     positionDefendant &&
-  //     positionDefendant[0] > 0 &&
-  //     positionDefendant[1] > 0
-  //   ) {
-  //     map.flyTo([positionDefendant[0], positionDefendant[1]], 18);
-  //   }
-
-  //   return () => {
-  //     // map.flyTo([positionDefendant[0], positionDefendant[1]], 18);
-  //     console.log("Running clean-up of effect on unmount");
-  //   };
-  // }, []);
-
-  useEffectOnce(() => {
-    if (positionDefendant)
-      map.flyTo([positionDefendant[0], positionDefendant[1]], 18);
-  });
+  victims,
+  geofences,
+}: MapTrackingProps) => {
   const legalIcon = new Icon({
     iconUrl: DefIcon,
     iconSize: [35, 35], // size of the icon
     iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
     popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
   });
-  return positionDefendant ? (
-    <Marker
-      key={defendantItem?.idDefendant}
-      position={[positionDefendant[0], positionDefendant[1]]}
-      icon={legalIcon}
-      //ref={markerRef}
-    >
-      <Popup>
-        <div className="flex flex-col gap-2">
-          <h1 className="text-red-700 text-center font-semibold">{`Defendant: ${defendantItem?.name} ${defendantItem?.lastName}`}</h1>
-          <ul>
-            <li className="flex flex-row items-center gap-1">
-              <IconFeather.Heart size={10} color="red" />
-              <span>{`Cardio Frequency: ${defendantItem?.personPosition.cardioFrequency}`}</span>
-            </li>
-
-            <li className="flex flex-row items-center gap-1">
-              <IconFeather.Battery size={10} color="green" />
-              <span>{`Battery: ${defendantItem?.personPosition.battery}`}</span>
-            </li>
-            <li className="flex flex-row items-center gap-1">
-              <IconFeather.Calendar size={10} color="blue" />
-              <span>{`Date: ${dayjs
-                .utc(defendantItem?.personPosition.positionDate)
-                .local()
-                .format("DD/MM/YYYY HH:mm:ss A")}`}</span>
-            </li>
-            <li className="flex flex-row items-center gap-1">
-              <IconFeather.Shield size={10} color="red" />
-              <span>{`Blood Oxygen: ${defendantItem?.personPosition.bloodOxygen}`}</span>
-            </li>
-          </ul>
-        </div>
-      </Popup>
-    </Marker>
-  ) : null;
-};
-export const MapTracking = ({
-  // historicPosition,
-  trackingDetail,
-}: MapTrackingProps) => {
-  const [positionDefendant, setPositionDefendant] = useState([0, 0]);
-  const [isPositionDefendant, setIspositionDefendant] = useState(false);
-  const [defendantItem, setDefendantItem] = useState<Person>();
-  const [victims, setVictims] = useState<Person[] | null>();
-  useEffect(() => {
-    if (trackingDetail) {
-      const defendantPos = trackingDetail.person.find(
-        (person) => person.idPersonType === 2
-      );
-      const victimsDefendant = trackingDetail.person.filter(
-        (person) => person.idPersonType === 3
-      );
-      if (defendantPos && defendantPos.personPosition) {
-        setDefendantItem(defendantPos);
-        setPositionDefendant([
-          defendantPos.personPosition.lat,
-          defendantPos.personPosition.lon,
-        ]);
-        setIspositionDefendant(true);
-      } else {
-        setPositionDefendant([0, 0]);
-        setIspositionDefendant(false);
-      }
-      if (victimsDefendant && victimsDefendant.length > 0) {
-        setVictims(victimsDefendant);
-      } else {
-        setVictims(null);
-      }
-    }
-  }, [trackingDetail]);
-
   return (
     <>
-      {isPositionDefendant ? (
+      {positionDefendant && defendantItem ? (
         <MapContainer
-          center={
-            positionDefendant
-              ? [positionDefendant[0], positionDefendant[1]]
-              : [0, 0]
-          }
+          center={[positionDefendant[0], positionDefendant[1]]}
           zoom={20}
           scrollWheelZoom={true}
           style={{ height: "70vh", width: "100wh" }}
@@ -152,21 +53,52 @@ export const MapTracking = ({
             titleCancel="Exit fullscreen mode"
             content={"[ ]"}
           />
-          <FlyNewPosition
-            positionDefendant={positionDefendant}
-            defendantItem={defendantItem}
-          />
+
+          {defendantItem && (
+            <Marker
+              key={defendantItem?.idDefendant}
+              position={[positionDefendant[0], positionDefendant[1]]}
+              icon={legalIcon}
+            >
+              <Popup>
+                <div className="flex flex-col gap-2">
+                  <h1 className="text-red-700 text-center font-semibold">{`Defendant: ${defendantItem?.name} ${defendantItem?.lastName}`}</h1>
+                  <ul>
+                    <li className="flex flex-row items-center gap-1">
+                      <IconFeather.Heart size={10} color="red" />
+                      <span>{`Cardio Frequency: ${defendantItem?.personPosition.cardioFrequency}`}</span>
+                    </li>
+
+                    <li className="flex flex-row items-center gap-1">
+                      <IconFeather.Battery size={10} color="green" />
+                      <span>{`Battery: ${defendantItem?.personPosition.battery}`}</span>
+                    </li>
+                    <li className="flex flex-row items-center gap-1">
+                      <IconFeather.Calendar size={10} color="blue" />
+                      <span>{`Date: ${dayjs
+                        .utc(defendantItem?.personPosition.positionDate)
+                        .local()
+                        .format("DD/MM/YYYY HH:mm:ss A")}`}</span>
+                    </li>
+                    <li className="flex flex-row items-center gap-1">
+                      <IconFeather.Shield size={10} color="red" />
+                      <span>{`Blood Oxygen: ${defendantItem?.personPosition.bloodOxygen}`}</span>
+                    </li>
+                  </ul>
+                </div>
+              </Popup>
+            </Marker>
+          )}
+
           {victims?.map((victim) => {
             if (victim.personPosition) {
               return (
                 <Marker
-                  // icon={}
                   key={victim?.idPerson}
                   position={[
                     victim.personPosition.lat,
                     victim.personPosition.lon,
                   ]}
-                  //ref={markerRef}
                 >
                   <Popup>
                     <div className="flex flex-col gap-2">
@@ -199,6 +131,13 @@ export const MapTracking = ({
               );
             } else return "";
           })}
+
+          {geofences &&
+            geofences?.map((geofence) => {
+              return (
+                <GeoJSON key={geofence.idGeofence} data={geofence.geofence} />
+              );
+            })}
           <TileLayer
             attribution="&copy; OpenStreetMap</a> "
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

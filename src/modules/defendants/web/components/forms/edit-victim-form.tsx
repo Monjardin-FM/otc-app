@@ -243,6 +243,10 @@ export const EditVictimForm = ({
                   {errors.password}
                 </AppFormHelperText>
               )}
+              <div className="border border-warn-700 w-full bg-warn-200 text-xs p-2 rounded-lg text-warn-900">
+                If the password is empty it will not be updated, otherwise it
+                will be updated
+              </div>
             </AppFormField>
             {/* <div className="col-span-12">
                 <AppButton

@@ -15,6 +15,7 @@ export type ManagementUsersTableProps = {
   items?: UserManage[];
   onEdit: (params: RenderFnParams<UserManage>) => void;
   onDelete: (params: RenderFnParams<UserManage>) => void;
+  loadingDeleteUser: boolean;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -75,10 +76,12 @@ const EmailUserColumn = (params: RenderFnParams<UserManage>) => {
 const ActionsColumn = ({
   onEdit,
   // record,
+  loadingDeleteUser,
   onDelete,
 }: RenderFnParams<UserManage> & {
   onEdit: () => void;
   onDelete: () => void;
+  loadingDeleteUser: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-8">
@@ -126,6 +129,8 @@ const ActionsColumn = ({
           variant="shadow"
           color="danger"
           isIconOnly
+          isDisabled={loadingDeleteUser}
+          // isLoading={loadingDeleteUser}
         >
           <Icon.Trash size={18} />
         </Button>
@@ -138,6 +143,7 @@ export const AppManagementUsersTable = ({
   items = [],
   onEdit,
   onDelete,
+  loadingDeleteUser,
 }: ManagementUsersTableProps) => {
   const columns: AppDataGridColumn<UserManage>[] = [
     {
@@ -171,6 +177,7 @@ export const AppManagementUsersTable = ({
           onDelete: () => {
             onDelete(data);
           },
+          loadingDeleteUser: loadingDeleteUser,
         }),
     },
   ];

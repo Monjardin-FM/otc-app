@@ -84,7 +84,14 @@ AddressFormProps) => {
         icon: "error",
       });
     }
-  }, [errorUpdateAddress]);
+    if (loadingUpdateAddress) {
+      AppToast().fire({
+        title: "Saving Address",
+        text: "The address is being saved. Please wait",
+        icon: "info",
+      });
+    }
+  }, [errorUpdateAddress, loadingUpdateAddress]);
   useEffect(() => {
     getCities();
     if (idAddress) {
@@ -97,7 +104,7 @@ AddressFormProps) => {
       setIdStatus(address?.idStatus === 1);
       setIdCity(address?.idCity);
     }
-  }, [address, idAddress]);
+  }, [address]);
   useEffect(() => {
     if (cities) {
       setCitiesOptions(
@@ -112,10 +119,10 @@ AddressFormProps) => {
     <div className="col-span-12 grid grid-cols-12 gap-3 border border-gray-300 rounded-lg p-6 bg-gray-200">
       <Formik
         initialValues={{
+          city: address?.idCity,
           idAddressType: address?.idAddressType ?? 0,
           zipCode: address?.zipCode ?? "",
           streetAvenue: address?.streetAvenue ?? "",
-          idCity: address?.idCity ?? 0,
         }}
         enableReinitialize
         validationSchema={validationSchemaDefendant}
@@ -174,21 +181,25 @@ AddressFormProps) => {
             <AppFormField className="col-span-3">
               <AppFormLabel>City</AppFormLabel>
               <Select
-                name="idCity"
+                name="city"
                 options={citiesOptions}
-                defaultValue={
+                // defaultValue={
+                //   citiesOptions &&
+                //   citiesOptions.find((item) => item.value === idCity)
+                // }
+                value={
                   citiesOptions &&
                   citiesOptions.find((item) => item.value === idCity)
                 }
-                isSearchable
+                isSearchable={true}
                 onChange={(e) => setIdCity(Number(e?.value))}
               />
-              {errors.idCity && (
+              {/* {errors.city && (
                 <AppFormHelperText colorSchema="red">
-                  {errors.idCity}
+                  {errors.city}
                 </AppFormHelperText>
-              )}
-              {idCity}
+              )} */}
+              {/* {idCity} */}
             </AppFormField>
             <AppFormField className="col-span-3">
               <AppFormLabel>Status</AppFormLabel>

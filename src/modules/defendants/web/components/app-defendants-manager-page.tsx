@@ -28,7 +28,11 @@ export const AppDefendantsManagerPage = () => {
   const [visibleNewDefendantModal, setVisibleNewDefendantModal] =
     useToggle(false);
   const [search, setSearch] = useState<string>("");
-  const { deleteDefendant, error: errorDelete } = useDeleteDefendant();
+  const {
+    deleteDefendant,
+    error: errorDelete,
+    loading: loadingDeleteDefendant,
+  } = useDeleteDefendant();
   const [idDefendant, setIdDefendant] = useState<number | null>(null);
   const [visibleEditSelectionModal, setVIsibleEditSelectionmodal] =
     useToggle(false);
@@ -64,10 +68,17 @@ export const AppDefendantsManagerPage = () => {
       AppToast().fire({
         title: "Error",
         icon: "error",
-        text: "An error occurred while trying to delete the user",
+        text: "An error occurred while trying to delete the defendant",
       });
     }
-  }, [errorDelete]);
+    if (loadingDeleteDefendant) {
+      AppToast().fire({
+        title: "Deleting Defendant",
+        icon: "info",
+        text: "The defendant is being deleted. Please wait",
+      });
+    }
+  }, [errorDelete, loadingDeleteDefendant]);
   return (
     <AppAuthorizationGuard
       roles={
@@ -183,6 +194,7 @@ export const AppDefendantsManagerPage = () => {
               if (!errorDelete) onDelete();
               setToggleReload(!toggleReload);
             }}
+            loadingDeleteDefendant={loadingDeleteDefendant}
           />
         </div>
       </AppPageTransition>

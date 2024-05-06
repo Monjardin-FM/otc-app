@@ -5,15 +5,9 @@ import { useGetRoles } from "../../hooks/use-get-roles";
 import { useSaveUser } from "../../hooks/use-save-user";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import * as Icon from "react-feather";
 import { AppToast } from "../../../../../presentation/Components/AppToast";
-import {
-  AppModal,
-  AppModalBody,
-  AppModalContent,
-  AppModalFooter,
-  AppModalHeader,
-  AppModalOverlay,
-} from "../../../../../presentation/Components/AppModal";
+
 import {
   AppFormField,
   AppFormHelperText,
@@ -21,13 +15,21 @@ import {
 } from "../../../../../presentation/Components/AppForm";
 import AppTextField from "../../../../../presentation/Components/AppTextField";
 import AppSelect from "../../../../../presentation/Components/AppSelect";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
 import { Switch } from "@headlessui/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react";
 
 export type AppNewUserModalProps = {
   isVisible: boolean;
-  onClose: () => void;
+  // onClose: () => void;
   onReload: () => void;
+  onOpenChange: () => void;
 };
 type UserCreateFormValues = {
   name: string;
@@ -41,7 +43,8 @@ type UserCreateFormValues = {
 };
 export const AppNewUserModal = ({
   isVisible,
-  onClose,
+  // onClose,
+  onOpenChange,
   onReload,
 }: AppNewUserModalProps) => {
   const { counties, getCounties } = useGetCounties();
@@ -107,14 +110,31 @@ export const AppNewUserModal = ({
         text: "User created successfully",
         icon: "success",
       });
-      onClose();
+      // onClose();
+      onOpenChange();
       onReload();
     }
   }, [responseCreateUser]);
+  useEffect(() => {
+    if (loading) {
+      AppToast().fire({
+        title: "Creating user",
+        text: "User is being created. Please wait",
+        icon: "info",
+      });
+    }
+  }, [loading]);
   return (
-    <AppModal isVisible={isVisible} onClose={onClose} size="3xl">
-      <AppModalOverlay>
-        <AppModalContent>
+    <Modal
+      isOpen={isVisible}
+      onOpenChange={onOpenChange}
+      size="4xl"
+      scrollBehavior="outside"
+      backdrop="blur"
+    >
+      {/* <AppModalOverlay> */}
+      <ModalContent>
+        {(onClose) => (
           <Formik
             enableReinitialize
             initialValues={{
@@ -132,8 +152,8 @@ export const AppNewUserModal = ({
           >
             {({ handleSubmit, handleChange, values, errors }) => (
               <form autoComplete="off" onSubmit={handleSubmit}>
-                <AppModalHeader>New User</AppModalHeader>
-                <AppModalBody>
+                <ModalHeader>New User</ModalHeader>
+                <ModalBody>
                   <div className="grid grid-cols-12 gap-y-4 gap-x-3">
                     <AppFormField className="col-span-6">
                       <AppFormLabel>Name</AppFormLabel>
@@ -290,23 +310,28 @@ export const AppNewUserModal = ({
                       </div>
                     </AppFormField>
                   </div>
-                </AppModalBody>
-                <AppModalFooter>
-                  <AppButton onClick={onClose}>Cancel</AppButton>
-                  <AppButton
-                    colorScheme="primary"
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" onPress={onClose} variant="ghost">
+                    Cancel
+                  </Button>
+                  <Button
+                    endContent={<Icon.Save size={18} />}
+                    color="primary"
                     type="submit"
                     isLoading={loading}
                     isDisabled={loading}
+                    variant="shadow"
                   >
                     Save
-                  </AppButton>
-                </AppModalFooter>
+                  </Button>
+                </ModalFooter>
               </form>
             )}
           </Formik>
-        </AppModalContent>
-      </AppModalOverlay>
-    </AppModal>
+        )}
+      </ModalContent>
+      {/* </AppModalOverlay> */}
+    </Modal>
   );
 };
