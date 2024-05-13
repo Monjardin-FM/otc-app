@@ -7,18 +7,12 @@ import {
 } from "../../../../../presentation/Components/AppDataGrid";
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
-import { AppTooltip } from "../../../../../presentation/Components/AppTooltip";
-import { AppBadge } from "../../../../../presentation/Components/AppBadge";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
+import { Button, Chip, Tooltip } from "@nextui-org/react";
 export type DevicessTableProps = {
-  // onToggleStatus?: (index: Client) => void;
-  // onUpdateClient: (data: Client) => void;
   items?: Device[];
   onEdit: (params: RenderFnParams<Device>) => void;
   onDelete: (params: RenderFnParams<Device>) => void;
-
-  // onNotification: (params: RenderFnParams<UserManage>) => void;
-  // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
+  loadingDeleteDevice: boolean;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -55,28 +49,35 @@ const NameDevicesColumn = (params: RenderFnParams<Device>) => {
 
 const StatusDevicesColumn = (params: RenderFnParams<Device>) => {
   return (
-    <div className="font-medium text-sm">
-      {params.record.idStatus === 1 ? (
-        <div className="bg-success-300 rounded-lg p-2 text-success-600 group relative inline-block text-center">
-          <Icon.Circle size={18} />
-          <AppTooltip>Active</AppTooltip>
-        </div>
-      ) : (
-        <div className="bg-red-300 rounded-lg p-2 text-red-600  group relative inline-block text-center">
-          <Icon.AlertTriangle size={18} />
-          <AppTooltip>Inactive</AppTooltip>
-        </div>
-      )}
-    </div>
+    <Tooltip
+      content={params.record.idStatus === 1 ? "Active" : "Inactive"}
+      color="primary"
+      offset={15}
+      showArrow
+      closeDelay={10}
+      disableAnimation
+    >
+      <Chip
+        color={params.record.idStatus === 1 ? "success" : "danger"}
+        variant="shadow"
+        radius="full"
+      >
+        {params.record.idStatus === 1 ? (
+          <Icon.Circle size={12} />
+        ) : (
+          <Icon.AlertTriangle size={12} />
+        )}
+      </Chip>
+    </Tooltip>
   );
 };
 const NumberDevicesColumn = (params: RenderFnParams<Device>) => {
   return (
-    <AppBadge>
-      <div className="font-semibold text-sm text-primary-600 tracking-wider">
+    <Chip variant="shadow" color="primary">
+      <span className="font-semibold text-sm tracking-wider">
         {params.record.description}
-      </div>
-    </AppBadge>
+      </span>
+    </Chip>
   );
 };
 
@@ -84,38 +85,63 @@ const ActionsColumn = ({
   onEdit,
   // record,
   onDelete,
+  loadingDeleteDevice,
 }: RenderFnParams<Device> & {
   onEdit: () => void;
   onDelete: () => void;
+  loadingDeleteDevice: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-8">
-      <div className="group relative inline-block text-center">
-        <AppButton
+      <Tooltip
+        content={"Edit Device"}
+        color="primary"
+        style={{
+          zIndex: 0,
+        }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
           onClick={() => {
             onEdit();
           }}
           title="Edit Device"
           size="sm"
-          variant="ghost"
+          variant="shadow"
+          isIconOnly
+          color="primary"
         >
-          <Icon.Eye size={18} />
-        </AppButton>
-        <AppTooltip>Edit Device</AppTooltip>
-      </div>
-      <div className="group relative inline-block text-center">
-        <AppButton
+          <Icon.Edit size={18} />
+        </Button>
+      </Tooltip>
+      <Tooltip
+        content={"Delete Device"}
+        color="danger"
+        style={{
+          zIndex: 0,
+        }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
           onClick={() => {
             onDelete();
           }}
           title="Delete Device"
           size="sm"
-          variant="ghost"
+          variant="shadow"
+          color="danger"
+          isIconOnly
+          isDisabled={loadingDeleteDevice}
         >
           <Icon.Trash size={18} />
-        </AppButton>
-        <AppTooltip>Delete Device</AppTooltip>
-      </div>
+        </Button>
+      </Tooltip>
     </div>
   );
 };
@@ -124,6 +150,7 @@ export const AppDevicessTable = ({
   items = [],
   onEdit,
   onDelete,
+  loadingDeleteDevice,
 }: DevicessTableProps) => {
   const columns: AppDataGridColumn<Device>[] = [
     {
@@ -158,6 +185,7 @@ export const AppDevicessTable = ({
           onDelete: () => {
             onDelete(data);
           },
+          loadingDeleteDevice: loadingDeleteDevice,
         }),
     },
   ];

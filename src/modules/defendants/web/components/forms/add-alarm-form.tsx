@@ -109,7 +109,6 @@ export const AddAlarmForm = ({
   };
   const onSubmitHandler = async (data: AssignAlarmDefendantFormValues) => {
     if (exceptionItems.length > 0) {
-      console.log(exceptionItems);
       await assignAlarmDefendant({
         name: data.name,
         idPerson: Number(idDefendant),

@@ -32,7 +32,6 @@ export const EditGeofenceForm = ({
       const itemsSchedule: StrDays =
         itemsFilter && JSON.parse(itemsFilter[0]?.strDays);
       const itemsInterval = itemsSchedule && itemsSchedule.intervals;
-      console.log(itemsInterval);
       setIntervals(itemsInterval);
     }
   }, [items]);

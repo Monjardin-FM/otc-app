@@ -12,8 +12,7 @@ import { AppAuthorizationGuard } from "../../../../presentation/Components/AppAu
 import { UserRole } from "../../../user/domain/entities/user-role";
 import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
-import { AppButton } from "../../../../presentation/Components/AppButton";
-import { AppTooltip } from "../../../../presentation/Components/AppTooltip";
+import { Button, Tooltip } from "@nextui-org/react";
 
 export const AppDevicesManagerPage = () => {
   const [visibleNewDeviceModal, setVisibleNewDeviceModal] = useToggle(false);
@@ -21,7 +20,7 @@ export const AppDevicesManagerPage = () => {
   const [idDevice, setIdDevice] = useState<number>();
   const { devices, getDevices, loading: loadingDevices } = useGetDevices();
   const [toggleReload, setToggleReload] = useToggle(false);
-  const { deleteDevice } = useDeleteDevice();
+  const { deleteDevice, loading: loadingDeleteDevice } = useDeleteDevice();
   const onClick = (search: string) => {
     getDevices({ completeName: search });
   };
@@ -64,15 +63,26 @@ export const AppDevicesManagerPage = () => {
           />
         </div>
         <div className="container mx-auto flex flex-col items-end jusitfy-center">
-          <div className="group relative inline-block text-center">
-            <AppButton
-              colorScheme="warn"
+          <Tooltip
+            content={"New Device"}
+            color="warning"
+            offset={1}
+            showArrow
+            closeDelay={10}
+            style={{
+              zIndex: 0,
+            }}
+            disableAnimation
+          >
+            <Button
+              color="warning"
               onClick={() => setVisibleNewDeviceModal(true)}
+              isIconOnly
+              size="md"
             >
-              <Icon.PlusCircle />
-            </AppButton>
-            <AppTooltip>New Device</AppTooltip>
-          </div>
+              <Icon.PlusCircle color="white" />
+            </Button>
+          </Tooltip>
         </div>
         <div className="container mx-auto mt-5">
           <AppDevicessTable
@@ -87,6 +97,7 @@ export const AppDevicesManagerPage = () => {
               setToggleReload(!toggleReload);
             }}
             items={devices}
+            loadingDeleteDevice={loadingDeleteDevice}
           />
         </div>
       </AppPageTransition>

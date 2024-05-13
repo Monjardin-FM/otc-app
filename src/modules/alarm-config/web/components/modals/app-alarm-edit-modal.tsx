@@ -12,6 +12,7 @@ import { DeviceType } from "../../../../catalog/domain/entities/device-type";
 import {
   AppModal,
   AppModalBody,
+  AppModalCloseButton,
   AppModalContent,
   AppModalFooter,
   AppModalHeader,
@@ -127,7 +128,10 @@ export const AppEditAlarmModal = ({
           >
             {({ handleSubmit, handleChange, values }) => (
               <form onSubmit={handleSubmit}>
-                <AppModalHeader>Edit Alarm</AppModalHeader>
+                <AppModalHeader>
+                  Edit Alarm
+                  <AppModalCloseButton />
+                </AppModalHeader>
                 <AppModalBody>
                   <div className="grid grid-cols-12 gap-y-4 gap-x-3">
                     <div className="grid grid-cols-12 col-span-6 gap-x-3 gap-y-4">

@@ -7,6 +7,7 @@ import { AppToast } from "../../../../../presentation/Components/AppToast";
 import {
   AppModal,
   AppModalBody,
+  AppModalCloseButton,
   AppModalContent,
   AppModalFooter,
   AppModalHeader,
@@ -91,7 +92,10 @@ export const AppNewDeviceModal = ({
           >
             {({ handleSubmit, handleChange, values, errors }) => (
               <form onSubmit={handleSubmit}>
-                <AppModalHeader>New Device</AppModalHeader>
+                <AppModalHeader>
+                  <AppModalCloseButton />
+                  New Device
+                </AppModalHeader>
                 <AppModalBody>
                   <div className="grid grid-cols-12 gap-y-4 gap-x-3">
                     <AppFormField className="col-span-6">

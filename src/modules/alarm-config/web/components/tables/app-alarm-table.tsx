@@ -7,17 +7,13 @@ import {
 } from "../../../../../presentation/Components/AppDataGrid";
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
-import { AppTooltip } from "../../../../../presentation/Components/AppTooltip";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
+import { Button, Chip, Tooltip } from "@nextui-org/react";
 
 export type AlarmsTableProps = {
-  // onToggleStatus?: (index: Client) => void;
-  // onUpdateClient: (data: Client) => void;
   items?: Alarm[];
   onEdit: (params: RenderFnParams<Alarm>) => void;
   onDelete: (params: RenderFnParams<Alarm>) => void;
-  // onNotification: (params: RenderFnParams<UserManage>) => void;
-  // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
+  loadingDeleteAlarm: boolean;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -54,59 +50,90 @@ const NameAlarmsColumn = (params: RenderFnParams<Alarm>) => {
 
 const StatusAlarmsColumn = (params: RenderFnParams<Alarm>) => {
   return (
-    <div className="font-medium text-sm">
-      {params.record.idStatus === 1 ? (
-        <div className="bg-success-300 rounded-lg p-2 text-success-600 group relative inline-block text-center">
-          <Icon.Circle size={18} />
-          <AppTooltip>Active</AppTooltip>
-        </div>
-      ) : (
-        <div className="bg-danger-300 rounded-lg p-2 text-danger-600  group relative inline-block text-center">
-          <Icon.AlertTriangle size={18} />
-          <AppTooltip>Inactive</AppTooltip>
-        </div>
-      )}
-    </div>
+    <Tooltip
+      content={params.record.idStatus === 1 ? "Active" : "Inactive"}
+      color="primary"
+      offset={15}
+      showArrow
+      closeDelay={10}
+      disableAnimation
+    >
+      <Chip
+        color={params.record.idStatus === 1 ? "success" : "danger"}
+        variant="shadow"
+        radius="full"
+      >
+        {params.record.idStatus === 1 ? (
+          <Icon.Circle size={12} />
+        ) : (
+          <Icon.AlertTriangle size={12} />
+        )}
+      </Chip>
+    </Tooltip>
   );
 };
 
 const ActionsColumn = ({
   onEdit,
   onDelete,
+  loadingDeleteAlarm,
 }: // record,
 RenderFnParams<Alarm> & {
   onEdit: () => void;
   onDelete: () => void;
+  loadingDeleteAlarm: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-8">
-      <div className="group relative inline-block text-center">
-        <AppButton
+      <Tooltip
+        content={"Edit Alarm"}
+        color="primary"
+        style={{
+          zIndex: 0,
+        }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
           onClick={() => {
             onEdit();
           }}
           title="Edit Alarm"
           size="sm"
-          variant="ghost"
+          variant="shadow"
+          isIconOnly
+          color="primary"
         >
-          <Icon.Eye size={18} />
-        </AppButton>
-        <AppTooltip>Edit Alarm</AppTooltip>
-      </div>
-      <div className="group relative inline-block text-center">
-        <AppButton
+          <Icon.Edit size={18} />
+        </Button>
+      </Tooltip>
+      <Tooltip
+        content={"Delete Alarm"}
+        color="danger"
+        style={{
+          zIndex: 0,
+        }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
           onClick={() => {
             onDelete();
           }}
           title="Delete Alarm"
           size="sm"
-          variant="ghost"
-          colorScheme="red"
+          variant="shadow"
+          color="danger"
+          isIconOnly
+          isDisabled={loadingDeleteAlarm}
         >
-          <Icon.XOctagon size={18} />
-        </AppButton>
-        <AppTooltip>Delete Alarm</AppTooltip>
-      </div>
+          <Icon.Trash size={18} />
+        </Button>
+      </Tooltip>
     </div>
   );
 };
@@ -115,6 +142,7 @@ export const AppAlarmssTable = ({
   items = [],
   onEdit,
   onDelete,
+  loadingDeleteAlarm,
 }: AlarmsTableProps) => {
   const columns: AppDataGridColumn<Alarm>[] = [
     {
@@ -143,6 +171,7 @@ export const AppAlarmssTable = ({
           onDelete: () => {
             onDelete(data);
           },
+          loadingDeleteAlarm: loadingDeleteAlarm,
         }),
     },
   ];
