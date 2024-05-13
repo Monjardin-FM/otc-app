@@ -1,4 +1,4 @@
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 import { AppSwal } from "../AppSwal";
 
 export const AppToast = () =>
@@ -6,13 +6,14 @@ export const AppToast = () =>
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 5000,
+    timer: 1500,
     customClass: {
       container: "sweet-alert-toast-height",
     },
     timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener("mouseenter", Swal.stopTimer);
-      toast.addEventListener("mouseleave", Swal.resumeTimer);
-    },
+    showCloseButton: true,
+    // didOpen: (toast) => {
+    // toast.addEventListener("mouseenter", Swal.);
+    // toast.addEventListener("mouseleave", Swal.resumeTimer);
+    // },
   });

@@ -222,7 +222,7 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
                   <>
                     <div className="w-full bg-warn-100  p-2 rounded-lg ">
                       <span className="text-lg text-primaryColor-700 mb-5">
-                        Addres of {nameVictim}
+                        Address of {nameVictim}
                       </span>
                       <AppAddressPersonsTable
                         items={addressPerson}
