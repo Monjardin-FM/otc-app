@@ -1,13 +1,13 @@
-export type Coordinates = [number, number];
+// export type Coordinates = [number, number];
 
 type Geometry = {
   type: string;
-  coordinates: Coordinates[][];
+  coordinates: [number, number][];
 };
 
 type Feature = {
   type: string;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   geometry: Geometry;
 };
 

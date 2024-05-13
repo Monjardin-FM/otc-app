@@ -8,12 +8,19 @@ import {
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
 import { AppBadge } from "../../../../../presentation/Components/AppBadge";
 import { Button, Chip, Tooltip } from "@nextui-org/react";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc"; // Importa el plugin UTC de Day.js
+import timezone from "dayjs/plugin/timezone"; // Importa el plugin de zona horaria de Day.js
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export type TrackingDetailsTableProps = {
   // onToggleStatus?: (index: Client) => void;
   // onUpdateClient: (data: Client) => void;
   items?: PersonAlert[] | null;
   onShowAlerts: (params: RenderFnParams<PersonAlert>) => void;
+  onMapShow: (params: RenderFnParams<PersonAlert>) => void;
   loadingShowAlerts: boolean;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
@@ -38,7 +45,10 @@ const DateTrackingDetailColumn = (params: RenderFnParams<PersonAlert>) => {
     <div className="flex items-center space-x-3">
       <AppBadge colorScheme="info">
         <div className="font-semibold text-sm text-primary-600 TrackingDetail-wider">
-          {params.record.timestamp}
+          {dayjs
+            .utc(params.record.timestamp)
+            .local()
+            .format("MM/DD/YYYY HH:mm:ss A")}
         </div>
       </AppBadge>
     </div>
@@ -64,15 +74,39 @@ const StatusTrackingDetailColumn = (params: RenderFnParams<PersonAlert>) => {
 
 const ActionsColumn = ({
   onShowAlerts,
+  onMapShow,
   loadingShowAlerts,
   record,
 }: // record,
 RenderFnParams<PersonAlert> & {
   onShowAlerts: () => void;
+  onMapShow: () => void;
   loadingShowAlerts: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-8">
+      <Tooltip
+        content={"Show alarm on map"}
+        showArrow
+        color="warning"
+        disableAnimation
+        closeDelay={100}
+      >
+        <Button
+          onClick={() => {
+            onMapShow();
+          }}
+          title="Show alarm on map"
+          size="sm"
+          variant="shadow"
+          isIconOnly
+          color="warning"
+          isDisabled={loadingShowAlerts}
+          isLoading={loadingShowAlerts}
+        >
+          <Icon.Crosshair size={18} />
+        </Button>
+      </Tooltip>
       {record.alarmName.includes("Bracelet Tampering") ? (
         <Tooltip
           content={"Cancel Alarm"}
@@ -107,6 +141,7 @@ export const AppTrackingDetailsTable = ({
   items = [],
   onShowAlerts,
   loadingShowAlerts,
+  onMapShow,
 }: TrackingDetailsTableProps) => {
   const columns: AppDataGridColumn<PersonAlert>[] = [
     {
@@ -137,6 +172,9 @@ export const AppTrackingDetailsTable = ({
           ...data,
           onShowAlerts: () => {
             onShowAlerts(data);
+          },
+          onMapShow: () => {
+            onMapShow(data);
           },
           loadingShowAlerts: loadingShowAlerts,
         }),

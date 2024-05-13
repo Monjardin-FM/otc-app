@@ -81,9 +81,7 @@ export const AppDefendantsManagerPage = () => {
   }, [errorDelete, loadingDeleteDefendant]);
   return (
     <AppAuthorizationGuard
-      roles={
-        AppConfig["userManagement.managerPage.authorization"] as UserRole[]
-      }
+      roles={AppConfig["defendants.managerPage.authorization"] as UserRole[]}
       redirect={{ to: "/" }}
     >
       {!defendants && <AppLoading />}

@@ -8,6 +8,7 @@ import {
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { DefendantDevice } from "../../../domain/entities/defendant-device";
 import * as Icon from "react-feather";
+import clsx from "clsx";
 export type DefendantDevicesTableProps = {
   // onToggleStatus?: (index: Client) => void;
   // onUpdateClient: (data: Client) => void;
@@ -16,6 +17,7 @@ export type DefendantDevicesTableProps = {
   onEdit: (params: RenderFnParams<DefendantDevice>) => void;
   onDelete: (params: RenderFnParams<DefendantDevice>) => void;
   loadingDeleteDefendantDevice: boolean;
+  isCreate: boolean;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
 };
@@ -77,6 +79,7 @@ const StatusDefendantDeviceColumn = (
 
 const ActionsColumn = ({
   // onEdit,
+  isCreate,
   onDelete,
   loadingDeleteDefendantDevice,
 }: // record,
@@ -84,30 +87,10 @@ RenderFnParams<DefendantDevice> & {
   onEdit: () => void;
   onDelete: () => void;
   loadingDeleteDefendantDevice: boolean;
+  isCreate: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-2 static">
-      {/* <Tooltip
-        content={"Edit Device"}
-        color="primary"
-        offset={5}
-        showArrow
-        closeDelay={10}
-        disableAnimation
-      >
-        <Button
-          onClick={() => {
-            onEdit();
-          }}
-          title="Edit Device"
-          size="sm"
-          variant="shadow"
-          isIconOnly
-          color="primary"
-        >
-          <Icon.Eye size={18} />
-        </Button>
-      </Tooltip> */}
       <Tooltip
         content={"Delete Device"}
         color="danger"
@@ -125,7 +108,7 @@ RenderFnParams<DefendantDevice> & {
           variant="shadow"
           color="danger"
           isIconOnly
-          isDisabled={loadingDeleteDefendantDevice}
+          isDisabled={loadingDeleteDefendantDevice || isCreate}
         >
           <Icon.Trash size={18} />
         </Button>
@@ -139,6 +122,7 @@ export const AppDefendantDevicesTable = ({
   onEdit,
   onDelete,
   loadingDeleteDefendantDevice,
+  isCreate,
 }: DefendantDevicesTableProps) => {
   const columns: AppDataGridColumn<DefendantDevice>[] = [
     {
@@ -158,6 +142,9 @@ export const AppDefendantDevicesTable = ({
       key: "actionsClient",
       dataIndex: "actionsClient",
       title: "Actions",
+      className: clsx("", {
+        hidden: isCreate,
+      }),
       render: (data) =>
         ActionsColumn({
           ...data,
@@ -168,6 +155,7 @@ export const AppDefendantDevicesTable = ({
             onDelete(data);
           },
           loadingDeleteDefendantDevice: loadingDeleteDefendantDevice,
+          isCreate: isCreate,
         }),
     },
   ];

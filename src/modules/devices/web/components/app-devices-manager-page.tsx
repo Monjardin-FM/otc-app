@@ -39,9 +39,7 @@ export const AppDevicesManagerPage = () => {
   }, [toggleReload]);
   return (
     <AppAuthorizationGuard
-      roles={
-        AppConfig["userManagement.managerPage.authorization"] as UserRole[]
-      }
+      roles={AppConfig["devices.managerPage.authorization"] as UserRole[]}
       redirect={{ to: "/" }}
     >
       {!devices && <AppLoading />}

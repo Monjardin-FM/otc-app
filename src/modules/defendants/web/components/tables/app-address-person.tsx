@@ -8,11 +8,13 @@ import {
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { Address } from "../../../domain/entities/address";
 import * as Icon from "react-feather";
+import clsx from "clsx";
 export type AddressPersonsTableProps = {
   loadingDeleteAddress: boolean;
   items?: Address[];
   onEdit: (params: RenderFnParams<Address>) => void;
   onDelete: (params: RenderFnParams<Address>) => void;
+  isCreate: boolean;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -84,11 +86,13 @@ const ActionsColumn = ({
   onEdit,
   onDelete,
   loadingDeleteAddress,
-}: // record,
+}: // isCreate,
+// record,
 RenderFnParams<Address> & {
   onEdit: () => void;
   onDelete: () => void;
   loadingDeleteAddress: boolean;
+  isCreate: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
@@ -144,6 +148,7 @@ export const AppAddressPersonsTable = ({
   onEdit,
   onDelete,
   loadingDeleteAddress,
+  isCreate,
 }: AddressPersonsTableProps) => {
   const columns: AppDataGridColumn<Address>[] = [
     {
@@ -169,6 +174,9 @@ export const AppAddressPersonsTable = ({
       key: "actionsClient",
       dataIndex: "actionsClient",
       title: "Actions",
+      className: clsx("", {
+        hidden: isCreate,
+      }),
       render: (data) =>
         ActionsColumn({
           ...data,
@@ -179,6 +187,7 @@ export const AppAddressPersonsTable = ({
             onDelete(data);
           },
           loadingDeleteAddress: loadingDeleteAddress,
+          isCreate: isCreate,
         }),
     },
   ];

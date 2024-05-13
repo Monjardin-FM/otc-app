@@ -57,9 +57,7 @@ export const AppAlarmConfigManagerPage = () => {
   }, [errorDelete]);
   return (
     <AppAuthorizationGuard
-      roles={
-        AppConfig["userManagement.managerPage.authorization"] as UserRole[]
-      }
+      roles={AppConfig["alarm.config.managerPage.authorization"] as UserRole[]}
       redirect={{ to: "/" }}
     >
       {!alarms && <AppLoading />}

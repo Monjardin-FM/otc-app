@@ -50,9 +50,7 @@ export const AppTrackingManagerPage = () => {
   return (
     <div>
       <AppAuthorizationGuard
-        roles={
-          AppConfig["userManagement.managerPage.authorization"] as UserRole[]
-        }
+        roles={AppConfig["tracking.managerPage.authorization"] as UserRole[]}
         redirect={{ to: "/" }}
       >
         {!tracking && <AppLoading />}

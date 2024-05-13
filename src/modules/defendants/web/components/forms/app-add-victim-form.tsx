@@ -188,6 +188,7 @@ export const AddVictimForm = ({
                 onChange={(date: Date) => {
                   if (date instanceof Date) setBirthDate(date);
                 }}
+                dateFormat={"MM/dd/yyyy"}
               />
             </AppFormField>
             <AppFormField className="col-span-4">

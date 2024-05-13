@@ -13,6 +13,7 @@ export type AlarmDefendantsTableProps = {
   items?: AlarmDefendant[];
   onView: (params: RenderFnParams<AlarmDefendant>) => void;
   onDelete: (params: RenderFnParams<AlarmDefendant>) => void;
+  onEdit: (params: RenderFnParams<AlarmDefendant>) => void;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -72,14 +73,37 @@ const ActionsColumn = ({
   onView,
   onDelete,
   loadingDelete,
+  onEdit,
 }: // record,
 RenderFnParams<AlarmDefendant> & {
   onView: () => void;
   onDelete: () => void;
+  onEdit: () => void;
   loadingDelete: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
+      <Tooltip
+        content={"Edit Geofence"}
+        color="warning"
+        offset={5}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onEdit();
+          }}
+          title="Edit Geofence"
+          size="sm"
+          variant="shadow"
+          isIconOnly
+          color="warning"
+        >
+          <Icon.Edit size={18} />
+        </Button>
+      </Tooltip>
       <Tooltip
         content={"View Geofence"}
         color="primary"
@@ -102,7 +126,7 @@ RenderFnParams<AlarmDefendant> & {
         </Button>
       </Tooltip>
       <Tooltip
-        content={"Delete Alarm Defendant"}
+        content={"Delete Geofence"}
         color="danger"
         offset={5}
         showArrow
@@ -113,7 +137,7 @@ RenderFnParams<AlarmDefendant> & {
           onClick={() => {
             onDelete();
           }}
-          title="Delete Alarm Defendant"
+          title="Delete Geofence"
           size="sm"
           variant="shadow"
           color="danger"
@@ -131,6 +155,7 @@ export const AppAlarmDefendantsTable = ({
   items = [],
   onView,
   onDelete,
+  onEdit,
   loadingDelete,
 }: AlarmDefendantsTableProps) => {
   const columns: AppDataGridColumn<AlarmDefendant>[] = [
@@ -165,6 +190,9 @@ export const AppAlarmDefendantsTable = ({
           },
           onView: () => {
             onView(data);
+          },
+          onEdit: () => {
+            onEdit(data);
           },
           loadingDelete: loadingDelete,
         }),

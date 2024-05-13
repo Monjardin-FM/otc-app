@@ -6,8 +6,7 @@ export const useCreateDefendant = () => {
   const [{ value, loading, error }, createDefendant] = useAsyncFn<
     DefendantRepository["createDefendant"]
   >(createDefendantService, [createDefendantService]);
-  // console.log("Error hook", value && value[1]);
-  // console.table(error);
+
   return {
     value,
     createDefendant,

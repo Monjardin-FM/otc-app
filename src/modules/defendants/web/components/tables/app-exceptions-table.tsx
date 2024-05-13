@@ -117,13 +117,13 @@ export const AppAlarmExceptionTable = ({
     {
       key: "AlarmExceptionPersonName",
       dataIndex: "AlarmExceptionPersonName",
-      title: "AlarmException",
+      title: "Schedule Name",
       render: NameAlarmExceptionPersonColumn,
     },
     {
       key: "AlarmExceptionType",
       dataIndex: "AlarmExceptionType",
-      title: "AlarmException Type",
+      title: "Schedule Type",
       render: TypeAlarmExceptionPersonColumn,
     },
 

@@ -18,6 +18,7 @@ export type VictimsTableProps = {
   onAddAddress: (params: RenderFnParams<Victim>) => void;
   onShowAddress: (params: RenderFnParams<Victim>) => void;
   onDelete: (params: RenderFnParams<Victim>) => void;
+  onAddPhone: (params: RenderFnParams<Victim>) => void;
   loadingDeleteVictim: boolean;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
@@ -112,6 +113,7 @@ const ActionsColumn = ({
   onShowAddress,
   onDelete,
   loadingDeleteVictim,
+  onAddPhone,
 }: // record,
 RenderFnParams<Victim> & {
   onEdit: () => void;
@@ -119,6 +121,7 @@ RenderFnParams<Victim> & {
   onShowAddress: () => void;
   onDelete: () => void;
   loadingDeleteVictim: boolean;
+  onAddPhone: () => void;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
@@ -163,6 +166,28 @@ RenderFnParams<Victim> & {
         >
           <span className="text-md">+</span>
           <Icon.Map size={18} />
+        </Button>
+      </Tooltip>
+      <Tooltip
+        content={"Add Phone"}
+        color="success"
+        offset={5}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onAddPhone();
+          }}
+          title="Add Phone"
+          size="sm"
+          variant="shadow"
+          color="success"
+          isIconOnly
+        >
+          <span className="text-md">+</span>
+          <Icon.PhoneCall size={18} />
         </Button>
       </Tooltip>
       <Tooltip
@@ -219,6 +244,7 @@ export const AppVictimssTable = ({
   onAddAddress,
   onShowAddress,
   loadingDeleteVictim,
+  onAddPhone,
 }: VictimsTableProps) => {
   const columns: AppDataGridColumn<Victim>[] = [
     {
@@ -263,6 +289,9 @@ export const AppVictimssTable = ({
           },
           onShowAddress: () => {
             onShowAddress(data);
+          },
+          onAddPhone: () => {
+            onAddPhone(data);
           },
           loadingDeleteVictim: loadingDeleteVictim,
         }),

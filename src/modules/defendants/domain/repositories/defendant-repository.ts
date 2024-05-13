@@ -7,6 +7,7 @@ import {
   AlarmDefendant,
   AlarmDefendantById,
 } from "../entities/alarm-defendant";
+import { Phone, PhoneById } from "../entities/phone";
 export type createDefendantParams = {
   completeName: string;
   name: string;
@@ -102,4 +103,9 @@ export type DefendantRepository = {
   deleteSpecificAlarmDefendant: (params: {
     idAlarmDefendant: number;
   }) => Promise<Boolean>;
+
+  getPhonePerson: (params: { idPerson: number }) => Promise<Phone[]>;
+  getPhoneById: (params: { idPhone: number }) => Promise<PhoneById>;
+  assignPhone: (params: { idPerson: number; phone: string }) => Promise<void>;
+  deletePhone: (params: { idPhone: number }) => Promise<Boolean>;
 };

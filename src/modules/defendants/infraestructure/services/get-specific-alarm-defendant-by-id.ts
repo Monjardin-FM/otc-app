@@ -19,12 +19,13 @@ export const getAlarmDefendantByIdService: DefendantRepository["getSpecificAlarm
     const data = body.data as any;
 
     const alarmDefendant: AlarmDefendantById = {
+      alarmException: data.alarmException,
       idPerson: data.idPerson,
       idPersonSpecificAlarm: data.idPersonSpecificAlarm,
-      idspecificAlarmType: data.idspecificAlarmType,
       idStatus: data.idStatus,
+      idspecificAlarmType: data.idspecificAlarmType,
       lGeofence: data.lGeofence,
-      specificAlarmType: data.specificAlarmType,
+      name: data.name,
     };
     return alarmDefendant;
   };

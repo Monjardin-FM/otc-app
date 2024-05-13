@@ -2,11 +2,11 @@ import { Historic } from "../../../domain/entities/historic-position";
 import { CircleMarker, LayerGroup, Popup } from "react-leaflet";
 import * as Icon from "react-feather";
 import dayjs from "dayjs";
-export type MyLayerProps = {
+export type MyLayerVictimsProps = {
   positions?: Historic[] | [];
 };
 
-export const MyLayer = ({ positions }: MyLayerProps) => {
+export const MyLayerVictims = ({ positions }: MyLayerVictimsProps) => {
   //   const [markers, setMarkers] = useState(positions);
   return (
     <LayerGroup>
@@ -20,11 +20,12 @@ export const MyLayer = ({ positions }: MyLayerProps) => {
                 center={[position.lat, position.lon]}
                 fill
                 radius={5}
-                color={"#FF1919"}
-                fillColor={"#ff9999"}
+                color={"#0000D1"}
+                fillColor={"#8A8AFF"}
                 //ref={markerRef}
                 className="relative flex flex-col items-center justify-center"
                 // pane={key.toString()}
+                // pane={String(key)}
               >
                 <span className="w-full z-50 text-primaryColor-900">
                   {key.toString()}

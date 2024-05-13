@@ -30,6 +30,8 @@ import { useGetAddressPerson } from "../../hooks/use-get-address-person";
 import { AppAddressPersonsTable } from "../tables/app-address-person";
 import { DefendantById } from "../../../domain/entities/defendant-by-id";
 import { Button, Chip, Textarea } from "@nextui-org/react";
+import { useGetPhonePerson } from "../../hooks/use-get-phone";
+import { AppPhoneTable } from "../tables/app-phone-person-table";
 export type DefendantFormProps = {
   onCreateDefendant: (params: createDefendantParams) => void;
   onClose: () => void;
@@ -75,6 +77,7 @@ export const DefendantForm = ({
   const [birthDate, setBirthDate] = useState<Date>(new Date());
   const { defendantDevice, getDefendantDevice } = useGetDefendantDevice();
   const { addressPerson, getAddressPerson } = useGetAddressPerson();
+  const { getPhonePerson, phonePerson } = useGetPhonePerson();
   const [toggleReload, setToggleReload] = useToggle(false);
 
   const validationSchemaDefendant = Yup.object().shape({
@@ -121,7 +124,7 @@ export const DefendantForm = ({
   // useEffect to filter chieff officer
   useEffect(() => {
     if (users) {
-      const chiefFilter = users.filter((item) => item.role === "Chief Officer");
+      const chiefFilter = users.filter((item) => item.idRole === 2);
       setChiefs(
         chiefFilter.map((item) => ({
           value: item.idPerson,
@@ -153,6 +156,7 @@ export const DefendantForm = ({
     if (idDefendant && idDefendant !== 0) {
       getDefendantDevice({ idDefendant: idDefendant });
       getAddressPerson({ idPerson: idDefendant });
+      getPhonePerson({ idPerson: idDefendant });
       onReload();
     }
   }, [idDefendant, toggleReload]);
@@ -187,7 +191,7 @@ export const DefendantForm = ({
                   <span className="text-gray-300">Birth Date:</span>
                   <span className="font-semibold text-white">
                     {` ${dayjs(defendantInfo.birthDate).format(
-                      "DD - MMMM - YYYY"
+                      "MMMM - DD - YYYY"
                     )}`}
                   </span>
                 </Chip>
@@ -259,21 +263,21 @@ export const DefendantForm = ({
             >
               New Address
             </Button>
-            {/* <Button
-            hidden={true}
-            size="lg"
-            variant="shadow"
-            color="primary"
-            startContent={<Icon.PlusCircle size={18} />}
-            onPress={() => {
-              setVisiblePhoneForm(true);
-              setVisibleDeviceForm(false);
-              setVisibleAddressForm(false);
-            }}
-            className="w-4/12"
-          >
-            New Phone Number
-          </Button> */}
+            <Button
+              hidden={true}
+              size="lg"
+              variant="shadow"
+              color="primary"
+              startContent={<Icon.PlusCircle size={18} />}
+              onPress={() => {
+                setVisiblePhoneForm(true);
+                setVisibleDeviceForm(false);
+                setVisibleAddressForm(false);
+              }}
+              className="w-4/12"
+            >
+              New Phone Number
+            </Button>
           </div>
         </>
       ) : (
@@ -406,6 +410,7 @@ export const DefendantForm = ({
                         onChange={(date: Date) => {
                           if (date instanceof Date) setBirthDate(date);
                         }}
+                        dateFormat={"MM/dd/yyyy"}
                       />
                     </AppFormField>
                     <AppFormField className="col-span-2">
@@ -536,7 +541,14 @@ export const DefendantForm = ({
       )}
       {visiblePhoneForm && (
         <div className="col-span-12">
-          <PhoneForm onClose={() => setVisiblePhoneForm(false)} />
+          <PhoneForm
+            onClose={() => setVisiblePhoneForm(false)}
+            idDefendant={idDefendant}
+            onReload={() => {
+              setToggleReload(!toggleReload);
+              onReload();
+            }}
+          />
         </div>
       )}
       <div className="col-span-12 mt-5 border flex">
@@ -553,9 +565,11 @@ export const DefendantForm = ({
                   </Disclosure.Button>
                   <Disclosure.Panel className="text-gray-500">
                     <AppDefendantDevicesTable
+                      isCreate={true}
                       onEdit={() => {}}
                       onDelete={() => {}}
                       items={defendantDevice}
+                      loadingDeleteDefendantDevice={false}
                     />
                   </Disclosure.Panel>
                 </>
@@ -572,9 +586,32 @@ export const DefendantForm = ({
                   </Disclosure.Button>
                   <Disclosure.Panel className="text-gray-500">
                     <AppAddressPersonsTable
+                      isCreate={true}
                       onEdit={() => {}}
                       onDelete={() => {}}
                       items={addressPerson}
+                      loadingDeleteAddress={false}
+                    />
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
+            <Disclosure defaultOpen>
+              {({ open }) => (
+                <>
+                  <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
+                    Phone Number
+                    <Icon.ChevronRight
+                      className={open ? "rotate-90 transform" : ""}
+                    />
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="text-gray-500">
+                    <AppPhoneTable
+                      isCreate={true}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      items={phonePerson}
+                      loadingDeletePhone={false}
                     />
                   </Disclosure.Panel>
                 </>

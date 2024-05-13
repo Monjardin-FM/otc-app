@@ -31,8 +31,6 @@ export const AppGeofence = ({
         extP.push([ex, ey]);
       }
       setPoints(extP);
-    } else {
-      console.log("polygon coordinates =", e.layer.getLatLngs()); // array of LatLng objects
     }
   };
   const deleted = () => {
@@ -78,17 +76,14 @@ export const AppGeofence = ({
         <EsriLeafletGeoSearch
           providers={{
             arcgisOnlineProvider: {
-              token:
-                "AAPK8dc805f8e8f24210bf4fefcfb9d5cc92vWrwGctqdzYnfO41yhFJ9iLw90RNaJwPM8FEaYlh91ctycL2ZrR2pYrVNAaMSzBs",
+              token: import.meta.env.VITE_TOKEN_GEOSEARCH,
               label: "ArcGIS Online Results",
               maxResults: 10,
             },
           }}
           useMapBounds={false}
           position="topright"
-          key={
-            "AAPK8dc805f8e8f24210bf4fefcfb9d5cc92vWrwGctqdzYnfO41yhFJ9iLw90RNaJwPM8FEaYlh91ctycL2ZrR2pYrVNAaMSzBs"
-          }
+          key={import.meta.env.VITE_TOKEN_GEOSEARCH}
         />
       </MapContainer>
     </>

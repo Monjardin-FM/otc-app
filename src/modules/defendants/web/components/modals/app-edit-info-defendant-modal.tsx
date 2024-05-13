@@ -41,6 +41,9 @@ import { AppToast } from "../../../../../presentation/Components/AppToast";
 import { useDeleteDefendantDevice } from "../../hooks/use-delete-device-defendant";
 import { useDeleteAddressPerson } from "../../hooks/use-delete-address-person";
 import { AddressUpdateForm } from "../forms/edit-addres-form";
+import { AppPhoneTable } from "../tables/app-phone-person-table";
+import { useGetPhonePerson } from "../../hooks/use-get-phone";
+import { useDeletePhonePerson } from "../../hooks/use-delete-phone";
 export type AppEditInfoDefendantModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -98,6 +101,12 @@ export const AppEditInfoDefendantModal = ({
     loading: loadingDefendant,
     // error: errorDefendant,
   } = useUpdateDefendant();
+  const { getPhonePerson, phonePerson } = useGetPhonePerson();
+  const {
+    deletePhonePerson,
+    error: errorDeletePhone,
+    loading: loadingDeletePhone,
+  } = useDeletePhonePerson();
   const onSubmitHandler = async (data: updateDefendantFormValue) => {
     if (idDefendant) {
       await updateDefendant({
@@ -171,6 +180,7 @@ export const AppEditInfoDefendantModal = ({
       getDefendantById({ idPerson: idDefendant });
       getDefendantDevice({ idDefendant: idDefendant });
       getAddressPerson({ idPerson: idDefendant });
+      getPhonePerson({ idPerson: idDefendant });
     }
   }, [idDefendant, toggleReload]);
 
@@ -210,6 +220,13 @@ export const AppEditInfoDefendantModal = ({
     });
   };
 
+  const onDeletePhone = () => {
+    AppToast().fire({
+      title: "Phone deleted",
+      icon: "success",
+      text: "The phone was deleted succesfully",
+    });
+  };
   useEffect(() => {
     if (errorDeleteDevice) {
       AppToast().fire({
@@ -249,6 +266,22 @@ export const AppEditInfoDefendantModal = ({
       });
     }
   }, [errorDeleteDevice, loadingDeleteDefendantDevice]);
+  useEffect(() => {
+    if (errorDeletePhone) {
+      AppToast().fire({
+        title: "Error",
+        icon: "error",
+        text: "An error occurred while trying to delete the phone. Try again",
+      });
+    }
+    if (loadingDeletePhone) {
+      AppToast().fire({
+        title: "Deleting phone",
+        icon: "info",
+        text: "The phone is being deleted. Please Wait",
+      });
+    }
+  }, [errorDeletePhone, loadingDeletePhone]);
   return (
     <Modal
       size="4xl"
@@ -431,6 +464,7 @@ export const AppEditInfoDefendantModal = ({
                             onChange={(date: Date) => {
                               if (date instanceof Date) setBirthDate(date);
                             }}
+                            dateFormat={"MM/dd/yyyy"}
                           />
                         </AppFormField>
                         <AppFormField className="col-span-2">
@@ -591,7 +625,7 @@ export const AppEditInfoDefendantModal = ({
                   >
                     New Address
                   </Button>
-                  {/* <Button
+                  <Button
                     color="warning"
                     startContent={<Icon.PlusCircle size={18} />}
                     onClick={() => {
@@ -601,7 +635,7 @@ export const AppEditInfoDefendantModal = ({
                     }}
                   >
                     New Phone Number
-                  </Button> */}
+                  </Button>
                 </div>
               )}
               <div className="col-span-12 w-full" ref={parent}>
@@ -629,9 +663,16 @@ export const AppEditInfoDefendantModal = ({
                   />
                 )}
               </div>
-              <div className="col-span-12 hidden">
+              <div className="col-span-12">
                 {visiblePhoneForm && (
-                  <PhoneForm onClose={() => setVisiblePhoneForm(false)} />
+                  <PhoneForm
+                    onClose={() => setVisiblePhoneForm(false)}
+                    onReload={() => {
+                      setToggleReload(!toggleReload);
+                      setVisiblePhoneForm(false);
+                    }}
+                    idDefendant={idDefendant}
+                  />
                 )}
               </div>
               <div className="col-span-12 border flex w-full">
@@ -648,6 +689,7 @@ export const AppEditInfoDefendantModal = ({
                           </Disclosure.Button>
                           <Disclosure.Panel className="text-gray-500">
                             <AppDefendantDevicesTable
+                              isCreate={false}
                               onDelete={async ({ record }) => {
                                 await deleteDefendantDevice({
                                   idDevice: record.idPersonDevice,
@@ -691,6 +733,7 @@ export const AppEditInfoDefendantModal = ({
                               }}
                               items={addressPerson}
                               loadingDeleteAddress={loadingDeleteAddress}
+                              isCreate={false}
                             />
                             <div ref={parent} className="w-full">
                               {visibleAddressEditForm && (
@@ -707,6 +750,33 @@ export const AppEditInfoDefendantModal = ({
                                 />
                               )}
                             </div>
+                          </Disclosure.Panel>
+                        </>
+                      )}
+                    </Disclosure>
+                    <Disclosure>
+                      {({ open }) => (
+                        <>
+                          <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
+                            Phone Number
+                            <Icon.ChevronRight
+                              className={open ? "rotate-90 transform" : ""}
+                            />
+                          </Disclosure.Button>
+                          <Disclosure.Panel className="text-gray-500">
+                            <AppPhoneTable
+                              isCreate={false}
+                              loadingDeletePhone={loadingDeletePhone}
+                              onDelete={async ({ record }) => {
+                                await deletePhonePerson({
+                                  idPhone: record.idPhonePerson,
+                                });
+                                if (!errorDeletePhone) onDeletePhone();
+                                setToggleReload(!toggleReload);
+                              }}
+                              items={phonePerson}
+                              onEdit={() => {}}
+                            />
                           </Disclosure.Panel>
                         </>
                       )}

@@ -16,18 +16,22 @@ export const findHistoricPositionService: TrackingRepository["postHistoricPositi
     const { body } = await verifyResponse({ response });
     const data = body.data as any[];
     const historicPositions = data.map<HistoricPosition>((position) => ({
-      battery: position.battery,
-      bloodOxygen: position.bloodOxygen,
-      cardioFrequency: position.cardioFrequency,
-      dateFin: position.dateFin,
-      dateInit: position.dateInit,
-      delta: position.delta,
+      birthDate: position.birthDate,
+      completeName: position.completeName,
+      createdAt: position.created_at,
+      deviceId: position.deviceId,
+      historicPersonPosition: position.historicPersonPosition,
+      idCounty: position.idCounty,
+      idDefendant: position.idDefendant,
+      idDeviceType: position.idDeviceType,
+      idGender: position.idGender,
+      idOfficer: position.idOfficer,
       idPerson: position.idPerson,
-      lat: position.lat,
-      lon: position.lon,
-      positionType: position.position_type,
-      positionDate: position.positionDate,
-      type: position.type,
+      idPersonType: position.idPersonType,
+      idRole: position.idRole,
+      idStatus: position.idStatus,
+      showalerts: position.showalerts,
+      geofences: position.geofences,
     }));
     return historicPositions;
   };

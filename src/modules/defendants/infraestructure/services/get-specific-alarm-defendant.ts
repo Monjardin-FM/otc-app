@@ -18,8 +18,8 @@ export const getAlarmDefendantService: DefendantRepository["getSpecificAlarmDefe
     const alarmDefendant = data.map<AlarmDefendant>((defendant) => ({
       idPerson: defendant.idPerson,
       idPersonSpecificAlarm: defendant.idPersonSpecificAlarm,
-      idSpecificAlarmType: defendant.idspecifiAlarmType,
       idStatus: defendant.idStatus,
+      idSpecificAlarmType: defendant.idspecifiAlarmType,
       specificAlarmType: defendant.specificAlarmType,
     }));
     return alarmDefendant;

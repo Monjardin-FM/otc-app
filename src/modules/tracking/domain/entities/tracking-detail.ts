@@ -39,6 +39,8 @@ export type Person = {
 export type Geofences = {
   idGeofence: number;
   geofence: string;
+  idAlarmType: number;
+  name: string;
 };
 export type PersonAlert = {
   timestamp: string;

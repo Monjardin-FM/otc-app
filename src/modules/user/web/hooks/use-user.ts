@@ -6,7 +6,6 @@ export const useUser = () => {
   const { value, error, loading } = useAppSelector((state) => state.user);
   const signIn = useSignIn();
   const signOut = useSignOut();
-
   return {
     signIn,
     signOut,

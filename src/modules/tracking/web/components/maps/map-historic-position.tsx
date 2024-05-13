@@ -1,70 +1,93 @@
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  GeoJSON,
+  Tooltip,
+} from "react-leaflet";
 import { useEffect, useState } from "react";
-import * as Icon from "react-feather";
+import * as IconFetaher from "react-feather";
 import dayjs from "dayjs";
-import { HistoricPosition } from "../../../domain/entities/historic-position";
+import {
+  GeofenceHistoric,
+  Historic,
+  HistoricPosition,
+} from "../../../domain/entities/historic-position";
 import { FullscreenControl } from "react-leaflet-fullscreen";
 import { Card, Skeleton } from "@nextui-org/react";
 import { Player } from "@lottiefiles/react-lottie-player";
 import MapPosition from "../../../../../assets/json/position.json";
 import { MyLayer } from "./markers";
-type FlyNewPositionProps = {
-  positionDefendant: number[];
-  historicPosition?: HistoricPosition[] | [];
+import { Icon } from "leaflet";
+import DefIcon from "../../../../../assets/icons/defendant-marker.png";
+import DefHistoricIcon from "../../../../../assets/icons/defendant-historic-marker.png";
+import { MyLayerVictims } from "./markers-victim";
+
+type FlyNewPositionDefendantProps = {
+  positionDefendantCenter: number[];
+  defendantPositionHistoric?: Historic[] | [];
 };
 // Marker with last position
-export const FlyNewPosition = ({
-  historicPosition,
-  positionDefendant,
-}: FlyNewPositionProps) => {
+export const FlyNewPositionDefendant = ({
+  defendantPositionHistoric,
+  positionDefendantCenter,
+}: FlyNewPositionDefendantProps) => {
   const map = useMap();
   useEffect(() => {
-    map.flyTo(
-      [
-        positionDefendant[positionDefendant.length - 1],
-        positionDefendant[positionDefendant.length - 1],
-      ],
-      20
-    );
-  }, [positionDefendant]);
-
-  return positionDefendant &&
-    historicPosition &&
-    historicPosition.length > 0 ? (
+    map.flyTo([positionDefendantCenter[0], positionDefendantCenter[1]], 15);
+  }, [positionDefendantCenter]);
+  const defendantIcon = new Icon({
+    iconUrl: DefIcon,
+    iconSize: [35, 35], // size of the icon
+    iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
+  });
+  return positionDefendantCenter &&
+    defendantPositionHistoric &&
+    defendantPositionHistoric.length > 0 ? (
     <Marker
       key={1}
-      position={[positionDefendant[0], positionDefendant[1]]}
-      //ref={markerRef}
+      position={[positionDefendantCenter[0], positionDefendantCenter[1]]}
+      icon={defendantIcon}
     >
       <Popup>
         <div className="flex flex-col gap-2">
           <h1 className="text-red-700 text-center font-semibold">{`Last Position`}</h1>
           <ul>
             <li className="flex flex-row items-center gap-1">
-              <Icon.Heart size={10} color="red" />
+              <IconFetaher.Heart size={10} color="red" />
               <span>{`Cardio Frequency: ${
-                historicPosition[historicPosition.length - 1].cardioFrequency
+                defendantPositionHistoric[defendantPositionHistoric.length - 1]
+                  .cardioFrequency
               }`}</span>
             </li>
 
             <li className="flex flex-row items-center gap-1">
-              <Icon.Battery size={10} color="green" />
+              <IconFetaher.Battery size={10} color="green" />
               <span>{`Battery: ${
-                historicPosition[historicPosition.length - 1].battery
+                defendantPositionHistoric[defendantPositionHistoric.length - 1]
+                  .battery
               }`}</span>
             </li>
             <li className="flex flex-row items-center gap-1">
-              <Icon.Calendar size={10} color="blue" />
+              <IconFetaher.Calendar size={10} color="blue" />
               <span>{`Date: ${dayjs
-                .utc(historicPosition[historicPosition.length - 1].positionDate)
+                .utc(
+                  defendantPositionHistoric[
+                    defendantPositionHistoric.length - 1
+                  ].positionDate
+                )
                 .local()
-                .format("DD/MM/YYYY HH:mm:ss A")}`}</span>
+                .format("MMMM/DD/YYYY HH:mm:ss A")}`}</span>
             </li>
             {}
             <li className="flex flex-row items-center gap-1">
-              <Icon.Shield size={10} color="red" />
+              <IconFetaher.Shield size={10} color="red" />
               <span>{`Blood Oxygen: ${
-                historicPosition[historicPosition.length - 1].bloodOxygen
+                defendantPositionHistoric[defendantPositionHistoric.length - 1]
+                  .bloodOxygen
               }`}</span>
             </li>
           </ul>
@@ -75,34 +98,56 @@ export const FlyNewPosition = ({
 };
 
 type MapTrackingProps = {
-  historicPosition?: HistoricPosition[];
+  defendantPosition?: HistoricPosition | null;
+  victimPosition?: HistoricPosition[] | null;
+  geofences?: GeofenceHistoric[] | null;
+  positionSelectedDefendant?: Historic;
 };
 export const MapHistoricPosition = ({
-  historicPosition,
-}: // historicPosition,
+  defendantPosition,
+  geofences,
+  victimPosition,
+  positionSelectedDefendant,
+}: // victimPosition,
 MapTrackingProps) => {
-  const [positionDefendant, setPositionDefendant] = useState([0, 0]);
-  const [isPositionDefendant, setIspositionDefendant] = useState(false);
+  const [positionDefendantCenter, setPositionDefendantCenter] = useState([
+    29.424349, -98.491142,
+  ]);
+  // const [isPositionDefendant, setIspositionDefendant] = useState(false);
   useEffect(() => {
-    if (historicPosition && historicPosition.length > 0) {
-      setPositionDefendant([historicPosition[0].lat, historicPosition[0].lon]);
-      setIspositionDefendant(true);
+    if (
+      defendantPosition &&
+      defendantPosition.historicPersonPosition.length > 0
+    ) {
+      setPositionDefendantCenter([
+        defendantPosition.historicPersonPosition[
+          defendantPosition.historicPersonPosition.length - 1
+        ].lat,
+        defendantPosition.historicPersonPosition[
+          defendantPosition.historicPersonPosition.length - 1
+        ].lon,
+      ]);
     } else {
-      setPositionDefendant([0, 0]);
-      setIspositionDefendant(false);
+      setPositionDefendantCenter([29.424349, -98.491142]);
     }
-  }, [historicPosition]);
-
+  }, [defendantPosition]);
+  const historicDefenndatnIcon = new Icon({
+    iconUrl: DefHistoricIcon,
+    iconSize: [35, 35], // size of the icon
+    iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
+  });
   return (
     <>
-      {isPositionDefendant ? (
+      {/* {String(isPositionDefendant)} */}
+      {defendantPosition ? (
         <MapContainer
           center={
-            positionDefendant
-              ? [positionDefendant[0], positionDefendant[1]]
-              : [0, 0]
+            positionDefendantCenter
+              ? [positionDefendantCenter[0], positionDefendantCenter[1]]
+              : [29.424349, -98.491142]
           }
-          zoom={20}
+          zoom={18}
           scrollWheelZoom={true}
           style={{ height: "70vh", width: "100wh" }}
           preferCanvas
@@ -113,38 +158,182 @@ MapTrackingProps) => {
             titleCancel="Exit fullscreen mode"
             content={"[ ]"}
           />
-          <FlyNewPosition
-            positionDefendant={positionDefendant}
-            historicPosition={historicPosition}
+          <FlyNewPositionDefendant
+            positionDefendantCenter={positionDefendantCenter}
+            defendantPositionHistoric={
+              defendantPosition?.historicPersonPosition
+            }
           />
-          <MyLayer positions={historicPosition} />
+          {positionSelectedDefendant && (
+            <Marker
+              icon={historicDefenndatnIcon}
+              key={positionSelectedDefendant.idPerson}
+              position={[
+                positionSelectedDefendant.lat,
+                positionSelectedDefendant.lon,
+              ]}
+            >
+              <Tooltip direction="top" permanent={false} offset={[0, -35]}>
+                <div className="flex flex-col gap-2">
+                  <h1 className="text-red-700 text-center font-semibold">{`Position`}</h1>
+                  <ul>
+                    <li className="flex flex-row items-center gap-1">
+                      <IconFetaher.Heart size={10} color="red" />
+                      <span>{`Cardio Frequency: ${positionSelectedDefendant.cardioFrequency}`}</span>
+                    </li>
+
+                    <li className="flex flex-row items-center gap-1">
+                      <IconFetaher.Battery size={10} color="green" />
+                      <span>{`Battery: ${positionSelectedDefendant.battery}`}</span>
+                    </li>
+                    <li className="flex flex-row items-center gap-1">
+                      <IconFetaher.Calendar size={10} color="blue" />
+                      <span>{`Date: ${dayjs
+                        .utc(positionSelectedDefendant.positionDate)
+                        .local()
+                        .format("MMMM/DD/YYYY HH:mm:ss A")}`}</span>
+                    </li>
+                    {}
+                    <li className="flex flex-row items-center gap-1">
+                      <IconFetaher.Shield size={10} color="red" />
+                      <span>{`Blood Oxygen: ${positionSelectedDefendant.bloodOxygen}`}</span>
+                    </li>
+                  </ul>
+                </div>
+              </Tooltip>
+            </Marker>
+          )}
+
+          <MyLayer positions={defendantPosition?.historicPersonPosition} />
+
+          {geofences && geofences.length > 0
+            ? geofences.map((geo) => (
+                <>
+                  <GeoJSON
+                    key={geo.idGeofence}
+                    data={JSON.parse(geo.geofence)}
+                    style={
+                      geo.idAlarmType === 1
+                        ? { color: "blue" }
+                        : { color: "red" }
+                    }
+                  >
+                    <Tooltip
+                      permanent={true}
+                      direction="center"
+                      content={geo.name}
+                      opacity={0.8}
+                      className={
+                        geo.idAlarmType === 1
+                          ? "font-semibold text-xl  border-0 border-none border-opacity-0 text-primaryColor-700 text-opacity-100"
+                          : "font-semibold text-xl  border-0 border-none border-opacity-0 text-red-700 text-opacity-100"
+                      }
+                    ></Tooltip>
+                  </GeoJSON>
+                </>
+              ))
+            : ""}
+
+          {victimPosition &&
+            victimPosition.length > 0 &&
+            victimPosition.map((victim) => (
+              <>
+                {victim.historicPersonPosition.length > 0 ? (
+                  <>
+                    <Marker
+                      key={victim.idPerson}
+                      position={[
+                        victim.historicPersonPosition[
+                          victim.historicPersonPosition.length - 1
+                        ].lat,
+                        victim.historicPersonPosition[
+                          victim.historicPersonPosition.length - 1
+                        ].lon,
+                      ]}
+                    >
+                      <Popup>
+                        <div className="flex flex-col gap-2">
+                          <h1 className="text-red-700 text-center font-semibold">{`Last Position: ${victim.completeName}`}</h1>
+                          <ul>
+                            <li className="flex flex-row items-center gap-1">
+                              <IconFetaher.Heart size={10} color="red" />
+                              <span>{`Cardio Frequency: ${
+                                victim.historicPersonPosition[
+                                  victim.historicPersonPosition.length - 1
+                                ].cardioFrequency
+                              }`}</span>
+                            </li>
+
+                            <li className="flex flex-row items-center gap-1">
+                              <IconFetaher.Battery size={10} color="green" />
+                              <span>{`Battery: ${
+                                victim.historicPersonPosition[
+                                  victim.historicPersonPosition.length - 1
+                                ].battery
+                              }`}</span>
+                            </li>
+                            <li className="flex flex-row items-center gap-1">
+                              <IconFetaher.Calendar size={10} color="blue" />
+                              <span>{`Date: ${dayjs
+                                .utc(
+                                  victim.historicPersonPosition[
+                                    victim.historicPersonPosition.length - 1
+                                  ].positionDate
+                                )
+                                .local()
+                                .format("MMMM/DD/YYYY HH:mm:ss A")}`}</span>
+                            </li>
+                            {}
+                            <li className="flex flex-row items-center gap-1">
+                              <IconFetaher.Shield size={10} color="red" />
+                              <span>{`Blood Oxygen: ${
+                                victim.historicPersonPosition[
+                                  victim.historicPersonPosition.length - 1
+                                ].bloodOxygen
+                              }`}</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </Popup>
+                    </Marker>
+                    <MyLayerVictims positions={victim.historicPersonPosition} />
+                  </>
+                ) : (
+                  ""
+                )}
+              </>
+            ))}
+
           <TileLayer
             attribution="&copy; OpenStreetMap</a> "
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
         </MapContainer>
       ) : (
-        <Card className="w-full space-y-5 p-4" radius="lg">
-          <div className="h-1/2 rounded-lg bg-transparent flex items-center justify-center flex-col">
-            <Player
-              autoplay
-              loop
-              src={MapPosition}
-              style={{ height: "300px", width: "300px" }}
-            />
-            <span className="text-primaryColor-900 font-semibold">
-              No position Found
-            </span>
-          </div>
-          <div className="space-y-3">
-            <Skeleton className="w-full rounded-lg">
-              <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
-            </Skeleton>
-            <Skeleton className="w-full rounded-lg">
-              <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
-            </Skeleton>
-          </div>
-        </Card>
+        <>
+          {/* {String(isPositionDefendant)} */}
+          <Card className="w-full space-y-5 p-4" radius="lg">
+            <div className="h-1/2 rounded-lg bg-transparent flex items-center justify-center flex-col">
+              <Player
+                autoplay
+                loop
+                src={MapPosition}
+                style={{ height: "300px", width: "300px" }}
+              />
+              <span className="text-primaryColor-900 font-semibold">
+                No position Found
+              </span>
+            </div>
+            <div className="space-y-3">
+              <Skeleton className="w-full rounded-lg">
+                <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+              </Skeleton>
+              <Skeleton className="w-full rounded-lg">
+                <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+              </Skeleton>
+            </div>
+          </Card>
+        </>
       )}
     </>
   );

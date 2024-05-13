@@ -44,11 +44,18 @@ AppTrackingModalProps) => {
   const [positionDefendant, setPositionDefendant] = useState<
     [number, number] | null
   >([0, 0]);
+  const [markerAlarmMap, setMarkerAlarmMap] = useState<PersonAlert | null>();
   const [isPositionDefendant, setIspositionDefendant] = useState(false);
   const [defendantItem, setDefendantItem] = useState<Person | null>();
   const [victims, setVictims] = useState<Person[] | null>();
-  const [geofences, setGeofences] =
-    useState<{ idGeofence: number; geofence: GeoJSONO }[]>();
+  const [geofences, setGeofences] = useState<
+    {
+      idGeofence: number;
+      geofence: GeoJSONO;
+      idAlarmType: number;
+      name: string;
+    }[]
+  >();
   useEffect(() => {
     if (trackingDetail) {
       const defendantPos = trackingDetail.person.find(
@@ -59,6 +66,8 @@ AppTrackingModalProps) => {
         const geofencesJSON = geofencesList?.map((geo) => ({
           idGeofence: geo.idGeofence,
           geofence: JSON.parse(geo.geofence),
+          idAlarmType: geo.idAlarmType,
+          name: geo.name,
         }));
 
         setGeofences(geofencesJSON);
@@ -113,6 +122,7 @@ AppTrackingModalProps) => {
     setPositionDefendant(null);
     setVictims(null);
     setDefendantItem(null);
+    setMarkerAlarmMap(null);
     onClose();
     // setIspositionDefendant(false);
   };
@@ -207,6 +217,7 @@ AppTrackingModalProps) => {
                         victims={victims}
                         geofences={geofences}
                         onClose={onClose}
+                        markerAlarmMap={markerAlarmMap}
                       />
                     </div>
 
@@ -215,6 +226,9 @@ AppTrackingModalProps) => {
                         onShowAlerts={() => {
                           if (defendantInfo)
                             handleShowAlert(defendantInfo?.idPerson);
+                        }}
+                        onMapShow={(record) => {
+                          setMarkerAlarmMap(record.record);
                         }}
                         items={alertPerson}
                         loadingShowAlerts={loadingShowAlerts}

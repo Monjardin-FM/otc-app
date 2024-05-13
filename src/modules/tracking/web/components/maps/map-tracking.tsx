@@ -1,17 +1,26 @@
-import { MapContainer, TileLayer, Popup, Marker, GeoJSON } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Popup,
+  Marker,
+  GeoJSON,
+  Tooltip,
+} from "react-leaflet";
 import * as IconFeather from "react-feather";
 // import { HistoricPosition } from "../../../domain/entities/historic-position";
-import { Person } from "../../../domain/entities/tracking-detail";
+import { Person, PersonAlert } from "../../../domain/entities/tracking-detail";
 import "dayjs/locale/es"; // Importa el idioma local si es necesario
 import { Card, Skeleton } from "@nextui-org/react";
 import { Player } from "@lottiefiles/react-lottie-player";
 import MapPositon from "../../../../../assets/json/position.json";
 import { FullscreenControl } from "react-leaflet-fullscreen";
+import { Icon } from "leaflet";
+import DefIcon from "../../../../../assets/icons/defendant-marker.png";
+// import AlarmIcon from "../../../../../assets/icons/alarm-marker.png";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc"; // Importa el plugin UTC de Day.js
 import timezone from "dayjs/plugin/timezone"; // Importa el plugin de zona horaria de Day.js
-import { Icon } from "leaflet";
-import DefIcon from "../../../../../assets/icons/defendant-marker.png";
+import { FlyNewPositionMarkerAlarm } from "./marker-alarm-fly-map";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -23,7 +32,13 @@ type MapTrackingProps = {
   defendantItem?: Person | null;
   victims?: Person[] | null;
   onClose: () => void;
-  geofences?: { idGeofence: number; geofence: any }[];
+  geofences?: {
+    idGeofence: number;
+    geofence: any;
+    idAlarmType: number;
+    name: string;
+  }[];
+  markerAlarmMap?: PersonAlert | null;
 };
 
 export const MapTracking = ({
@@ -31,6 +46,7 @@ export const MapTracking = ({
   positionDefendant,
   victims,
   geofences,
+  markerAlarmMap,
 }: MapTrackingProps) => {
   const legalIcon = new Icon({
     iconUrl: DefIcon,
@@ -38,6 +54,12 @@ export const MapTracking = ({
     iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
     popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
   });
+  // const alarmIcon = new Icon({
+  //   iconUrl: AlarmIcon,
+  //   iconSize: [35, 35], // size of the icon
+  //   iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
+  //   popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
+  // });
   return (
     <>
       {positionDefendant && defendantItem ? (
@@ -53,7 +75,7 @@ export const MapTracking = ({
             titleCancel="Exit fullscreen mode"
             content={"[ ]"}
           />
-
+          <FlyNewPositionMarkerAlarm markerAlarmMap={markerAlarmMap} />
           {defendantItem && (
             <Marker
               key={defendantItem?.idDefendant}
@@ -78,7 +100,7 @@ export const MapTracking = ({
                       <span>{`Date: ${dayjs
                         .utc(defendantItem?.personPosition.positionDate)
                         .local()
-                        .format("DD/MM/YYYY HH:mm:ss A")}`}</span>
+                        .format("MMMM/DD/YYYY HH:mm:ss A")}`}</span>
                     </li>
                     <li className="flex flex-row items-center gap-1">
                       <IconFeather.Shield size={10} color="red" />
@@ -118,7 +140,7 @@ export const MapTracking = ({
                           <span>{`Date: ${dayjs
                             .utc(victim?.personPosition.positionDate)
                             .local()
-                            .format("DD/MM/YYYY HH:mm:ss A")}`}</span>
+                            .format("MMMM/DD/YYYY HH:mm:ss A")}`}</span>
                         </li>
                         <li className="flex flex-row items-center gap-1">
                           <IconFeather.Shield size={10} color="red" />
@@ -135,7 +157,27 @@ export const MapTracking = ({
           {geofences &&
             geofences?.map((geofence) => {
               return (
-                <GeoJSON key={geofence.idGeofence} data={geofence.geofence} />
+                <GeoJSON
+                  key={geofence.idGeofence}
+                  data={geofence.geofence}
+                  style={
+                    geofence.idAlarmType === 1
+                      ? { color: "blue" }
+                      : { color: "red" }
+                  }
+                >
+                  <Tooltip
+                    permanent={true}
+                    direction="center"
+                    content={geofence.name}
+                    opacity={0.8}
+                    className={
+                      geofence.idAlarmType === 1
+                        ? "font-semibold text-xl  border-0 border-none border-opacity-0 text-primaryColor-700 text-opacity-100"
+                        : "font-semibold text-xl  border-0 border-none border-opacity-0 text-red-700 text-opacity-100"
+                    }
+                  ></Tooltip>
+                </GeoJSON>
               );
             })}
           <TileLayer

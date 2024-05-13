@@ -33,7 +33,7 @@ type AssignAlarmDefendantFormValues = {
   idSpecificAlarmType: number;
 };
 dayjs.extend(utc);
-export const AddAlarmForm = ({
+export const EditAlarmForm = ({
   idDefendant,
   onReload,
   onClose,
@@ -109,7 +109,6 @@ export const AddAlarmForm = ({
   };
   const onSubmitHandler = async (data: AssignAlarmDefendantFormValues) => {
     if (exceptionItems.length > 0) {
-      console.log(exceptionItems);
       await assignAlarmDefendant({
         name: data.name,
         idPerson: Number(idDefendant),
@@ -279,7 +278,7 @@ export const AddAlarmForm = ({
                     className="col-span-12  grid grid-cols-12  gap-5"
                   >
                     <Card
-                      className="col-span-6 w-full flex flex-col  text-center gap-5 items-center justify-center h-auto p-5 "
+                      className="col-span-12 w-full flex flex-col  text-center gap-5 items-center justify-center h-auto p-5 "
                       isBlurred
                     >
                       <div className="flex flex-row items-center justify-center gap-16">
@@ -386,7 +385,7 @@ export const AddAlarmForm = ({
                         </Button>
                       </div>
                     </Card>
-                    <div className="col-span-6">
+                    <div className="col-span-12">
                       <AppAlarmExceptionTable
                         items={exceptionItems}
                         onDelete={(record) => {

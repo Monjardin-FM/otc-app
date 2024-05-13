@@ -23,15 +23,6 @@ const verifyResponse = async ({ response }: { response?: Response }) => {
   }
 
   const body = await response.json();
-  // const SUCCESS_CODE = 200;
-  // const isSuccess = body.statusCode === SUCCESS_CODE && body.isSuccess;
-  // console.log(`response service:  ${response}`);
-  // console.log(`body service:  ${body}`);
-
-  // if (!isSuccess) {
-  //   // Regresa el error original en lugar de lanzar un nuevo error
-  //   return { body };
-  // }
 
   return { body };
 };

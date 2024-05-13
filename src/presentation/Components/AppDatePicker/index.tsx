@@ -1,14 +1,15 @@
 import { useContext } from "react";
 import clsx from "clsx";
-import es from "date-fns/locale/es";
+import enUS from "date-fns/locale/en-US";
 import DatePicker, {
   ReactDatePickerProps,
   registerLocale,
 } from "react-datepicker";
 import { AppInput, AppInputProps } from "../AppInput";
 import { AppFormContext } from "../AppForm";
+// import enUS, { enUS } from "date-fns/locale/en-US";
 
-registerLocale("es", es);
+registerLocale("enUS", enUS);
 
 export type AppDatePickerProps = ReactDatePickerProps & AppInputProps;
 
@@ -24,7 +25,7 @@ const AppDatePicker = ({
   const { isRequired } = useContext(AppFormContext);
   return (
     <DatePicker
-      locale="es"
+      locale="enUS"
       dateFormat="dd/MM/yyyy"
       className={clsx("form-input h-10", className)}
       required={isRequired || required}

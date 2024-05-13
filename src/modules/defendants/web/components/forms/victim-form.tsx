@@ -16,6 +16,10 @@ import { useDeleteVictim } from "../../../../victim/web/hooks/use-delete-victim"
 import { useGetVictimById } from "../../../../victim/web/hooks/use-get-victim-by-id";
 import { DefendantById } from "../../../domain/entities/defendant-by-id";
 import { AppToast } from "../../../../../presentation/Components/AppToast";
+import { AppPhoneTable } from "../tables/app-phone-person-table";
+import { useGetPhonePerson } from "../../hooks/use-get-phone";
+import { useDeletePhonePerson } from "../../hooks/use-delete-phone";
+import { PhoneForm } from "./phone-form";
 // import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type VictimFormProps = {
@@ -33,6 +37,8 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
   const [visibleTableAddress, setVisibleTableAddress] = useToggle(false);
   const [visibleEditAddress, setVisibleEditAddress] = useToggle(false);
   const [visibleEditVictimForm, setVisibleEditVictimForm] = useToggle(false);
+  const [visibleFormPhone, setVisibleFormPhone] = useToggle(false);
+  const { getPhonePerson, phonePerson } = useGetPhonePerson();
   const {
     deleteVictim,
     error: errorDeleteVictim,
@@ -45,6 +51,11 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
     error: errorDeleteAddress,
     loading: loadingDeleteAddress,
   } = useDeleteAddressPerson();
+  const {
+    deletePhonePerson,
+    error: errorDeletePhone,
+    loading: loadingDeletePhone,
+  } = useDeletePhonePerson();
 
   const onDeleteAddress = () => {
     AppToast().fire({
@@ -61,6 +72,13 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
       icon: "success",
     });
   };
+  const onDeletePhone = () => {
+    AppToast().fire({
+      title: "Phone deleted",
+      icon: "success",
+      text: "The phone was deleted succesfully",
+    });
+  };
   useEffect(() => {
     if (idDefendant) getVictims({ idDefendant: idDefendant, completeName: "" });
   }, [toggleReload]);
@@ -68,6 +86,7 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
     if (idVictim) {
       getAddressPerson({ idPerson: idVictim });
       getVictimById({ idPerson: idVictim, completeName: "" });
+      getPhonePerson({ idPerson: idVictim });
     }
   }, [idVictim, toggleReload]);
 
@@ -104,6 +123,22 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
       });
     }
   }, [loadingDeleteAddress, errorDeleteAddress]);
+  useEffect(() => {
+    if (errorDeletePhone) {
+      AppToast().fire({
+        title: "Error",
+        icon: "error",
+        text: "An error occurred while trying to delete the phone. Try again",
+      });
+    }
+    if (loadingDeletePhone) {
+      AppToast().fire({
+        title: "Deleting phone",
+        icon: "info",
+        text: "The phone is being deleted. Please Wait",
+      });
+    }
+  }, [errorDeletePhone, loadingDeletePhone]);
   return (
     <div
       // ref={parent}
@@ -140,6 +175,17 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
                       `${record.record.name} ${record.record.lastName}`
                     );
                     setVisibleFormAddress(true);
+                    setVisibleFormPhone(false);
+
+                    setToggleReload(!toggleReload);
+                  }}
+                  onAddPhone={(record) => {
+                    setIdVictim(record.record.idPerson);
+                    setVisibleFormPhone(true);
+                    setVisibleFormAddress(false);
+                    setNameVictim(
+                      `${record.record.name} ${record.record.lastName}`
+                    );
                     setToggleReload(!toggleReload);
                   }}
                   onShowAddress={(record) => {
@@ -192,6 +238,23 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
                           setIdAddress(Number(record.idAddress));
                         }}
                         loadingDeleteAddress={loadingDeleteAddress}
+                        isCreate={false}
+                      />
+                      <span className="text-lg text-primaryColor-700 mb-5">
+                        Phone of {nameVictim}
+                      </span>
+                      <AppPhoneTable
+                        isCreate={false}
+                        loadingDeletePhone={loadingDeletePhone}
+                        onDelete={async ({ record }) => {
+                          await deletePhonePerson({
+                            idPhone: record.idPhonePerson,
+                          });
+                          if (!errorDeletePhone) onDeletePhone();
+                          setToggleReload(!toggleReload);
+                        }}
+                        items={phonePerson}
+                        onEdit={() => {}}
                       />
                     </div>
                     {visibleEditAddress && (
@@ -231,6 +294,28 @@ export const VictimForm = ({ idDefendant, defendantInfo }: VictimFormProps) => {
                           setToggleReload(!toggleReload);
                         }}
                         idDefendant={idVictim}
+                      />
+                    </div>
+                  </div>
+                )}
+                {visibleFormPhone && (
+                  <div className="flex flex-col items-center justify-center mt-5 gap-2">
+                    <Chip
+                      className="text-center"
+                      variant="shadow"
+                      color="primary"
+                    >
+                      Add phone to {nameVictim}
+                    </Chip>
+                    <div className="w-full">
+                      <PhoneForm
+                        idDefendant={idVictim}
+                        onReload={() => {
+                          setToggleReload(!toggleReload);
+                        }}
+                        onClose={() => {
+                          setVisibleFormPhone(false);
+                        }}
                       />
                     </div>
                   </div>

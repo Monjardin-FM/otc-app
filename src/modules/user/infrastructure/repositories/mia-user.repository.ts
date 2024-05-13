@@ -4,6 +4,7 @@ import {
   UserRepository,
   UserRepositorySignInDTO,
 } from "../../domain/repositories/user.repository";
+// import { UserRole } from "../../domain/entities/user-role";
 // import { UserRole } from 'modules/user/domain/entities/user-role';
 
 export class MiaUserRepository implements UserRepository {

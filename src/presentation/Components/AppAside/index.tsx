@@ -60,7 +60,7 @@ export const AppAsideV2 = ({
             <AppAuthorizationGuard
               roles={
                 AppConfig[
-                  "userManagement.managerPage.authorization"
+                  "alarm.config.managerPage.authorization"
                 ] as UserRole[]
               }
             >
@@ -96,7 +96,7 @@ export const AppAsideV2 = ({
             </AppAuthorizationGuard>
             <AppAuthorizationGuard
               roles={
-                AppConfig["defendants.managerPage.authorization"] as UserRole[]
+                AppConfig["devices.managerPage.authorization"] as UserRole[]
               }
             >
               <AppAsideLink
@@ -132,7 +132,7 @@ export const AppAsideV2 = ({
             </AppAuthorizationGuard> */}
             <AppAuthorizationGuard
               roles={
-                AppConfig["defendants.managerPage.authorization"] as UserRole[]
+                AppConfig["tracking.managerPage.authorization"] as UserRole[]
               }
             >
               <AppAsideLink
