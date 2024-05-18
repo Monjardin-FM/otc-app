@@ -31,5 +31,14 @@
     "Monitoring Center Agent",
     "Monitoring Center Supervisor",
     "Officer"
+  ],
+  "tracking.inactive.defendants.managerPage.authorization": [
+    "County Administrator",
+    "OTC Administrator",
+    "Chief Officer",
+    "County Director",
+    "Monitoring Center Agent",
+    "Monitoring Center Supervisor",
+    "Officer"
   ]
 }

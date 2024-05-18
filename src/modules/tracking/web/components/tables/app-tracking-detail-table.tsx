@@ -107,7 +107,8 @@ RenderFnParams<PersonAlert> & {
           <Icon.Crosshair size={18} />
         </Button>
       </Tooltip>
-      {record.alarmName.includes("Bracelet Tampering") ? (
+      {record.alarmName.includes("Bracelet Tampering") &&
+      record.seqMachineState ? (
         <Tooltip
           content={"Cancel Alarm"}
           showArrow

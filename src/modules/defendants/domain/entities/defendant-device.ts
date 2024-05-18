@@ -1,8 +1,9 @@
 export type DefendantDevice = {
-  idPersonDevice: number;
-  idPerson: number;
-  idDevice: number;
-  idStatus: number;
-  idDeviceType: number;
   deviceType: string;
+  idDevice: number;
+  idDeviceType: number;
+  idPerson: number;
+  idPersonDevice: number;
+  idStatus: number;
+  imei: string;
 };

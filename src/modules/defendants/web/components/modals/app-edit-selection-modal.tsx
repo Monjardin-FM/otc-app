@@ -70,6 +70,18 @@ export const AppEditSelectionModal = ({
             >
               Edit Defendant Alarms
             </Button>
+            <Button
+              size="lg"
+              className="w-3/4"
+              startContent={<Icon.Clock size={18} />}
+              color="default"
+              variant="shadow"
+              onPress={() => {
+                onEditInfo("scheduleAlarms");
+              }}
+            >
+              Alarms
+            </Button>
           </ModalBody>
         </>
       </ModalContent>

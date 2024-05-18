@@ -18,6 +18,7 @@ export const getDevicesService: DeviceRepository["getDevice"] = async (
   const data = body.data as any[];
 
   const devices = data.map<Device>((device) => ({
+    available: device.available,
     idDevice: device.idDevice,
     idDeviceType: device.idDeviceType,
     deviceType: device.deviceType,

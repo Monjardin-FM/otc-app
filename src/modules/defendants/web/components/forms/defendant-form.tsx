@@ -29,7 +29,7 @@ import { useGetDefendantDevice } from "../../hooks/use-get-defendant-device";
 import { useGetAddressPerson } from "../../hooks/use-get-address-person";
 import { AppAddressPersonsTable } from "../tables/app-address-person";
 import { DefendantById } from "../../../domain/entities/defendant-by-id";
-import { Button, Chip, Textarea } from "@nextui-org/react";
+import { Button, Chip, Input, Textarea } from "@nextui-org/react";
 import { useGetPhonePerson } from "../../hooks/use-get-phone";
 import { AppPhoneTable } from "../tables/app-phone-person-table";
 export type DefendantFormProps = {
@@ -79,7 +79,8 @@ export const DefendantForm = ({
   const { addressPerson, getAddressPerson } = useGetAddressPerson();
   const { getPhonePerson, phonePerson } = useGetPhonePerson();
   const [toggleReload, setToggleReload] = useToggle(false);
-
+  const [isVisiblePassword, setIsVisiblePassword] = useState(false);
+  const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
   const validationSchemaDefendant = Yup.object().shape({
     name: Yup.string().required("Required name"),
     lastName: Yup.string().required("Required last name"),
@@ -475,12 +476,34 @@ export const DefendantForm = ({
                       />
                     </AppFormField>
                     <AppFormField className="col-span-2">
-                      <AppFormLabel>Password</AppFormLabel>
-                      <AppTextField
+                      <Input
                         name="password"
+                        label="Password"
+                        labelPlacement="outside"
                         value={values.password}
                         onChange={handleChange}
-                        type="password"
+                        // type="password"
+                        // isClearable
+                        // placeholder="Password"
+                        defaultValue={values.password}
+                        radius="sm"
+                        variant="faded"
+                        size="md"
+                        // onClear={() => setFieldValue("password", "")}
+                        endContent={
+                          <button
+                            className="focus:outline-none"
+                            type="button"
+                            onClick={toggleVisibility}
+                          >
+                            {isVisiblePassword ? (
+                              <Icon.EyeOff size={15} />
+                            ) : (
+                              <Icon.Eye size={15} />
+                            )}
+                          </button>
+                        }
+                        type={isVisiblePassword ? "text" : "password"}
                       />
                       {errors.password && (
                         <AppFormHelperText colorSchema="red">

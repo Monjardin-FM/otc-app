@@ -23,6 +23,7 @@ export const getDefendantDeviceService: DefendantRepository["getDeviceDefendant"
       idPerson: defendant.idPerson,
       idPersonDevice: defendant.idPersonDevice,
       idStatus: defendant.idStatus,
+      imei: defendant.imei,
     }));
     return defendants;
   };

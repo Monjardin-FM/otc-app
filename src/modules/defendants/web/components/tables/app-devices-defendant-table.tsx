@@ -78,10 +78,11 @@ const StatusDefendantDeviceColumn = (
 };
 
 const ActionsColumn = ({
-  // onEdit,
+  onEdit,
   isCreate,
   onDelete,
   loadingDeleteDefendantDevice,
+  record,
 }: // record,
 RenderFnParams<DefendantDevice> & {
   onEdit: () => void;
@@ -91,6 +92,30 @@ RenderFnParams<DefendantDevice> & {
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-2 static">
+      {record.idDeviceType === 1 && (
+        <Tooltip
+          content={"Edit Device"}
+          color="primary"
+          offset={5}
+          showArrow
+          closeDelay={10}
+          disableAnimation
+        >
+          <Button
+            onClick={() => {
+              onEdit();
+            }}
+            title="Edit Device"
+            size="sm"
+            variant="shadow"
+            color="primary"
+            isIconOnly
+            isDisabled={isCreate}
+          >
+            <Icon.Edit size={18} />
+          </Button>
+        </Tooltip>
+      )}
       <Tooltip
         content={"Delete Device"}
         color="danger"

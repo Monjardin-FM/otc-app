@@ -18,6 +18,7 @@ import { AppButton } from "../../../../../presentation/Components/AppButton";
 import { VicimById } from "../../../../victim/domain/entities/victim-by-id";
 import { useUpdateVictim } from "../../../../victim/web/hooks/use-update-victim";
 import { DefendantById } from "../../../domain/entities/defendant-by-id";
+import { Input } from "@nextui-org/react";
 export type EditVictimFormProps = {
   idVictim?: number | null;
   idDefendant?: number | null;
@@ -46,7 +47,8 @@ export const EditVictimForm = ({
   const [birthDate, setBirthDate] = useState<Date>(new Date());
   const { genders, getGenders } = useGetGenders();
   const [statusVictim, setStatusVictim] = useState(true);
-
+  const [isVisiblePassword, setIsVisiblePassword] = useState(false);
+  const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
   const {
     value: responseUpdateVictim,
     updateVictim,
@@ -232,12 +234,34 @@ export const EditVictimForm = ({
               )}
             </AppFormField>
             <AppFormField className="col-span-4">
-              <AppFormLabel>Password</AppFormLabel>
-              <AppTextField
+              <Input
                 name="password"
+                label="Password"
+                labelPlacement="outside"
                 value={values.password}
                 onChange={handleChange}
-                type="password"
+                // type="password"
+                // isClearable
+                // placeholder="Password"
+                defaultValue={values.password}
+                radius="sm"
+                variant="faded"
+                size="md"
+                // onClear={() => setFieldValue("password", "")}
+                endContent={
+                  <button
+                    className="focus:outline-none"
+                    type="button"
+                    onClick={toggleVisibility}
+                  >
+                    {isVisiblePassword ? (
+                      <Icon.EyeOff size={15} />
+                    ) : (
+                      <Icon.Eye size={15} />
+                    )}
+                  </button>
+                }
+                type={isVisiblePassword ? "text" : "password"}
               />
               {errors.password && (
                 <AppFormHelperText colorSchema="red">

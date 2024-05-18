@@ -4,6 +4,7 @@ import { AppDefendantsManagerPage } from "./modules/defendants/web/components/ap
 import { AppDevicesManagerPage } from "./modules/devices/web/components/app-devices-manager-page";
 import { ManagementUsersManagerPage } from "./modules/management-users/web/components/app-management-users-manager-page";
 import { AppRequestAdminManagerPage } from "./modules/request-admin/web/components/app-request-admin-manager-page";
+import { AppTrackingInactiveDefendantsManagerPage } from "./modules/tracking-inactive/web/components/app-tracking-inactive-defendants-manager-page";
 import { AppTrackingPlusManagerPage } from "./modules/tracking-plus/web/components/app-tracking-plus-manager-page";
 import { AppTrackingManagerPage } from "./modules/tracking/web/components/app-tracking-manager-page";
 import { AppUserAuth } from "./modules/user/web/components/AppUserAuthPage";
@@ -57,6 +58,11 @@ export const routes: IRoute[] = [
         key: "tracking-view",
         path: "/tracking",
         component: AppTrackingManagerPage,
+      },
+      {
+        key: "tracking-inactive-defendants",
+        path: "/tracking-inactive-defendants",
+        component: AppTrackingInactiveDefendantsManagerPage,
       },
       {
         key: "tracking-plus-view",

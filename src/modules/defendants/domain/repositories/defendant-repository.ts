@@ -2,12 +2,17 @@ import { DefendantById } from "../entities/defendant-by-id";
 import { Defendant } from "../entities/defendant";
 import { DefendantDevice } from "../entities/defendant-device";
 import { Address } from "../entities/address";
-import { SpecificAlarmParams } from "../entities/alarm-defendant-params";
+import {
+  AlarmException,
+  SpecificAlarmParams,
+} from "../entities/alarm-defendant-params";
 import {
   AlarmDefendant,
   AlarmDefendantById,
 } from "../entities/alarm-defendant";
 import { Phone, PhoneById } from "../entities/phone";
+import { AutomaticAlarmsDefendant } from "../entities/automatic-alarm-defendant";
+import { ScheduleAlarm } from "../entities/schedule-alarm";
 export type createDefendantParams = {
   completeName: string;
   name: string;
@@ -73,6 +78,13 @@ export type DefendantRepository = {
     idDevice: number;
     idDeviceType: number;
   }): Promise<void>;
+  updateDeviceDefendant(params: {
+    idPerson: number;
+    idDevice: number;
+    idDeviceNew: number;
+    imei: string;
+    imeiNew: string;
+  }): Promise<void>;
   deleteDeviceDefendant(params: { idDevice: number }): Promise<Boolean>;
   assignAddress(params: {
     idPerson: number;
@@ -108,4 +120,18 @@ export type DefendantRepository = {
   getPhoneById: (params: { idPhone: number }) => Promise<PhoneById>;
   assignPhone: (params: { idPerson: number; phone: string }) => Promise<void>;
   deletePhone: (params: { idPhone: number }) => Promise<Boolean>;
+  getDefendantAlarms: (params: {
+    idPerson: number;
+  }) => Promise<AutomaticAlarmsDefendant[]>;
+  postScheduleAlarmDefendant: (params: {
+    idDefendant: number;
+    idAlarmType: number;
+    description: string;
+    alarmException: AlarmException[];
+  }) => Promise<void>;
+  getScheduleAlarms: (params: {
+    idDefendant: number;
+    idAlarmType: number;
+  }) => Promise<ScheduleAlarm[]>;
+  deleteScheduleAlarm: (params: { idAlarm: number }) => Promise<Boolean>;
 };

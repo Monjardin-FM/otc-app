@@ -44,6 +44,8 @@ import { AddressUpdateForm } from "../forms/edit-addres-form";
 import { AppPhoneTable } from "../tables/app-phone-person-table";
 import { useGetPhonePerson } from "../../hooks/use-get-phone";
 import { useDeletePhonePerson } from "../../hooks/use-delete-phone";
+import { DefendantDevice } from "../../../domain/entities/defendant-device";
+import { EditDeviceForm } from "../forms/edit-device-form";
 export type AppEditInfoDefendantModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -84,6 +86,11 @@ export const AppEditInfoDefendantModal = ({
   const [statusOfficer, setStatusOfficer] = useState(false);
   const [birthDate, setBirthDate] = useState<Date | null>(new Date());
   const [toggleReload, setToggleReload] = useToggle(false);
+  const [isVisiblePassword, setIsVisiblePassword] = useState(false);
+  const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
+  const [visibleEditDeviceForm, setVisibleEditDeviceForm] = useState(false);
+  const [selectedDevice, setSelectedDevice] =
+    useState<DefendantDevice | null>();
   const {
     deleteDefendantDevice,
     error: errorDeleteDevice,
@@ -171,7 +178,6 @@ export const AppEditInfoDefendantModal = ({
     offense: Yup.string().required("Required offense"),
     password: Yup.string().min(10, "Minimum length 10 characters"),
   });
-
   useEffect(() => {
     getUsers({ completeName: "" });
     getGenders();
@@ -556,14 +562,28 @@ export const AppEditInfoDefendantModal = ({
                             labelPlacement="outside"
                             value={values.password}
                             onChange={handleChange}
-                            type="password"
-                            isClearable
-                            placeholder="Password"
+                            // type="password"
+                            // isClearable
+                            // placeholder="Password"
                             defaultValue={values.password}
                             radius="sm"
                             variant="faded"
                             size="md"
-                            onClear={() => setFieldValue("password", "")}
+                            // onClear={() => setFieldValue("password", "")}
+                            endContent={
+                              <button
+                                className="focus:outline-none"
+                                type="button"
+                                onClick={toggleVisibility}
+                              >
+                                {isVisiblePassword ? (
+                                  <Icon.EyeOff size={15} />
+                                ) : (
+                                  <Icon.Eye size={15} />
+                                )}
+                              </button>
+                            }
+                            type={isVisiblePassword ? "text" : "password"}
                           />
                           {errors.password && (
                             <AppFormHelperText colorSchema="red">
@@ -697,12 +717,29 @@ export const AppEditInfoDefendantModal = ({
                                 if (!errorDeleteDevice) onDelete();
                                 setToggleReload(!toggleReload);
                               }}
-                              onEdit={() => {}}
+                              onEdit={({ record }) => {
+                                setSelectedDevice(record);
+                                setVisibleEditDeviceForm(true);
+                              }}
                               items={defendantDevice}
                               loadingDeleteDefendantDevice={
                                 loadingDeleteDefendantDevice
                               }
                             />
+                            <div ref={parent} className="w-full">
+                              {visibleEditDeviceForm && (
+                                <EditDeviceForm
+                                  onClose={() =>
+                                    setVisibleEditDeviceForm(false)
+                                  }
+                                  onReload={() =>
+                                    setToggleReload(!toggleReload)
+                                  }
+                                  idDefendant={idDefendant}
+                                  selectedDevice={selectedDevice}
+                                />
+                              )}
+                            </div>
                           </Disclosure.Panel>
                         </>
                       )}

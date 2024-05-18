@@ -149,7 +149,7 @@ MapTrackingProps) => {
           }
           zoom={18}
           scrollWheelZoom={true}
-          style={{ height: "70vh", width: "100wh" }}
+          style={{ height: "70vh", width: "100wh", zIndex: 0 }}
           preferCanvas
         >
           <FullscreenControl

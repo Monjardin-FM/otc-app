@@ -18,6 +18,7 @@ import AppSelect from "../../../../../presentation/Components/AppSelect";
 import { Switch } from "@headlessui/react";
 import {
   Button,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -57,7 +58,8 @@ export const AppNewUserModal = ({
     // error: errorSave,
     value: responseCreateUser,
   } = useSaveUser();
-
+  const [isVisiblePassword, setIsVisiblePassword] = useState(false);
+  const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
   const validationSchemaSaveUser = Yup.object().shape({
     name: Yup.string().required("Required name"),
     lastName: Yup.string().required("Required last name"),
@@ -271,13 +273,35 @@ export const AppNewUserModal = ({
                       )}
                     </AppFormField>
                     <AppFormField className="col-span-6">
-                      <AppFormLabel>Password</AppFormLabel>
-                      <AppTextField
+                      {/* <AppFormLabel>Password</AppFormLabel> */}
+                      <Input
                         name="password"
-                        onChange={handleChange}
+                        label="Password"
+                        labelPlacement="outside"
                         value={values.password}
-                        type="password"
-                        autoComplete="new-password"
+                        onChange={handleChange}
+                        // type="password"
+                        // isClearable
+                        // placeholder="Password"
+                        defaultValue={values.password}
+                        radius="sm"
+                        variant="faded"
+                        size="md"
+                        // onClear={() => setFieldValue("password", "")}
+                        endContent={
+                          <button
+                            className="focus:outline-none"
+                            type="button"
+                            onClick={toggleVisibility}
+                          >
+                            {isVisiblePassword ? (
+                              <Icon.EyeOff size={15} />
+                            ) : (
+                              <Icon.Eye size={15} />
+                            )}
+                          </button>
+                        }
+                        type={isVisiblePassword ? "text" : "password"}
                       />
                       {errors.password && (
                         <AppFormHelperText colorSchema="red">

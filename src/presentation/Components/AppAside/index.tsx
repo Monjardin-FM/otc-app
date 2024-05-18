@@ -141,6 +141,19 @@ export const AppAsideV2 = ({
                 to="/tracking"
               />
             </AppAuthorizationGuard>
+            <AppAuthorizationGuard
+              roles={
+                AppConfig[
+                  "tracking.inactive.defendants.managerPage.authorization"
+                ] as UserRole[]
+              }
+            >
+              <AppAsideLink
+                icon={<Icon.MapPin size={20} />}
+                label="Tracking Inactive Defendants"
+                to="/tracking-inactive-defendants"
+              />
+            </AppAuthorizationGuard>
           </div>
 
           <div className="mt-14">
