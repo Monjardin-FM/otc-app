@@ -6,6 +6,8 @@ import {
   useMap,
   GeoJSON,
   Tooltip,
+  LayersControl,
+  LayerGroup,
 } from "react-leaflet";
 import { useEffect, useState } from "react";
 import * as IconFetaher from "react-feather";
@@ -152,6 +154,23 @@ MapTrackingProps) => {
           style={{ height: "70vh", width: "100wh", zIndex: 0 }}
           preferCanvas
         >
+          <LayersControl>
+            <LayersControl.BaseLayer checked name="Google Map">
+              <TileLayer
+                attribution="Google Maps"
+                url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
+              />
+            </LayersControl.BaseLayer>
+            <LayersControl.BaseLayer name="Google Map Satellite">
+              <LayerGroup>
+                <TileLayer
+                  attribution="Google Maps Satellite"
+                  url="https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}"
+                />
+                <TileLayer url="https://www.google.cn/maps/vt?lyrs=y@189&gl=cn&x={x}&y={y}&z={z}" />
+              </LayerGroup>
+            </LayersControl.BaseLayer>
+          </LayersControl>
           <FullscreenControl
             position="topright"
             title="Fullscreen mode"
@@ -304,10 +323,10 @@ MapTrackingProps) => {
               </>
             ))}
 
-          <TileLayer
+          {/* <TileLayer
             attribution="&copy; OpenStreetMap</a> "
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          /> */}
         </MapContainer>
       ) : (
         <>

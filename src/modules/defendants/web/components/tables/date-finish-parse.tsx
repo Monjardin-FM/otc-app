@@ -35,11 +35,15 @@ export const DateFinishParse = ({ strDays }: DateFinishParseProps) => {
       const itemsIntervals = itemsSchedule.intervals;
       setIntervals(itemsIntervals);
     }
-  });
+  }, []);
   return (
     <div className="flex flex-col gap-2">
       {intervals?.map((inter) => (
-        <Chip color="secondary">{convertHour(inter.end)}</Chip>
+        <Chip color="secondary">
+          <p className="text-balance leading-3 tracking-tight text-sm">
+            {convertHour(inter.end)}
+          </p>
+        </Chip>
       ))}
     </div>
   );

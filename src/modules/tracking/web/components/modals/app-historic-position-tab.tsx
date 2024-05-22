@@ -157,6 +157,8 @@ export const AppHistoricPositionTab = () => {
                     className="px-1 py-0.5 w-20 text-right text-small text-danger-500 font-medium bg-danger-100 outline-double transition-colors rounded-small border-medium border-transparent hover:border-danger-500 focus:border-danger-500"
                     type="number"
                     aria-label="Position"
+                    max={rangePositionsDefendant.length}
+                    min={0}
                     value={inputValue}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const v = e.target.value;

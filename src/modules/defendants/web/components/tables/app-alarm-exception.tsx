@@ -3,77 +3,84 @@ import {
   AppDataGridColumn,
   RenderFnParams,
 } from "../../../../../presentation/Components/AppDataGrid";
-import { Intervals } from "../../../domain/entities/alarm-defendant";
 import { Chip } from "@nextui-org/react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc"; // Importa el plugin UTC de Day.js
 import timezone from "dayjs/plugin/timezone"; // Importa el plugin de zona horaria de Day.js
+import { DateInitParse } from "./date-init-parse";
+import { DateFinishParse } from "./date-finish-parse";
+import { DaysParse } from "./days-parse";
 dayjs.extend(utc);
 dayjs.extend(timezone);
+type Shedules = {
+  alarmExceptionType: number;
+  dateInit: string;
+  dateFinish: string;
+  strDays: string;
+};
 export type AlarmExceptionSchedulesTableProps = {
-  items?: Intervals[];
+  items?: Shedules[];
 };
-const convertHour = (utcTime: string): string => {
-  // Parsear la hora UTC como un objeto Date
-  const utcDate = new Date(`2000-01-01T${utcTime}:00Z`); // Asignamos una fecha arbitraria ya que solo nos interesa la hora
 
-  // Obtener el desplazamiento de la zona horaria local en minutos
-  const offsetMinutes = new Date().getTimezoneOffset();
-
-  // Aplicar el desplazamiento de la zona horaria local a la hora UTC
-  const localTime = new Date(utcDate.getTime() - offsetMinutes * 60000);
-
-  // Formatear la hora local en formato HH:mm
-  const horaLocal = localTime.toISOString().slice(11, 16);
-
-  return horaLocal;
-};
-const convertDaysWeek = (days: number[]): string => {
-  const nameDays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const daysNames = days.map((day) => nameDays[day - 1]);
-  return daysNames.join(", ");
-};
 const DateInitAlarmExceptionScheduleColumn = (
-  params: RenderFnParams<Intervals>
+  params: RenderFnParams<Shedules>
 ) => {
   return (
-    <Chip color={"primary"} variant="shadow" radius="full">
-      <span>{convertHour(params.record.start)}</span>
-    </Chip>
+    <>
+      {params.record.strDays !== "null" ? (
+        <DateInitParse strDays={params.record.strDays} />
+      ) : (
+        <Chip color={"primary"} variant="shadow" radius="full">
+          <span>
+            {dayjs
+              .utc(params.record.dateInit)
+              .local()
+              .format("MM/DD/YYYY HH:mm:ss A")}
+          </span>
+        </Chip>
+      )}
+    </>
   );
 };
 const DateFinishAlarmExceptionScheduleColumn = (
-  params: RenderFnParams<Intervals>
+  params: RenderFnParams<Shedules>
 ) => {
   return (
-    <Chip color={"primary"} variant="shadow" radius="full">
-      <span>{convertHour(params.record.end)}</span>
-    </Chip>
+    <>
+      {params.record.strDays !== "null" ? (
+        <DateFinishParse strDays={params.record.strDays}></DateFinishParse>
+      ) : (
+        <Chip color={"primary"} variant="shadow" radius="full">
+          <span>
+            {dayjs
+              .utc(params.record.dateFinish)
+              .local()
+              .format("MM/DD/YYYY HH:mm:ss A")}
+          </span>
+        </Chip>
+      )}
+    </>
   );
 };
 
 const DateDaysAlarmExceptionScheduleColumn = (
-  params: RenderFnParams<Intervals>
+  params: RenderFnParams<Shedules>
 ) => {
   return (
-    <Chip color="warning" variant="shadow">
-      {convertDaysWeek(params.record.days)}
-    </Chip>
+    <>
+      {params.record.strDays !== "null" ? (
+        <DaysParse strDays={params.record.strDays}></DaysParse>
+      ) : (
+        ""
+      )}
+    </>
   );
 };
 
 export const AppAlarmExceptionSchedulesTable = ({
-  items = [],
+  items,
 }: AlarmExceptionSchedulesTableProps) => {
-  const columns: AppDataGridColumn<Intervals>[] = [
+  const columns: AppDataGridColumn<Shedules>[] = [
     {
       key: "DateInitAlarmExceptionScheduleColumn",
       dataIndex: "DateInitAlarmExceptionScheduleColumn",
@@ -94,6 +101,6 @@ export const AppAlarmExceptionSchedulesTable = ({
     },
   ];
   return (
-    <AppDataGrid<Intervals> columns={columns} dataSource={items} itemKey="id" />
+    <AppDataGrid<Shedules> columns={columns} dataSource={items} itemKey="id" />
   );
 };

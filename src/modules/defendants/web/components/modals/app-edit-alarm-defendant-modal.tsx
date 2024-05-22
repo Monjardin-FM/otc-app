@@ -20,11 +20,14 @@ import { useGetDefendantAlarmById } from "../../hooks/use-get-alarm-defendant-by
 import { GeoJSONO } from "../../../domain/entities/geoJSON";
 import { AppAlarmExceptionSchedulesTable } from "../tables/app-alarm-exception";
 import { EditGeofenceForm } from "../forms/edit-geofence-form";
-import {
-  AlarmExceptionSchedule,
-  Intervals,
-  StrDays,
-} from "../../../domain/entities/alarm-defendant";
+import { ScheduleAlarm } from "../../../domain/entities/schedule-alarm";
+import { AlarmDefendant } from "../../../domain/entities/alarm-defendant";
+// import {
+//   AlarmExceptionSchedule,
+//   Intervals,
+//   StrDays,
+// } from "../../../domain/entities/alarm-defendant";
+// import { ScheduleAlarm } from "../../../domain/entities/schedule-alarm";
 export type AppEditAlarmDefendantModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -52,7 +55,9 @@ AppEditAlarmDefendantModalProps) => {
   const { defendantAlarmById, getDefendantAlarmById } =
     useGetDefendantAlarmById();
   const [geofence, setGeofence] = useState<any>();
-  const [intervals, setIntervals] = useState<Intervals[]>();
+  // const [intervals, setIntervals] = useState<Intervals[]>([]);
+  const [itemsScheduleException, setItemsScheduleException] =
+    useState<Omit<ScheduleAlarm, "idAlarm">[]>();
 
   // useEffect to fetch defendant alarm
   useEffect(() => {
@@ -65,21 +70,14 @@ AppEditAlarmDefendantModalProps) => {
       const geofenceJSON: GeoJSONO[] = defendantAlarmById?.lGeofence.map(
         (item) => JSON.parse(item.geofence)
       );
-      // setVisibleMapGeofence(false);
       setGeofence(geofenceJSON);
-    }
-  }, [defendantAlarmById]);
-
-  useEffect(() => {
-    if (defendantAlarmById) {
-      const itemsFilter: AlarmExceptionSchedule[] =
-        defendantAlarmById?.alarmException?.filter(
-          (item) => item.strDays !== "null"
-        );
-      const itemsSchedule: StrDays =
-        itemsFilter && JSON.parse(itemsFilter[0]?.strDays);
-      const itemsInterval = itemsSchedule && itemsSchedule.intervals;
-      setIntervals(itemsInterval);
+      const items = defendantAlarmById.alarmException.map((item) => ({
+        alarmExceptionType: item.alarmExceptionType,
+        dateInit: item.dateInit,
+        dateFinish: item.dateFinish,
+        strDays: item.strDays,
+      }));
+      setItemsScheduleException(items);
     }
   }, [defendantAlarmById]);
 
@@ -114,6 +112,25 @@ AppEditAlarmDefendantModalProps) => {
       });
     }
   }, [errorDelete, loadingDelete]);
+  const handleView = async (record: AlarmDefendant) => {
+    setIdAlarmDefendant(record.idPersonSpecificAlarm);
+    await getDefendantAlarmById({
+      idPersonSpecificAlarm: record.idPersonSpecificAlarm,
+    });
+    setVisibleMapGeofence(true);
+    setVisibleAlarmForm(false);
+    setVisibleEditGeofence(false);
+  };
+
+  const handleEdit = async (record: AlarmDefendant) => {
+    setIdAlarmDefendant(record.idPersonSpecificAlarm);
+    await getDefendantAlarmById({
+      idPersonSpecificAlarm: record.idPersonSpecificAlarm,
+    });
+    setVisibleEditGeofence(true);
+    setVisibleMapGeofence(false);
+    setVisibleAlarmForm(false);
+  };
   return (
     <Modal
       size="full"
@@ -122,6 +139,7 @@ AppEditAlarmDefendantModalProps) => {
         onClose();
         setVisibleMapGeofence(false);
         setVisibleAlarmForm(false);
+        setVisibleEditGeofence(false);
       }}
       backdrop="blur"
       // scrollBehavior="outside"
@@ -150,6 +168,7 @@ AppEditAlarmDefendantModalProps) => {
                 onPress={() => {
                   setVisibleAlarmForm(true);
                   setVisibleMapGeofence(false);
+                  setVisibleEditGeofence(false);
                 }}
               >
                 New Alarm
@@ -165,39 +184,23 @@ AppEditAlarmDefendantModalProps) => {
                   if (!errorDelete) onDelete();
                   setToggleReload(!toggleReload);
                 }}
-                onView={async ({ record }) => {
-                  setVisibleMapGeofence(false);
-                  setVisibleAlarmForm(false);
-                  setVisibleEditGeofence(false);
-                  await getDefendantAlarmById({
-                    idPersonSpecificAlarm: record.idPersonSpecificAlarm,
-                  });
-                  setIdAlarmDefendant(record.idPersonSpecificAlarm);
-                  setVisibleMapGeofence(true);
-                }}
-                onEdit={async ({ record }) => {
-                  setVisibleEditGeofence(true);
-                  setVisibleAlarmForm(false);
-                  setVisibleMapGeofence(false);
-                  await getDefendantAlarmById({
-                    idPersonSpecificAlarm: record.idPersonSpecificAlarm,
-                  });
-                  setIdAlarmDefendant(record.idPersonSpecificAlarm);
-                  setVisibleEditGeofence(true);
-                }}
+                onView={({ record }) => handleView(record)}
+                onEdit={({ record }) => handleEdit(record)}
                 items={defendantAlarm}
                 loadingDelete={loadingDelete}
               />
             </div>
             {visibleMapGeofence && (
-              <div className="col-span-12 grid grid-cols-12 h-full gap-3 bg-info-100 p-3 rounded-lg items-start">
-                <div className="col-span-5 flex flex-col items-center justify-center gap-4">
-                  <span className="font-semibold text-primaryColor-700">
+              <div className="col-span-12 grid grid-cols-12 h-full gap-3 bg-info-100 p-3 rounded-lg items-star">
+                <div className="col-span-7 flex flex-col overflow-x-auto gap-4 bg-white p-3 rounded-lg">
+                  <span className="font-semibold text-primaryColor-700 text-center mt-5">
                     Schedules
                   </span>
-                  <AppAlarmExceptionSchedulesTable items={intervals} />
+                  <AppAlarmExceptionSchedulesTable
+                    items={itemsScheduleException}
+                  />
                 </div>
-                <div className="col-span-7 flex flex-col items-end gap-2">
+                <div className="col-span-5 flex flex-col items-end gap-2">
                   <AppGeofenceView geofence={geofence} />
                   <Button
                     color="danger"
@@ -214,7 +217,7 @@ AppEditAlarmDefendantModalProps) => {
               <div className="col-span-12 border">
                 <EditGeofenceForm
                   geofence={geofence}
-                  items={defendantAlarmById?.alarmException}
+                  items={itemsScheduleException}
                   idDefendant={idDefendant}
                   onReload={async () => {
                     if (defendantAlarmById?.idPersonSpecificAlarm) {

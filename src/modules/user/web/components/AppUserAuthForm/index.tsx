@@ -1,19 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { AppToast } from "../../../../../presentation/Components/AppToast";
 import {
   AppFormField,
   AppFormHelperText,
-  AppFormLabel,
 } from "../../../../../presentation/Components/AppForm";
-import AppTextField from "../../../../../presentation/Components/AppTextField";
 import { AppButton } from "../../../../../presentation/Components/AppButton";
 import { useUser } from "../../hooks/use-user";
 import * as Icon from "react-feather";
 import { useFormik } from "formik";
+import { Input } from "@nextui-org/react";
 export const AppUserAuthForm = () => {
   const { signIn, loading, error } = useUser();
-
+  const [isVisiblePassword, setIsVisiblePassword] = useState(false);
+  const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
   useEffect(() => {
     if (error) {
       AppToast().fire({ icon: "info", title: "Failed authentication" });
@@ -38,21 +38,20 @@ export const AppUserAuthForm = () => {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} className="w-full" autoComplete="off">
+    <form onSubmit={formik.handleSubmit} className="w-full " autoComplete="off">
       <AppFormField className="mt-7" isRequired>
-        <AppFormLabel textColor="black" htmlFor="email">
-          Email
-        </AppFormLabel>
-        <AppTextField
-          colorSchema={
-            formik.touched.email && formik.errors.email ? "red" : "gray"
-          }
+        <Input
           id="email"
           name="email"
-          type="email"
-          leftIcon={<Icon.Mail size={20} />}
-          onChange={formik.handleChange}
+          label="Email"
+          labelPlacement="inside"
           value={formik.values.email}
+          onChange={formik.handleChange}
+          radius="sm"
+          variant="faded"
+          size="md"
+          startContent={<Icon.Mail size={15} />}
+          type="email"
         />
         {formik.touched.email && formik.errors.email && (
           <AppFormHelperText colorSchema="red">
@@ -61,21 +60,34 @@ export const AppUserAuthForm = () => {
         )}
       </AppFormField>
 
-      <AppFormField className="mt-5" isRequired>
-        <AppFormLabel textColor="black" htmlFor="password">
-          Password
-        </AppFormLabel>
-        <AppTextField
-          colorSchema={
-            formik.touched.password && formik.errors.password ? "red" : "gray"
-          }
+      <AppFormField className="mt-10" isRequired>
+        <Input
           id="password"
           name="password"
-          type="password"
-          leftIcon={<Icon.Lock size={20} />}
-          onChange={formik.handleChange}
+          label="Password"
+          labelPlacement="inside"
           value={formik.values.password}
+          onChange={formik.handleChange}
+          radius="sm"
+          variant="faded"
+          size="md"
+          startContent={<Icon.Lock size={15} />}
+          endContent={
+            <button
+              className="focus:outline-none"
+              type="button"
+              onClick={toggleVisibility}
+            >
+              {isVisiblePassword ? (
+                <Icon.EyeOff size={15} />
+              ) : (
+                <Icon.Eye size={15} />
+              )}
+            </button>
+          }
+          type={isVisiblePassword ? "text" : "password"}
         />
+
         {formik.touched.password && formik.errors.password && (
           <AppFormHelperText colorSchema="red">
             {formik.errors.password}

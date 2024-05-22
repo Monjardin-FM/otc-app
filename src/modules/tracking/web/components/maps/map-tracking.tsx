@@ -5,6 +5,8 @@ import {
   Marker,
   GeoJSON,
   Tooltip,
+  LayersControl,
+  LayerGroup,
 } from "react-leaflet";
 import * as IconFeather from "react-feather";
 // import { HistoricPosition } from "../../../domain/entities/historic-position";
@@ -180,10 +182,23 @@ export const MapTracking = ({
                 </GeoJSON>
               );
             })}
-          <TileLayer
-            attribution="&copy; OpenStreetMap</a> "
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <LayersControl>
+            <LayersControl.BaseLayer checked name="Google Map">
+              <TileLayer
+                attribution="Google Maps"
+                url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
+              />
+            </LayersControl.BaseLayer>
+            <LayersControl.BaseLayer name="Google Map Satellite">
+              <LayerGroup>
+                <TileLayer
+                  attribution="Google Maps Satellite"
+                  url="https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}"
+                />
+                <TileLayer url="https://www.google.cn/maps/vt?lyrs=y@189&gl=cn&x={x}&y={y}&z={z}" />
+              </LayerGroup>
+            </LayersControl.BaseLayer>
+          </LayersControl>
         </MapContainer>
       ) : (
         <Card className="w-full space-y-5 p-4" radius="lg">

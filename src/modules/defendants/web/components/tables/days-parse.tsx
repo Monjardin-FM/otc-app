@@ -32,11 +32,15 @@ export const DaysParse = ({ strDays }: DaysParseProps) => {
       const itemsIntervals = itemsSchedule.intervals;
       setIntervals(itemsIntervals);
     }
-  });
+  }, []);
   return (
     <div className="flex flex-col gap-2">
       {intervals?.map((inter) => (
-        <Chip color="warning">{convertDaysWeek(inter.days)}</Chip>
+        <Chip color="warning" size="lg">
+          <p className="text-balance leading-3 tracking-tight text-sm">
+            {convertDaysWeek(inter.days)}
+          </p>
+        </Chip>
       ))}
     </div>
   );
