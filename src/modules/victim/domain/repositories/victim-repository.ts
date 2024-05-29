@@ -2,6 +2,7 @@ import { Victim } from "../entities/victim";
 import { VicimById } from "../entities/victim-by-id";
 
 export type VictimRepository = {
+  getVictimByEmail(params: {}): Promise<Victim>;
   getVictimDefendant(params: {
     completeName: string;
     idDefendant: number;

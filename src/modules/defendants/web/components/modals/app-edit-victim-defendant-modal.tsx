@@ -5,6 +5,8 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
+  Tab,
+  Tabs,
 } from "@nextui-org/react";
 import { useGetDefendantsById } from "../../hooks/use-get-defendants-by-id";
 import * as Icon from "react-feather";
@@ -46,7 +48,37 @@ AppEditVictimDefendantModalProps) => {
             </Chip>
           </ModalHeader>
           <ModalBody className="flex flex-col items-center justify-center w-full p-5 gap-5">
-            <VictimForm idDefendant={idDefendant} defendantInfo={defendant} />
+            <Tabs
+              color="warning"
+              radius="md"
+              className="w-full border"
+              fullWidth
+              variant="bordered"
+            >
+              <Tab
+                key={"newVictim"}
+                title={
+                  <div className="flex items-center space-x-2">
+                    <Icon.UserPlus size={18} />
+                    <span>New Victim</span>
+                  </div>
+                }
+              >
+                <VictimForm
+                  idDefendant={idDefendant}
+                  defendantInfo={defendant}
+                />
+              </Tab>
+              <Tab
+                key={"existVictim"}
+                title={
+                  <div className="flex items-center space-x-2">
+                    <Icon.User size={18} />
+                    <span>Existing Victim</span>
+                  </div>
+                }
+              ></Tab>
+            </Tabs>
           </ModalBody>
         </>
       </ModalContent>
