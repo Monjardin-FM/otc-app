@@ -32,6 +32,9 @@ import { DefendantById } from "../../../domain/entities/defendant-by-id";
 import { Button, Chip, Input, Textarea } from "@nextui-org/react";
 import { useGetPhonePerson } from "../../hooks/use-get-phone";
 import { AppPhoneTable } from "../tables/app-phone-person-table";
+import { AppCaseNumberTable } from "../tables/app-case-number-table";
+import { useGetCaseNumber } from "../../hooks/use-get-case-number";
+import { CaseNumberForm } from "./create-case-number-form";
 export type DefendantFormProps = {
   onCreateDefendant: (params: createDefendantParams) => void;
   onClose: () => void;
@@ -45,7 +48,7 @@ type createDefendantFormValue = {
   name: string;
   lastName: string;
   email: string;
-  caseNumber: string;
+  // caseNumber: string;
   gender: number;
   sid: string;
   offense: string;
@@ -64,6 +67,7 @@ export const DefendantForm = ({
   const [visibleDeviceForm, setVisibleDeviceForm] = useToggle(false);
   const [visibleAddressForm, setVisibleAddressForm] = useToggle(false);
   const [visiblePhoneForm, setVisiblePhoneForm] = useToggle(false);
+  const [visibleCaseNumberForm, setVisibleCaseNumberForm] = useToggle(false);
   const [parent] = useAutoAnimate();
   const { getUsers, users } = useGetUsers();
   const { genders, getGenders } = useGetGenders();
@@ -78,6 +82,7 @@ export const DefendantForm = ({
   const { defendantDevice, getDefendantDevice } = useGetDefendantDevice();
   const { addressPerson, getAddressPerson } = useGetAddressPerson();
   const { getPhonePerson, phonePerson } = useGetPhonePerson();
+  const { caseNumber, getCaseNumber } = useGetCaseNumber();
   const [toggleReload, setToggleReload] = useToggle(false);
   const [isVisiblePassword, setIsVisiblePassword] = useState(false);
   const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
@@ -91,7 +96,7 @@ export const DefendantForm = ({
     password: Yup.string()
       .required("Required password")
       .min(10, "Minimum length 10 characters"),
-    caseNumber: Yup.string().required("Required case number"),
+    // caseNumber: Yup.string().required("Required case number"),
     sid: Yup.string().required("Required sid"),
     offense: Yup.string().required("Required offense"),
   });
@@ -102,7 +107,7 @@ export const DefendantForm = ({
       lastName: data.lastName,
       completeName: `${data.name} ${data.lastName}`,
       eMail: data.email,
-      caseNumber: data.caseNumber,
+      caseNumber: "",
       idCounty: Number(idCounty),
       idGender: Number(data.gender),
       idOfficer: Number(idOfficer),
@@ -158,6 +163,7 @@ export const DefendantForm = ({
       getDefendantDevice({ idDefendant: idDefendant });
       getAddressPerson({ idPerson: idDefendant });
       getPhonePerson({ idPerson: idDefendant });
+      getCaseNumber({ idPerson: idDefendant });
       onReload();
     }
   }, [idDefendant, toggleReload]);
@@ -197,14 +203,14 @@ export const DefendantForm = ({
                   </span>
                 </Chip>
               </li>
-              <li>
+              {/* <li>
                 <Chip color="primary" variant="shadow">
                   <span className="text-gray-300">Case Number:</span>
                   <span className="font-semibold text-white">
                     {` ${defendantInfo.caseNumber}`}
                   </span>
                 </Chip>
-              </li>
+              </li> */}
               <li>
                 {" "}
                 <Chip color="primary" variant="shadow">
@@ -214,7 +220,7 @@ export const DefendantForm = ({
                   </span>
                 </Chip>
               </li>
-              <li>
+              {/* <li>
                 {" "}
                 <Chip color="primary" variant="shadow">
                   <span className="text-gray-300">Offense:</span>
@@ -222,7 +228,7 @@ export const DefendantForm = ({
                     {` ${defendantInfo.offense}`}
                   </span>
                 </Chip>
-              </li>
+              </li> */}
               <li>
                 {" "}
                 <Chip color="primary" variant="shadow">
@@ -245,6 +251,7 @@ export const DefendantForm = ({
                 setVisibleDeviceForm(true);
                 setVisibleAddressForm(false);
                 setVisiblePhoneForm(false);
+                setVisibleCaseNumberForm(false);
               }}
               className="w-4/12"
             >
@@ -259,6 +266,7 @@ export const DefendantForm = ({
                 setVisibleAddressForm(true);
                 setVisibleDeviceForm(false);
                 setVisiblePhoneForm(false);
+                setVisibleCaseNumberForm(false);
               }}
               className="w-4/12"
             >
@@ -274,10 +282,26 @@ export const DefendantForm = ({
                 setVisiblePhoneForm(true);
                 setVisibleDeviceForm(false);
                 setVisibleAddressForm(false);
+                setVisibleCaseNumberForm(false);
               }}
               className="w-4/12"
             >
               New Phone Number
+            </Button>
+            <Button
+              variant="shadow"
+              size="lg"
+              color="primary"
+              startContent={<Icon.PlusCircle size={18} />}
+              onPress={() => {
+                setVisibleCaseNumberForm(true);
+                setVisibleAddressForm(false);
+                setVisibleDeviceForm(false);
+                setVisiblePhoneForm(false);
+              }}
+              className="w-4/12"
+            >
+              New Case Number
             </Button>
           </div>
         </>
@@ -290,7 +314,7 @@ export const DefendantForm = ({
               email: "",
               gender: 0,
               county: 0,
-              caseNumber: "",
+              // caseNumber: "",
               sid: "",
               offense: "",
               password: "",
@@ -391,7 +415,7 @@ export const DefendantForm = ({
                         onChange={(e) => setIdCounty(e?.value)}
                       />
                     </AppFormField>
-                    <AppFormField className="col-span-2">
+                    {/* <AppFormField className="col-span-2">
                       <AppFormLabel>Case Number</AppFormLabel>
                       <AppTextField
                         name="caseNumber"
@@ -403,7 +427,7 @@ export const DefendantForm = ({
                           {errors.caseNumber}
                         </AppFormHelperText>
                       )}
-                    </AppFormField>
+                    </AppFormField> */}
                     <AppFormField className="col-span-2">
                       <AppFormLabel>Date of Birth</AppFormLabel>
                       <AppDatePicker
@@ -448,34 +472,6 @@ export const DefendantForm = ({
                       )}
                     </AppFormField>
                     <AppFormField className="col-span-2">
-                      <AppFormLabel>Offense</AppFormLabel>
-                      <AppTextField
-                        name="offense"
-                        value={values.offense}
-                        onChange={handleChange}
-                      />
-                      {errors.offense && (
-                        <AppFormHelperText colorSchema="red">
-                          {errors.offense}
-                        </AppFormHelperText>
-                      )}
-                    </AppFormField>
-                    <AppFormField className="col-span-3 z-0">
-                      <Textarea
-                        name="notes"
-                        label="Notes"
-                        labelPlacement="outside"
-                        value={values.notes}
-                        onChange={handleChange}
-                        type="string"
-                        placeholder="Add notes"
-                        defaultValue={values.notes}
-                        radius="sm"
-                        variant="faded"
-                        size="md"
-                      />
-                    </AppFormField>
-                    <AppFormField className="col-span-2">
                       <Input
                         name="password"
                         label="Password"
@@ -511,6 +507,42 @@ export const DefendantForm = ({
                         </AppFormHelperText>
                       )}
                     </AppFormField>
+
+                    <AppFormField className="col-span-6 z-0">
+                      <Textarea
+                        name="notes"
+                        label="Notes"
+                        labelPlacement="outside"
+                        value={values.notes}
+                        onChange={handleChange}
+                        type="string"
+                        placeholder="Add notes"
+                        defaultValue={values.notes}
+                        radius="sm"
+                        variant="faded"
+                        size="md"
+                      />
+                    </AppFormField>
+                    <AppFormField className="col-span-6">
+                      <Textarea
+                        name="offense"
+                        label="Offense"
+                        labelPlacement="outside"
+                        value={values.offense}
+                        onChange={handleChange}
+                        type="string"
+                        defaultValue={values.offense}
+                        radius="sm"
+                        variant="faded"
+                        size="md"
+                      />
+
+                      {errors.offense && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.offense}
+                        </AppFormHelperText>
+                      )}
+                    </AppFormField>
                   </div>
                   <div className="col-span-12 flex flex-row items-center justify-end gap-3 ">
                     <AppButton onClick={onClose}>Cancel</AppButton>
@@ -529,14 +561,6 @@ export const DefendantForm = ({
           </Formik>
         </div>
       )}
-      {/* {idDefendant &&
-      idDefendant > 0 &&
-      idDefendant !== undefined &&
-      idDefendant !== null ? (
-        
-      ) : (
-        ""
-      )} */}
 
       {visibleDeviceForm && (
         <div className="col-span-12">
@@ -566,6 +590,18 @@ export const DefendantForm = ({
         <div className="col-span-12">
           <PhoneForm
             onClose={() => setVisiblePhoneForm(false)}
+            idDefendant={idDefendant}
+            onReload={() => {
+              setToggleReload(!toggleReload);
+              onReload();
+            }}
+          />
+        </div>
+      )}
+      {visibleCaseNumberForm && (
+        <div className="col-span-12">
+          <CaseNumberForm
+            onClose={() => setVisibleCaseNumberForm(false)}
             idDefendant={idDefendant}
             onReload={() => {
               setToggleReload(!toggleReload);
@@ -635,6 +671,27 @@ export const DefendantForm = ({
                       onDelete={() => {}}
                       items={phonePerson}
                       loadingDeletePhone={false}
+                    />
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
+            <Disclosure defaultOpen>
+              {({ open }) => (
+                <>
+                  <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
+                    Case Number
+                    <Icon.ChevronRight
+                      className={open ? "rotate-90 transform" : ""}
+                    />
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="text-gray-500">
+                    <AppCaseNumberTable
+                      isCreate={true}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      items={caseNumber}
+                      loadingDeleteCaseNumber={false}
                     />
                   </Disclosure.Panel>
                 </>

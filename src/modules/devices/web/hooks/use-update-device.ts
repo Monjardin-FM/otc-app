@@ -1,4 +1,4 @@
-import { DeviceRepository } from "../../domain/respositories/device-repositoty";
+import { DeviceRepository } from "../../domain/respositories/device-repository";
 
 import { useAsyncFn } from "react-use";
 import { updateDeviceService } from "../../infraestructure/services/update.device";

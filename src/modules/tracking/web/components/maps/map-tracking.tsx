@@ -56,12 +56,6 @@ export const MapTracking = ({
     iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
     popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
   });
-  // const alarmIcon = new Icon({
-  //   iconUrl: AlarmIcon,
-  //   iconSize: [35, 35], // size of the icon
-  //   iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
-  //   popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
-  // });
   return (
     <>
       {positionDefendant && defendantItem ? (

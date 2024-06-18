@@ -1,35 +1,30 @@
+import { useEffect, useState } from "react";
+import { Device } from "../../../domain/entities/device";
+import { useGetHistoricPositionDevice } from "../../hooks/use-get-historic-position-device";
+import dayjs from "dayjs";
 import { AppFormField } from "../../../../../presentation/Components/AppForm";
 import AppDatePicker from "../../../../../presentation/Components/AppDatePicker";
 import { Button, Slider, SliderValue, Tooltip } from "@nextui-org/react";
-import { MapHistoricPosition } from "../maps/map-historic-position";
-import { useFindHistoricPosition } from "../../hooks/use-find-hsitoric-position";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import {
-  GeofenceHistoric,
-  Historic,
-  HistoricPosition,
-} from "../../../domain/entities/historic-position";
+import { MapHistoricPositionDevice } from "../maps/map-historic-position-device";
+import { DeviceHistoricPosition } from "../../../domain/entities/device-position";
 
-export const AppHistoricPositionTab = () => {
+export type AppHistoricPositionDeviceProps = {
+  deviceInfo?: Device | null;
+};
+export const AppHistoricPositionDevice = ({
+  deviceInfo,
+}: AppHistoricPositionDeviceProps) => {
   const [dateInitSearch, setDateInitSearch] = useState<string>();
   const [dateFinishSearch, setDateFinishSearch] = useState<string>();
   const [dateInit, setDateInit] = useState<Date>(new Date());
   const [dateFinish, setDateFinish] = useState<Date>(new Date());
-  const [userId, setUserId] = useState<number | null>();
-  const { findHistoricPosition, historicPosition, loading } =
-    useFindHistoricPosition();
-  const [defendantPosition, setDefendantPosition] =
-    useState<HistoricPosition | null>();
-  const [victimsPosition, setVictimsPosition] = useState<
-    HistoricPosition[] | null
-  >();
-  const [geofences, setGeofences] = useState<GeofenceHistoric[]>();
+  const { getHistoricPositionDevice, historicPositionDevice, loading } =
+    useGetHistoricPositionDevice();
 
   const [rangePositionsDefendant, setRangePositionsDefendant] =
-    useState<Historic[]>();
+    useState<DeviceHistoricPosition[]>();
   const [positionSelectedDefendant, setPositionSelectedDefendant] =
-    useState<Historic>();
+    useState<DeviceHistoricPosition>();
 
   const [value, setValue] = useState<SliderValue>(0);
   const [inputValue, setInputValue] = useState<string>("0");
@@ -45,45 +40,33 @@ export const AppHistoricPositionTab = () => {
   };
 
   const handleSubmit = async () => {
-    if (userId)
-      await findHistoricPosition({
-        dateInit: dateInitSearch ?? "",
-        dateFin: dateFinishSearch ?? "",
-        idPerson: userId,
-      });
+    if (deviceInfo) {
+      if (deviceInfo.idDeviceType === 1) {
+        await getHistoricPositionDevice({
+          dateInit: dateInitSearch ?? "",
+          dateFin: dateFinishSearch ?? "",
+          deviceId: deviceInfo.description,
+        });
+      } else if (deviceInfo.idDeviceType === 3) {
+        await getHistoricPositionDevice({
+          dateInit: dateInitSearch ?? "",
+          dateFin: dateFinishSearch ?? "",
+          deviceId: String(deviceInfo.idPerson),
+        });
+      }
+    }
   };
 
   useEffect(() => {
-    if (historicPosition && historicPosition.length > 0) {
-      const defendantPositionFilter = historicPosition?.find(
-        (item) => item.idPersonType === 2
-      );
-      setDefendantPosition(defendantPositionFilter);
-      const victimPositionFilter = historicPosition?.filter(
-        (item) => item.idPersonType === 3
-      );
-      setVictimsPosition(victimPositionFilter);
-      if (defendantPositionFilter) {
-        setGeofences(defendantPositionFilter.geofences);
-      }
-      setRangePositionsDefendant(
-        defendantPositionFilter?.historicPersonPosition
-      );
-    }
-  }, [historicPosition]);
-  // Transform dates in to strings
+    if (historicPositionDevice && historicPositionDevice.length > 0)
+      setRangePositionsDefendant(historicPositionDevice);
+  }, [historicPositionDevice]);
   useEffect(() => {
     setDateInitSearch(dayjs(dateInit.getTime()).toISOString());
     setDateFinishSearch(dayjs(dateFinish.getTime()).toISOString());
   }, [dateInit, setDateFinish]);
-
-  // get idDefendant in local storage
-  useEffect(() => {
-    const storedUserId = localStorage.getItem("trackingId");
-    if (storedUserId) setUserId(Number(storedUserId));
-  }, []);
   return (
-    <div className="w-full flex flex-row items-start justify-center ">
+    <div className="w-full flex flex-row items-start justify-center">
       <div className="flex flex-col text-center items-center w-2/5  gap-3 z-50">
         <AppFormField className="col-span-4">
           <AppDatePicker
@@ -116,19 +99,16 @@ export const AppHistoricPositionTab = () => {
         <Button
           color="primary"
           className="w-1/2 tex-center"
-          onClick={handleSubmit}
+          onPress={handleSubmit}
           isDisabled={loading}
           isLoading={loading}
         >
           Search
         </Button>
       </div>
-
       <div className=" w-3/5 flex flex-col rounded-lg bg-gray-200 mb-5 gap-5 p-2">
-        <MapHistoricPosition
-          defendantPosition={defendantPosition}
-          victimPosition={victimsPosition}
-          geofences={geofences}
+        <MapHistoricPositionDevice
+          historicPositionDevice={historicPositionDevice}
           positionSelectedDefendant={positionSelectedDefendant}
         />
         {rangePositionsDefendant ? (

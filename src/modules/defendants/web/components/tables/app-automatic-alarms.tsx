@@ -9,11 +9,11 @@ import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AutomaticAlarmsDefendant } from "../../../domain/entities/automatic-alarm-defendant";
 import * as Icon from "react-feather";
 export type AutomaticAlarmsDefendantTableProps = {
-  //   loadingDeleteAutomaticAlarmsDefendant: boolean;
   items?: AutomaticAlarmsDefendant[];
   onEdit: (params: RenderFnParams<AutomaticAlarmsDefendant>) => void;
   onView: (params: RenderFnParams<AutomaticAlarmsDefendant>) => void;
-  //   isCreate: boolean;
+  onEditAlarm: (params: RenderFnParams<AutomaticAlarmsDefendant>) => void;
+  onViewAlarm: (params: RenderFnParams<AutomaticAlarmsDefendant>) => void;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -50,42 +50,12 @@ const NameAutomaticAlarmsDefendantPersonColumn = (
   );
 };
 
-// const StatusAutomaticAlarmsDefendantPersonColumn = (
-//   params: RenderFnParams<AutomaticAlarmsDefendant>
-// ) => {
-//   return (
-//     <Tooltip
-//       content={params.record.idStatus === 1 ? "Active" : "Inactive"}
-//       color="primary"
-//       offset={15}
-//       showArrow
-//       closeDelay={10}
-//       disableAnimation
-//     >
-//       <Chip
-//         color={params.record.idStatus === 1 ? "success" : "danger"}
-//         variant="shadow"
-//         radius="full"
-//       >
-//         <Icon.Circle size={10} />
-//       </Chip>
-//     </Tooltip>
-//   );
-// };
-
 const ActionsColumn = ({
   onEdit,
   onView,
-}: //   onDelete,
-//   loadingDeleteAutomaticAlarmsDefendant,
-// isCreate,
-// record,
-RenderFnParams<AutomaticAlarmsDefendant> & {
+}: RenderFnParams<AutomaticAlarmsDefendant> & {
   onEdit: () => void;
   onView: () => void;
-  //   onDelete: () => void;
-  //   loadingDeleteAutomaticAlarmsDefendant: boolean;
-  //   isCreate: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
@@ -135,10 +105,67 @@ RenderFnParams<AutomaticAlarmsDefendant> & {
   );
 };
 
+const AlarmActionsColumn = ({
+  onEditAlarm,
+  onViewAlarm,
+}: RenderFnParams<AutomaticAlarmsDefendant> & {
+  onEditAlarm: () => void;
+  onViewAlarm: () => void;
+}) => {
+  return (
+    <div className="flex flex-row items-center justify-start gap-3 static -z-50">
+      <Tooltip
+        content={"View"}
+        color="primary"
+        offset={5}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onViewAlarm();
+          }}
+          title="View"
+          size="sm"
+          variant="shadow"
+          isIconOnly
+          color="primary"
+        >
+          <Icon.Eye size={18} />
+        </Button>
+      </Tooltip>
+      <Tooltip
+        content={"Edit"}
+        color="warning"
+        offset={5}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onEditAlarm();
+          }}
+          title="Edit"
+          size="sm"
+          variant="shadow"
+          isIconOnly
+          color="warning"
+        >
+          <Icon.Edit size={18} />
+        </Button>
+      </Tooltip>
+    </div>
+  );
+};
+
 export const AppAutomaticAlarmsDefendantTable = ({
   items = [],
   onEdit,
   onView,
+  onEditAlarm,
+  onViewAlarm,
 }: AutomaticAlarmsDefendantTableProps) => {
   const columns: AppDataGridColumn<AutomaticAlarmsDefendant>[] = [
     {
@@ -147,20 +174,11 @@ export const AppAutomaticAlarmsDefendantTable = ({
       title: "Alarm Name",
       render: NameAutomaticAlarmsDefendantPersonColumn,
     },
-
-    // {
-    //   key: "AutomaticAlarmsDefendanttatus",
-    //   dataIndex: "AutomaticAlarmsDefendanttatus",
-    //   title: "Status",
-    //   render: StatusAutomaticAlarmsDefendantPersonColumn,
-    // },
     {
-      key: "actionsAlarmDefendant",
-      dataIndex: "actionsAlarmDefendant",
-      title: "Actions",
-      //   className: clsx("", {
-      //     hidden: isCreate,
-      //   }),
+      key: "actionsScheduleAlarmDefendant",
+      dataIndex: "actionsScheduleAlarmDefendant",
+      title: "Schedule Actions",
+
       render: (data) =>
         ActionsColumn({
           ...data,
@@ -169,6 +187,22 @@ export const AppAutomaticAlarmsDefendantTable = ({
           },
           onView: () => {
             onView(data);
+          },
+        }),
+    },
+    {
+      key: "actionsAlarmDefendant",
+      dataIndex: "actionsAlarmDefendant",
+      title: "Alarm Actions",
+
+      render: (data) =>
+        AlarmActionsColumn({
+          ...data,
+          onEditAlarm: () => {
+            onEditAlarm(data);
+          },
+          onViewAlarm: () => {
+            onViewAlarm(data);
           },
         }),
     },

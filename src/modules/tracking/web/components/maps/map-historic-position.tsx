@@ -192,7 +192,7 @@ MapTrackingProps) => {
                 positionSelectedDefendant.lon,
               ]}
             >
-              <Tooltip direction="top" permanent={false} offset={[0, -35]}>
+              <Tooltip direction="top" permanent={true} offset={[0, -35]}>
                 <div className="flex flex-col gap-2">
                   <h1 className="text-red-700 text-center font-semibold">{`Position`}</h1>
                   <ul>

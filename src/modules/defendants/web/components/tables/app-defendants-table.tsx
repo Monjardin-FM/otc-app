@@ -8,6 +8,7 @@ import {
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
 import { Button, Chip, Tooltip } from "@nextui-org/react";
+import { AppAuthorizationGuard } from "../../../../../presentation/Components/AppAuthorizationGuard";
 // import dayjs from "dayjs";
 export type DefendantsTableProps = {
   // onToggleStatus?: (index: Client) => void;
@@ -76,15 +77,15 @@ const SIDDefendantColumn = (params: RenderFnParams<Defendant>) => {
   );
 };
 
-const CaseNumberDefendantColumn = (params: RenderFnParams<Defendant>) => {
-  return (
-    <Chip color="success" variant="dot">
-      <div className="font-semibold text-sm text-primary-600 tracking-wider">
-        {params.record.caseNumber}
-      </div>
-    </Chip>
-  );
-};
+// const CaseNumberDefendantColumn = (params: RenderFnParams<Defendant>) => {
+//   return (
+//     <Chip color="success" variant="dot">
+//       <div className="font-semibold text-sm text-primary-600 tracking-wider">
+//         {params.record.caseNumber}
+//       </div>
+//     </Chip>
+//   );
+// };
 
 const StatusDefendantColumn = (params: RenderFnParams<Defendant>) => {
   return (
@@ -147,31 +148,35 @@ RenderFnParams<Defendant> & {
           <Icon.Edit size={18} />
         </Button>
       </Tooltip>
-      <Tooltip
-        content={"Delete Defendant"}
-        color="danger"
-        style={{
-          zIndex: 0,
-        }}
-        offset={1}
-        showArrow
-        closeDelay={10}
-        disableAnimation
+      <AppAuthorizationGuard
+        roles={["County Administrator", "OTC Administrator"]}
       >
-        <Button
-          onClick={() => {
-            onDelete();
-          }}
-          title="Delete Defendant"
-          size="sm"
-          variant="shadow"
+        <Tooltip
+          content={"Delete Defendant"}
           color="danger"
-          isIconOnly
-          isDisabled={loadingDeleteDefendant}
+          style={{
+            zIndex: 0,
+          }}
+          offset={1}
+          showArrow
+          closeDelay={10}
+          disableAnimation
         >
-          <Icon.Trash size={18} />
-        </Button>
-      </Tooltip>
+          <Button
+            onClick={() => {
+              onDelete();
+            }}
+            title="Delete Defendant"
+            size="sm"
+            variant="shadow"
+            color="danger"
+            isIconOnly
+            isDisabled={loadingDeleteDefendant}
+          >
+            <Icon.Trash size={18} />
+          </Button>
+        </Tooltip>
+      </AppAuthorizationGuard>
     </div>
   );
 };
@@ -201,12 +206,12 @@ export const AppDefendantsTable = ({
       title: "SID",
       render: SIDDefendantColumn,
     },
-    {
-      key: "defendantCaseNumber",
-      dataIndex: "defendantCaseNumber",
-      title: "Case Number",
-      render: CaseNumberDefendantColumn,
-    },
+    // {
+    //   key: "defendantCaseNumber",
+    //   dataIndex: "defendantCaseNumber",
+    //   title: "Case Number",
+    //   render: CaseNumberDefendantColumn,
+    // },
     {
       key: "defendantStatus",
       dataIndex: "defendantStatus",

@@ -1,7 +1,7 @@
 import { api } from "../../../../utils/api";
 import { verifyResponse } from "../../../../utils/check-response";
 import { token } from "../../../../utils/token";
-import { DeviceRepository } from "../../domain/respositories/device-repositoty";
+import { DeviceRepository } from "../../domain/respositories/device-repository";
 
 export const updateDeviceService: DeviceRepository["updateDevice"] = async (
   params

@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AppConfig from "../../../../settings.json";
 import { AppDevicesHeader } from "./app-devices-header";
 import * as Icon from "react-feather";
 import { useToggle } from "react-use";
 import { AppNewDeviceModal } from "./modals/app-new-device-modal";
-import { AppDevicessTable } from "./tables/app-device-table";
 import { useGetDevices } from "../hooks/use-get-devices";
 import { AppEditDeviceModal } from "./modals/app-edit-device";
 import { useDeleteDevice } from "../hooks/use-delete-device";
@@ -12,19 +11,57 @@ import { AppAuthorizationGuard } from "../../../../presentation/Components/AppAu
 import { UserRole } from "../../../user/domain/entities/user-role";
 import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
-import { Button, Tooltip } from "@nextui-org/react";
+import {
+  Button,
+  Pagination,
+  // getKeyValue,
+  // Pagination,
+  // Table,
+  // TableBody,
+  // TableCell,
+  // TableColumn,
+  // TableHeader,
+  // TableRow,
+  Tooltip,
+} from "@nextui-org/react";
+import { AppDevicessTable } from "./tables/app-device-table";
+import { Device } from "../../domain/entities/device";
+import { AppTrackingDeviceModal } from "./modals/app-tracking-device-modal";
 
 export const AppDevicesManagerPage = () => {
   const [visibleNewDeviceModal, setVisibleNewDeviceModal] = useToggle(false);
   const [visibleEditDeviceModal, setVisibleEditDeviceModal] = useToggle(false);
+  const [visibleTrackingDeviceModal, setVisibleTrackingDeviceModal] =
+    useToggle(false);
   const [idDevice, setIdDevice] = useState<number>();
   const { devices, getDevices, loading: loadingDevices } = useGetDevices();
   const [toggleReload, setToggleReload] = useToggle(false);
+  const [selectedDeviceTrack, setSelectedDeviceTrack] =
+    useState<Device | null>();
   const { deleteDevice, loading: loadingDeleteDevice } = useDeleteDevice();
   const onClick = (search: string) => {
     getDevices({ completeName: search });
   };
   const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(0);
+
+  const rowsPerPage = 10;
+
+  useEffect(() => {
+    if (devices) {
+      const nPages = Math.ceil(devices?.length / rowsPerPage);
+      setPages(nPages);
+    }
+  }, [devices]);
+
+  const data = useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return devices?.slice(start, end);
+  }, [page, devices]);
+
+  // useEffect debounce search
   useEffect(() => {
     if (search.length > 1 || search.length === 0) {
       const timeDelay = setTimeout(() => {
@@ -33,6 +70,7 @@ export const AppDevicesManagerPage = () => {
       return () => clearTimeout(timeDelay);
     }
   }, [search, toggleReload]);
+  // useEffect to getDevices when render the component
   useEffect(() => {
     getDevices({ completeName: "" });
   }, [toggleReload]);
@@ -52,6 +90,11 @@ export const AppDevicesManagerPage = () => {
         onClose={() => setVisibleEditDeviceModal(false)}
         onReload={() => setToggleReload(!toggleReload)}
         idDevice={idDevice}
+      />
+      <AppTrackingDeviceModal
+        isVisible={visibleTrackingDeviceModal}
+        onClose={() => setVisibleTrackingDeviceModal(false)}
+        deviceInfo={selectedDeviceTrack}
       />
       <AppPageTransition>
         <div className="items-center mx-auto mb-5">
@@ -84,21 +127,40 @@ export const AppDevicesManagerPage = () => {
             </Button>
           </Tooltip>
         </div>
-        <div className="container mx-auto mt-5">
-          <AppDevicessTable
-            onEdit={(record) => {
-              setIdDevice(record.record.idDevice);
-              setVisibleEditDeviceModal(true);
-            }}
-            onDelete={async (record) => {
-              if (record.record.idDevice) {
-                await deleteDevice({ idDevice: record.record.idDevice });
-              }
-              setToggleReload(!toggleReload);
-            }}
-            items={devices}
-            loadingDeleteDevice={loadingDeleteDevice}
-          />
+        <div className="mt-5 flex flex-col items-center w-full justify-center gap-5 mb-10 bg-gray-100 container mx-auto p-3 rounded-lg">
+          <div className="w-full container">
+            <AppDevicessTable
+              onEdit={(record) => {
+                setIdDevice(record.record.idDevice);
+                setVisibleEditDeviceModal(true);
+              }}
+              onDelete={async (record) => {
+                if (record.record.idDevice) {
+                  await deleteDevice({ idDevice: record.record.idDevice });
+                }
+                setToggleReload(!toggleReload);
+              }}
+              onTracking={(record) => {
+                setSelectedDeviceTrack(record.record);
+                setVisibleTrackingDeviceModal(true);
+              }}
+              items={data}
+              loadingDeleteDevice={loadingDeleteDevice}
+            />
+          </div>
+          <div>
+            <Pagination
+              loop
+              // isCompact
+              showControls
+              showShadow
+              color="primary"
+              page={page}
+              total={pages}
+              onChange={(page) => setPage(page)}
+              className="w-full container"
+            />
+          </div>
         </div>
       </AppPageTransition>
     </AppAuthorizationGuard>

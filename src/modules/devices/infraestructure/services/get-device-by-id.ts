@@ -1,7 +1,7 @@
 import { api } from "../../../../utils/api";
 import { verifyResponse } from "../../../../utils/check-response";
 import { token } from "../../../../utils/token";
-import { DeviceRepository } from "../../domain/respositories/device-repositoty";
+import { DeviceRepository } from "../../domain/respositories/device-repository";
 
 export const getDeviceByIdService: DeviceRepository["getDeviceById"] = async (
   params
@@ -16,11 +16,13 @@ export const getDeviceByIdService: DeviceRepository["getDeviceById"] = async (
   const data = body.data as any;
 
   const device = {
+    available: data.available,
     idDevice: data.idDevice,
     idDeviceType: data.idDeviceType,
     deviceType: data.deviceType,
     description: data.description,
     idStatus: data.idStatus,
+    idPerson: data.idPerson,
   };
   return device;
 };

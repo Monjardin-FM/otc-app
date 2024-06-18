@@ -12,6 +12,7 @@ export type DevicessTableProps = {
   items?: Device[];
   onEdit: (params: RenderFnParams<Device>) => void;
   onDelete: (params: RenderFnParams<Device>) => void;
+  onTracking: (params: RenderFnParams<Device>) => void;
   loadingDeleteDevice: boolean;
 };
 const getRandomColorSchema = (params: { length: number }) => {
@@ -35,13 +36,16 @@ const NameDevicesColumn = (params: RenderFnParams<Device>) => {
             length: params.record.description.length,
           })}
         >
-          <Icon.User size={20} />
+          <Icon.Radio size={20} />
         </AppAvatar>
       </div>
-      <div>
-        <div className="font-semibold tracking-wider">
+      <div className="flex flex-col">
+        <span className="font-bold tracking-wider text-gray-900">
           {params.record.description}
-        </div>
+        </span>
+        <span className="font-semibold text-gray-600 text-xs">
+          {params.record.deviceType}
+        </span>
       </div>
     </div>
   );
@@ -83,12 +87,14 @@ const NumberDevicesColumn = (params: RenderFnParams<Device>) => {
 
 const ActionsColumn = ({
   onEdit,
-  // record,
+  record,
   onDelete,
+  onTracking,
   loadingDeleteDevice,
 }: RenderFnParams<Device> & {
   onEdit: () => void;
   onDelete: () => void;
+  onTracking: () => void;
   loadingDeleteDevice: boolean;
 }) => {
   return (
@@ -142,6 +148,34 @@ const ActionsColumn = ({
           <Icon.Trash size={18} />
         </Button>
       </Tooltip>
+      {/* // 1 IMEI 3 ID */}
+      {(record.idDeviceType === 1 || record.idDeviceType === 3) && (
+        <Tooltip
+          content={"Tracking Device"}
+          color="warning"
+          style={{
+            zIndex: 0,
+          }}
+          offset={1}
+          showArrow
+          closeDelay={10}
+          disableAnimation
+        >
+          <Button
+            onClick={() => {
+              onTracking();
+            }}
+            title="Tracking Device"
+            size="sm"
+            variant="shadow"
+            color="warning"
+            isIconOnly
+            // isDisabled={loadingDeleteDevice}
+          >
+            <Icon.MapPin size={18} />
+          </Button>
+        </Tooltip>
+      )}
     </div>
   );
 };
@@ -151,6 +185,7 @@ export const AppDevicessTable = ({
   onEdit,
   onDelete,
   loadingDeleteDevice,
+  onTracking,
 }: DevicessTableProps) => {
   const columns: AppDataGridColumn<Device>[] = [
     {
@@ -184,6 +219,9 @@ export const AppDevicessTable = ({
           },
           onDelete: () => {
             onDelete(data);
+          },
+          onTracking: () => {
+            onTracking(data);
           },
           loadingDeleteDevice: loadingDeleteDevice,
         }),

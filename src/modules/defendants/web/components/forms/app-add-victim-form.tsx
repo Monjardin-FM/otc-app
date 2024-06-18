@@ -107,7 +107,7 @@ export const AddVictimForm = ({
     >
       {({ handleSubmit, handleChange, values, errors }) => (
         <form autoComplete="off" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-12 gap-y-4 gap-x-3 col-span-12 border border-gray-300 rounded-lg p-6 bg-gray-200">
+          <div className="grid grid-cols-12 gap-y-4 gap-x-3 col-span-12 border border-gray-300 rounded-lg p-6 bg-gray-200 w-full">
             <AppFormField className="col-span-4">
               <AppFormLabel>Name</AppFormLabel>
               <AppTextField

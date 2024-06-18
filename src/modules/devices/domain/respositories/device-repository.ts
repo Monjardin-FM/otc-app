@@ -1,4 +1,8 @@
-import { Device } from '../entities/device';
+import { Device } from "../entities/device";
+import {
+  DeviceHistoricPosition,
+  DevicePosition,
+} from "../entities/device-position";
 
 export type DeviceRepository = {
   getDevice(params: { completeName: string }): Promise<Device[]>;
@@ -17,4 +21,10 @@ export type DeviceRepository = {
     idStatus: number;
   }): Promise<void>;
   deleteDevice(params: { idDevice: number }): Promise<Boolean>;
+  getPositionDevice(params: { imei: string }): Promise<DevicePosition[]>;
+  getHistoricPositionDevice(params: {
+    dateInit: string;
+    dateFin: string;
+    deviceId: string;
+  }): Promise<DeviceHistoricPosition[]>;
 };

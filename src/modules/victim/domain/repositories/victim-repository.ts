@@ -1,7 +1,9 @@
 import { Victim } from "../entities/victim";
 import { VicimById } from "../entities/victim-by-id";
+import { VictimMail } from "../entities/victim-mail";
 
 export type VictimRepository = {
+  getVictimByMail(params: { mail: string }): Promise<VictimMail[]>;
   getVictimDefendant(params: {
     completeName: string;
     idDefendant: number;
@@ -10,6 +12,10 @@ export type VictimRepository = {
     completeName: string;
     idPerson: number;
   }): Promise<VicimById>;
+  assignDefendantVictim(params: {
+    idDefendant: number;
+    idVictim: number;
+  }): Promise<void>;
   createVictim(params: {
     completeName: string;
     name: string;

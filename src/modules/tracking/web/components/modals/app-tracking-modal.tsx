@@ -25,9 +25,7 @@ export type AppTrackingModalProps = {
 export const AppTrackingModal = ({
   isVisible,
   onClose,
-}: // toggle,
-// personId,
-AppTrackingModalProps) => {
+}: AppTrackingModalProps) => {
   const {
     trackingDetail,
     getTrackingDetail,

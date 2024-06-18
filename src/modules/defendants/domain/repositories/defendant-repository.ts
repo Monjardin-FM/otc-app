@@ -13,6 +13,8 @@ import {
 import { Phone, PhoneById } from "../entities/phone";
 import { AutomaticAlarmsDefendant } from "../entities/automatic-alarm-defendant";
 import { ScheduleAlarm } from "../entities/schedule-alarm";
+import { CaseNumber } from "../entities/case-number";
+import { AlarmDefendantDetail } from "../entities/alarm-defendant-detail";
 export type createDefendantParams = {
   completeName: string;
   name: string;
@@ -134,4 +136,30 @@ export type DefendantRepository = {
     idAlarmType: number;
   }) => Promise<ScheduleAlarm[]>;
   deleteScheduleAlarm: (params: { idAlarm: number }) => Promise<Boolean>;
+  getCaseNumber: (params: { idPerson: number }) => Promise<CaseNumber[]>;
+  createCaseNumber: (params: {
+    idPerson: number;
+    caseNumber: string;
+  }) => Promise<void>;
+  updateCaseNumber: (params: {
+    idCaseNumber: number;
+    caseNumber: string;
+  }) => Promise<void>;
+  deleteCaseNumber: (params: { idCaseNumber: number }) => Promise<Boolean>;
+  getAlarmDefendantDetail: (params: {
+    idDefendant: number;
+    idAlarmType: number;
+  }) => Promise<AlarmDefendantDetail>;
+  updateAlarmDefendantDetail: (params: {
+    idAlarmType: number;
+    idPerson: number;
+    responseInterval: number;
+    geocordinateTimeout: number;
+    dynamicDistance: number;
+    enableResponseCall: boolean;
+    resolveTime: number;
+    callText: string;
+    smsText: string;
+    mailText: string;
+  }) => Promise<void>;
 };

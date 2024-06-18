@@ -46,6 +46,12 @@ import { useGetPhonePerson } from "../../hooks/use-get-phone";
 import { useDeletePhonePerson } from "../../hooks/use-delete-phone";
 import { DefendantDevice } from "../../../domain/entities/defendant-device";
 import { EditDeviceForm } from "../forms/edit-device-form";
+import { useGetCaseNumber } from "../../hooks/use-get-case-number";
+import { CaseNumberForm } from "../forms/create-case-number-form";
+import { AppCaseNumberTable } from "../tables/app-case-number-table";
+import { useDeleteCaseNumber } from "../../hooks/use-delete-case-number";
+import { CaseNumber } from "../../../domain/entities/case-number";
+import { EditCaseNumberForm } from "../forms/edit-case-number-form";
 export type AppEditInfoDefendantModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -55,7 +61,7 @@ type updateDefendantFormValue = {
   name?: string;
   lastName?: string;
   //   email: string;
-  caseNumber?: string;
+  // caseNumber?: string;
   gender?: number;
   sid?: string;
   offense?: string;
@@ -71,12 +77,16 @@ export const AppEditInfoDefendantModal = ({
   const [visibleDeviceForm, setVisibleDeviceForm] = useToggle(false);
   const [visibleAddressForm, setVisibleAddressForm] = useToggle(false);
   const [visiblePhoneForm, setVisiblePhoneForm] = useToggle(false);
+  const [visibleCaseNumberForm, setVisibleCaseNumberForm] = useToggle(false);
   const [visibleAddressEditForm, setVisibleAddressEditForm] = useToggle(false);
+  const [visibleEditCaseNumberForm, setVisibleEditCaseNumberForm] =
+    useToggle(false);
   const { getUsers, users } = useGetUsers();
   const { genders, getGenders } = useGetGenders();
   const { counties, getCounties } = useGetCounties();
   const { defendantDevice, getDefendantDevice } = useGetDefendantDevice();
   const { addressPerson, getAddressPerson } = useGetAddressPerson();
+  const { getCaseNumber, caseNumber } = useGetCaseNumber();
   const [idAddress, setIdAddress] = useState<number | null>();
   const [chiefs, setChiefs] = useState<{ value: number; label: string }[]>();
   const [countiesFilter, setCountiesFilter] =
@@ -84,6 +94,9 @@ export const AppEditInfoDefendantModal = ({
   const [idOfficer, setIdOfficer] = useState<number | null>();
   const [idCounty, setIdCounty] = useState<number | null>();
   const [statusOfficer, setStatusOfficer] = useState(false);
+  const [caseNumberSelected, setCaseNumberSelected] =
+    useState<CaseNumber | null>(null);
+
   const [birthDate, setBirthDate] = useState<Date | null>(new Date());
   const [toggleReload, setToggleReload] = useToggle(false);
   const [isVisiblePassword, setIsVisiblePassword] = useState(false);
@@ -96,6 +109,11 @@ export const AppEditInfoDefendantModal = ({
     error: errorDeleteDevice,
     loading: loadingDeleteDefendantDevice,
   } = useDeleteDefendantDevice();
+  const {
+    deleteCaseNumber,
+    error: errorDeleteCaseNumber,
+    loading: loadingDeleteCaseNumber,
+  } = useDeleteCaseNumber();
   const {
     error: errorDeleteAddress,
     deleteAddressPerson,
@@ -121,7 +139,7 @@ export const AppEditInfoDefendantModal = ({
         lastName: data.lastName ?? "",
         completeName: `${data.name} ${data.lastName}`,
         //   eMail: data.email,
-        caseNumber: data.caseNumber ?? "",
+        caseNumber: "",
         idCounty: Number(idCounty),
         idGender: Number(data.gender),
         idOfficer: Number(idOfficer),
@@ -173,7 +191,7 @@ export const AppEditInfoDefendantModal = ({
     gender: Yup.number()
       .moreThan(0, "Select a gender")
       .required("Select a gender"),
-    caseNumber: Yup.string().required("Required case number"),
+    // caseNumber: Yup.string().required("Required case number"),
     sid: Yup.string().required("Required sid"),
     offense: Yup.string().required("Required offense"),
     password: Yup.string().min(10, "Minimum length 10 characters"),
@@ -187,6 +205,7 @@ export const AppEditInfoDefendantModal = ({
       getDefendantDevice({ idDefendant: idDefendant });
       getAddressPerson({ idPerson: idDefendant });
       getPhonePerson({ idPerson: idDefendant });
+      getCaseNumber({ idPerson: idDefendant });
     }
   }, [idDefendant, toggleReload]);
 
@@ -201,7 +220,7 @@ export const AppEditInfoDefendantModal = ({
   // useEffect to filter chieff officer
   useEffect(() => {
     if (users) {
-      const chiefFilter = users.filter((item) => item.role === "Chief Officer");
+      const chiefFilter = users.filter((item) => item.idRole === 2);
       setChiefs(
         chiefFilter.map((item) => ({
           value: item.idPerson,
@@ -233,6 +252,13 @@ export const AppEditInfoDefendantModal = ({
       text: "The phone was deleted succesfully",
     });
   };
+  const onDeleteCaseNumber = () => {
+    AppToast().fire({
+      title: "Case Number deleted",
+      icon: "success",
+      text: "The case number was deleted succesfully",
+    });
+  };
   useEffect(() => {
     if (errorDeleteDevice) {
       AppToast().fire({
@@ -249,6 +275,22 @@ export const AppEditInfoDefendantModal = ({
       });
     }
   }, [errorDeleteDevice, loadingDeleteAddress]);
+  useEffect(() => {
+    if (errorDeleteCaseNumber) {
+      AppToast().fire({
+        title: "Error",
+        icon: "error",
+        text: "An error occurred while trying to delete the case number. Try again",
+      });
+    }
+    if (loadingDeleteCaseNumber) {
+      AppToast().fire({
+        title: "Deleting case number",
+        icon: "info",
+        text: "The case number is being deleted. Please Wait",
+      });
+    }
+  }, [errorDeleteCaseNumber, loadingDeleteCaseNumber]);
   const onDeleteAddress = () => {
     AppToast().fire({
       title: "Address deleted",
@@ -316,7 +358,7 @@ export const AppEditInfoDefendantModal = ({
                   lastName: defendant?.lastName,
                   gender: defendant?.idGender,
                   county: defendant?.idCounty,
-                  caseNumber: defendant?.caseNumber,
+                  // caseNumber: defendant?.caseNumber,
                   sid: defendant?.sid,
                   offense: defendant?.offense,
                   password: "",
@@ -426,7 +468,7 @@ export const AppEditInfoDefendantModal = ({
                             </AppFormHelperText>
                           )}
                         </AppFormField>
-                        <AppFormField className="col-span-3 z-0">
+                        {/* <AppFormField className="col-span-3 z-0">
                           <Input
                             name="caseNumber"
                             label="Case number"
@@ -447,7 +489,7 @@ export const AppEditInfoDefendantModal = ({
                               {errors.caseNumber}
                             </AppFormHelperText>
                           )}
-                        </AppFormField>
+                        </AppFormField> */}
                         <AppFormField className="col-span-3">
                           <AppFormLabel>County</AppFormLabel>
                           <Select
@@ -518,43 +560,6 @@ export const AppEditInfoDefendantModal = ({
                             </AppFormHelperText>
                           )}
                         </AppFormField>
-                        <AppFormField className="col-span-3 z-0">
-                          <Input
-                            name="offense"
-                            label="Offense"
-                            labelPlacement="outside"
-                            value={values.offense}
-                            onChange={handleChange}
-                            type="string"
-                            isClearable
-                            placeholder="Offense"
-                            defaultValue={values.offense}
-                            radius="sm"
-                            variant="faded"
-                            size="md"
-                            onClear={() => setFieldValue("offense", "")}
-                          />
-                          {errors.offense && (
-                            <AppFormHelperText colorSchema="red">
-                              {errors.offense}
-                            </AppFormHelperText>
-                          )}
-                        </AppFormField>
-                        <AppFormField className="col-span-3 z-0">
-                          <Textarea
-                            name="notes"
-                            label="Notes"
-                            labelPlacement="outside"
-                            value={values.notes}
-                            onChange={handleChange}
-                            type="string"
-                            placeholder="Add notes"
-                            defaultValue={values.notes}
-                            radius="sm"
-                            variant="faded"
-                            size="md"
-                          />
-                        </AppFormField>
                         <AppFormField className="col-span-3 z-0 ">
                           <Input
                             name="password"
@@ -595,6 +600,42 @@ export const AppEditInfoDefendantModal = ({
                             otherwise it will be updated
                           </div>
                         </AppFormField>
+                        <AppFormField className="col-span-6 z-0">
+                          <Textarea
+                            name="notes"
+                            label="Notes"
+                            labelPlacement="outside"
+                            value={values.notes}
+                            onChange={handleChange}
+                            type="string"
+                            placeholder="Add notes"
+                            defaultValue={values.notes}
+                            radius="sm"
+                            variant="faded"
+                            size="md"
+                          />
+                        </AppFormField>
+                        <AppFormField className="col-span-6 z-0">
+                          <Textarea
+                            name="offense"
+                            label="Offense"
+                            labelPlacement="outside"
+                            value={values.offense}
+                            onChange={handleChange}
+                            type="string"
+                            placeholder="Offense"
+                            defaultValue={values.offense}
+                            radius="sm"
+                            variant="faded"
+                            size="md"
+                            // onClear={() => setFieldValue("offense", "")}
+                          />
+                          {errors.offense && (
+                            <AppFormHelperText colorSchema="red">
+                              {errors.offense}
+                            </AppFormHelperText>
+                          )}
+                        </AppFormField>
                       </div>
                       <div className="col-span-12 flex flex-row items-center justify-end gap-3 ">
                         <Button
@@ -630,6 +671,7 @@ export const AppEditInfoDefendantModal = ({
                       setVisibleDeviceForm(true);
                       setVisibleAddressForm(false);
                       setVisiblePhoneForm(false);
+                      setVisibleCaseNumberForm(false);
                     }}
                   >
                     New Device
@@ -641,6 +683,7 @@ export const AppEditInfoDefendantModal = ({
                       setVisibleAddressForm(true);
                       setVisibleDeviceForm(false);
                       setVisiblePhoneForm(false);
+                      setVisibleCaseNumberForm(false);
                     }}
                   >
                     New Address
@@ -652,9 +695,22 @@ export const AppEditInfoDefendantModal = ({
                       setVisiblePhoneForm(true);
                       setVisibleDeviceForm(false);
                       setVisibleAddressForm(false);
+                      setVisibleCaseNumberForm(false);
                     }}
                   >
                     New Phone Number
+                  </Button>
+                  <Button
+                    color="warning"
+                    startContent={<Icon.PlusCircle size={18} />}
+                    onClick={() => {
+                      setVisibleCaseNumberForm(true);
+                      setVisiblePhoneForm(false);
+                      setVisibleDeviceForm(false);
+                      setVisibleAddressForm(false);
+                    }}
+                  >
+                    New Case Number
                   </Button>
                 </div>
               )}
@@ -683,13 +739,25 @@ export const AppEditInfoDefendantModal = ({
                   />
                 )}
               </div>
-              <div className="col-span-12">
+              <div className="col-span-12" ref={parent}>
                 {visiblePhoneForm && (
                   <PhoneForm
                     onClose={() => setVisiblePhoneForm(false)}
                     onReload={() => {
                       setToggleReload(!toggleReload);
                       setVisiblePhoneForm(false);
+                    }}
+                    idDefendant={idDefendant}
+                  />
+                )}
+              </div>
+              <div className="col-span-12" ref={parent}>
+                {visibleCaseNumberForm && (
+                  <CaseNumberForm
+                    onClose={() => setVisibleCaseNumberForm(false)}
+                    onReload={() => {
+                      setToggleReload(!toggleReload);
+                      setVisibleCaseNumberForm(false);
                     }}
                     idDefendant={idDefendant}
                   />
@@ -814,6 +882,56 @@ export const AppEditInfoDefendantModal = ({
                               items={phonePerson}
                               onEdit={() => {}}
                             />
+                          </Disclosure.Panel>
+                        </>
+                      )}
+                    </Disclosure>
+                    <Disclosure>
+                      {({ open }) => (
+                        <>
+                          <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
+                            Case Number
+                            <Icon.ChevronRight
+                              className={open ? "rotate-90 transform" : ""}
+                            />
+                          </Disclosure.Button>
+                          <Disclosure.Panel className="text-gray-500">
+                            <AppCaseNumberTable
+                              isCreate={false}
+                              loadingDeleteCaseNumber={loadingDeleteCaseNumber}
+                              onDelete={async ({ record }) => {
+                                await deleteCaseNumber({
+                                  idCaseNumber: record.idCaseNumber,
+                                });
+                                if (!errorDeleteCaseNumber)
+                                  onDeleteCaseNumber();
+                                setToggleReload(!toggleReload);
+                              }}
+                              items={caseNumber}
+                              onEdit={(record) => {
+                                setVisibleAddressForm(false);
+                                setVisibleDeviceForm(false);
+                                setVisibleAddressEditForm(false);
+                                setVisiblePhoneForm(false);
+                                setCaseNumberSelected(record.record);
+                                setVisibleEditCaseNumberForm(true);
+                              }}
+                            />
+                            <div ref={parent} className="w-full">
+                              {visibleEditCaseNumberForm && (
+                                <EditCaseNumberForm
+                                  onClose={() => {
+                                    setCaseNumberSelected(null);
+                                    setVisibleEditCaseNumberForm(false);
+                                  }}
+                                  onReload={() =>
+                                    setToggleReload(!toggleReload)
+                                  }
+                                  idDefendant={idDefendant}
+                                  caseNumberSelected={caseNumberSelected}
+                                />
+                              )}
+                            </div>
                           </Disclosure.Panel>
                         </>
                       )}

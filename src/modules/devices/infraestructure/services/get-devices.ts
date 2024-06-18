@@ -2,7 +2,7 @@ import { api } from "../../../../utils/api";
 import { verifyResponse } from "../../../../utils/check-response";
 import { token } from "../../../../utils/token";
 import { Device } from "../../domain/entities/device";
-import { DeviceRepository } from "../../domain/respositories/device-repositoty";
+import { DeviceRepository } from "../../domain/respositories/device-repository";
 
 export const getDevicesService: DeviceRepository["getDevice"] = async (
   params
@@ -24,6 +24,7 @@ export const getDevicesService: DeviceRepository["getDevice"] = async (
     deviceType: device.deviceType,
     description: device.description,
     idStatus: device.idStatus,
+    idPerson: device.idPerson,
   }));
   return devices;
 };

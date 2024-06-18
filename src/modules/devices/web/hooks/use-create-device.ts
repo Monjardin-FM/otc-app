@@ -1,5 +1,5 @@
 import { useAsyncFn } from "react-use";
-import { DeviceRepository } from "../../domain/respositories/device-repositoty";
+import { DeviceRepository } from "../../domain/respositories/device-repository";
 import { saveDeviceService } from "../../infraestructure/services/create-device";
 
 export const useSaveDevice = () => {

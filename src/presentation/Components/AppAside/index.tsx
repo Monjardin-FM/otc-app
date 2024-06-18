@@ -51,12 +51,12 @@ export const AppAsideV2 = ({
           )}
 
           <div className="mt-8 space-y-4">
-            <AppAsideLink
+            {/* <AppAsideLink
               icon={<Icon.Grid size={20} />}
               label="Start"
               to="/"
               exact
-            />
+            /> */}
             <AppAuthorizationGuard
               roles={
                 AppConfig[
