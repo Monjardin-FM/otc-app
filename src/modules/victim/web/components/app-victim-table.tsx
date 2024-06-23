@@ -11,17 +11,16 @@ import { Button, Chip, Tooltip } from "@nextui-org/react";
 import dayjs from "dayjs";
 
 export type VictimsTableProps = {
-  // onToggleStatus?: (index: Client) => void;
-  // onUpdateClient: (data: Client) => void;
   items?: Victim[];
   onEdit: (params: RenderFnParams<Victim>) => void;
   onAddAddress: (params: RenderFnParams<Victim>) => void;
   onShowAddress: (params: RenderFnParams<Victim>) => void;
   onDelete: (params: RenderFnParams<Victim>) => void;
   onAddPhone: (params: RenderFnParams<Victim>) => void;
+  onDownloadFile: (params: RenderFnParams<Victim>) => void;
+  onUploadFile: (params: RenderFnParams<Victim>) => void;
   loadingDeleteVictim: boolean;
-  // onNotification: (params: RenderFnParams<UserManage>) => void;
-  // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
+  loadingDownloadFile: boolean;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -114,6 +113,9 @@ const ActionsColumn = ({
   onDelete,
   loadingDeleteVictim,
   onAddPhone,
+  onDownloadFile,
+  onUploadFile,
+  loadingDownloadFile,
 }: // record,
 RenderFnParams<Victim> & {
   onEdit: () => void;
@@ -121,7 +123,10 @@ RenderFnParams<Victim> & {
   onShowAddress: () => void;
   onDelete: () => void;
   loadingDeleteVictim: boolean;
+  loadingDownloadFile: boolean;
   onAddPhone: () => void;
+  onDownloadFile: () => void;
+  onUploadFile: () => void;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
@@ -212,6 +217,49 @@ RenderFnParams<Victim> & {
         </Button>
       </Tooltip>
       <Tooltip
+        content={"Upload File"}
+        color="secondary"
+        offset={5}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onUploadFile();
+          }}
+          title="Upload File"
+          size="sm"
+          variant="shadow"
+          color="secondary"
+          isIconOnly
+        >
+          <Icon.UploadCloud size={18} />
+        </Button>
+      </Tooltip>
+      <Tooltip
+        content={"Download File"}
+        color="default"
+        offset={5}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onDownloadFile();
+          }}
+          title="Download File"
+          size="sm"
+          variant="shadow"
+          color="default"
+          isIconOnly
+          isDisabled={loadingDownloadFile}
+        >
+          <Icon.DownloadCloud size={18} />
+        </Button>
+      </Tooltip>
+      <Tooltip
         content={"Delete Victim"}
         color="danger"
         offset={5}
@@ -245,6 +293,9 @@ export const AppVictimssTable = ({
   onShowAddress,
   loadingDeleteVictim,
   onAddPhone,
+  onDownloadFile,
+  onUploadFile,
+  loadingDownloadFile,
 }: VictimsTableProps) => {
   const columns: AppDataGridColumn<Victim>[] = [
     {
@@ -293,7 +344,14 @@ export const AppVictimssTable = ({
           onAddPhone: () => {
             onAddPhone(data);
           },
+          onDownloadFile: () => {
+            onDownloadFile(data);
+          },
+          onUploadFile: () => {
+            onUploadFile(data);
+          },
           loadingDeleteVictim: loadingDeleteVictim,
+          loadingDownloadFile: loadingDownloadFile,
         }),
     },
   ];

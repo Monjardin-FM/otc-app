@@ -12,7 +12,7 @@ import clsx from "clsx";
 
 export type PhoneTableProps = {
   items?: Phone[];
-  onEdit: (params: RenderFnParams<Phone>) => void;
+  onSendMessage: (params: RenderFnParams<Phone>) => void;
   onDelete: (params: RenderFnParams<Phone>) => void;
   loadingDeletePhone: boolean;
   isCreate: boolean;
@@ -51,19 +51,39 @@ const NamPhoneColumn = (params: RenderFnParams<Phone>) => {
 };
 
 const ActionsColumn = ({
-  // onEdit,
   onDelete,
   loadingDeletePhone,
-}: //   isCreate,
-// record,
-RenderFnParams<Phone> & {
-  onEdit: () => void;
+  onSendMessage,
+}: RenderFnParams<Phone> & {
+  onSendMessage: () => void;
   onDelete: () => void;
   loadingDeletePhone: boolean;
   isCreate: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-2 static">
+      <Tooltip
+        content={"Send Message"}
+        color="success"
+        offset={5}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onSendMessage();
+          }}
+          title="Send Message"
+          size="sm"
+          variant="shadow"
+          color="success"
+          isIconOnly
+          // isDisabled={loadingDeletePhone}
+        >
+          <Icon.MessageCircle size={18} />
+        </Button>
+      </Tooltip>
       <Tooltip
         content={"Delete Phone"}
         color="danger"
@@ -92,7 +112,7 @@ RenderFnParams<Phone> & {
 
 export const AppPhoneTable = ({
   items = [],
-  onEdit,
+  onSendMessage,
   onDelete,
   loadingDeletePhone,
   isCreate,
@@ -114,8 +134,8 @@ export const AppPhoneTable = ({
       render: (data) =>
         ActionsColumn({
           ...data,
-          onEdit: () => {
-            onEdit(data);
+          onSendMessage: () => {
+            onSendMessage(data);
           },
           onDelete: () => {
             onDelete(data);

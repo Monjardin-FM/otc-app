@@ -8,6 +8,7 @@ import {
   //   ModalFooter,
   ModalHeader,
   Textarea,
+  Tooltip,
 } from "@nextui-org/react";
 import * as Icon from "react-feather";
 import { useGetDefendantsById } from "../../hooks/use-get-defendants-by-id";
@@ -52,6 +53,10 @@ import { AppCaseNumberTable } from "../tables/app-case-number-table";
 import { useDeleteCaseNumber } from "../../hooks/use-delete-case-number";
 import { CaseNumber } from "../../../domain/entities/case-number";
 import { EditCaseNumberForm } from "../forms/edit-case-number-form";
+import { SendMessageForm } from "../forms/send-message-form";
+import { Phone } from "../../../domain/entities/phone";
+import { UploadFileForm } from "../forms/upload-file-form";
+import { useDownloadFile } from "../../hooks/use-get-download-file";
 export type AppEditInfoDefendantModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -76,6 +81,8 @@ export const AppEditInfoDefendantModal = ({
   const { defendant, getDefendantById } = useGetDefendantsById();
   const [visibleDeviceForm, setVisibleDeviceForm] = useToggle(false);
   const [visibleAddressForm, setVisibleAddressForm] = useToggle(false);
+  const [visibleSendMessageForm, setVisibleSendMessageForm] = useToggle(false);
+  const [visibleUploadFileForm, setVisibleUploadFileForm] = useToggle(false);
   const [visiblePhoneForm, setVisiblePhoneForm] = useToggle(false);
   const [visibleCaseNumberForm, setVisibleCaseNumberForm] = useToggle(false);
   const [visibleAddressEditForm, setVisibleAddressEditForm] = useToggle(false);
@@ -94,16 +101,22 @@ export const AppEditInfoDefendantModal = ({
   const [idOfficer, setIdOfficer] = useState<number | null>();
   const [idCounty, setIdCounty] = useState<number | null>();
   const [statusOfficer, setStatusOfficer] = useState(false);
-  const [caseNumberSelected, setCaseNumberSelected] =
-    useState<CaseNumber | null>(null);
-
   const [birthDate, setBirthDate] = useState<Date | null>(new Date());
   const [toggleReload, setToggleReload] = useToggle(false);
   const [isVisiblePassword, setIsVisiblePassword] = useState(false);
   const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
   const [visibleEditDeviceForm, setVisibleEditDeviceForm] = useState(false);
+  const [caseNumberSelected, setCaseNumberSelected] =
+    useState<CaseNumber | null>(null);
   const [selectedDevice, setSelectedDevice] =
     useState<DefendantDevice | null>();
+  const [selectedPhoneNumber, setSelectedPhoneNumber] =
+    useState<Phone | null>();
+  const {
+    downloadFile,
+    linkDownload,
+    loading: loadingDownloadFile,
+  } = useDownloadFile();
   const {
     deleteDefendantDevice,
     error: errorDeleteDevice,
@@ -330,6 +343,10 @@ export const AppEditInfoDefendantModal = ({
       });
     }
   }, [errorDeletePhone, loadingDeletePhone]);
+  useEffect(() => {
+    if (linkDownload && linkDownload.length > 0)
+      window.open(linkDownload, "_blank");
+  }, [linkDownload]);
   return (
     <Modal
       size="4xl"
@@ -340,7 +357,7 @@ export const AppEditInfoDefendantModal = ({
     >
       <ModalContent>
         <>
-          <ModalHeader className="flex flex-col gap-1 items-center">
+          <ModalHeader className="flex flex-row items-center justify-center gap-5">
             <Chip color="primary" variant="bordered">
               <div className="flex flex-row items-center jusitfy-center gap-3">
                 <Icon.User size={15} />
@@ -349,6 +366,51 @@ export const AppEditInfoDefendantModal = ({
                 </span>
               </div>
             </Chip>
+            <div className="flex flex-row items-start justify-start gap-5">
+              <Tooltip
+                content={"Upload file"}
+                color="primary"
+                offset={5}
+                showArrow
+                closeDelay={10}
+                disableAnimation
+              >
+                <Button
+                  isIconOnly
+                  color="primary"
+                  onPress={() => setVisibleUploadFileForm(true)}
+                >
+                  <Icon.UploadCloud size={15} />
+                </Button>
+              </Tooltip>
+              <UploadFileForm
+                isVisible={visibleUploadFileForm}
+                onClose={() => setVisibleUploadFileForm(false)}
+                idDefendant={idDefendant}
+              />
+              <Tooltip
+                content={"Download file"}
+                color="warning"
+                offset={5}
+                showArrow
+                closeDelay={10}
+                disableAnimation
+              >
+                <Button
+                  isIconOnly
+                  color="warning"
+                  onPress={async () => {
+                    if (idDefendant) {
+                      await downloadFile({ idPerson: idDefendant });
+                    }
+                  }}
+                  isDisabled={loadingDownloadFile}
+                  isLoading={loadingDownloadFile}
+                >
+                  <Icon.DownloadCloud size={15} />
+                </Button>
+              </Tooltip>
+            </div>
           </ModalHeader>
           <ModalBody className="flex flex-col items-center justify-center w-full p-5 gap-5">
             <>
@@ -880,7 +942,17 @@ export const AppEditInfoDefendantModal = ({
                                 setToggleReload(!toggleReload);
                               }}
                               items={phonePerson}
-                              onEdit={() => {}}
+                              onSendMessage={({ record }) => {
+                                setSelectedPhoneNumber(record);
+                                setVisibleSendMessageForm(true);
+                              }}
+                            />
+                            <SendMessageForm
+                              isVisible={visibleSendMessageForm}
+                              onClose={() => {
+                                setVisibleSendMessageForm(false);
+                              }}
+                              selectedPhone={selectedPhoneNumber}
                             />
                           </Disclosure.Panel>
                         </>

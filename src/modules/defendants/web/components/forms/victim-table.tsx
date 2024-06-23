@@ -19,6 +19,10 @@ import { AddressForm } from "./address-form";
 import { PhoneForm } from "./phone-form";
 import { DefendantById } from "../../../domain/entities/defendant-by-id";
 import { Victim } from "../../../../victim/domain/entities/victim";
+import { Phone } from "../../../domain/entities/phone";
+import { SendMessageForm } from "./send-message-form";
+import { useDownloadFile } from "../../hooks/use-get-download-file";
+import { UploadFileForm } from "./upload-file-form";
 
 type VictimTableFormsProps = {
   idDefendant?: number | null;
@@ -32,14 +36,17 @@ export const VictimTableForms = ({
 }: VictimTableFormsProps) => {
   const [idVictim, setIdVictim] = useState<number | null>();
   const [visibleFormAddress, setVisibleFormAddress] = useToggle(false);
+  const [visibleUploadFileForm, setVisibleUploadFileForm] = useToggle(false);
   const { getVictimById, victim } = useGetVictimById();
   const [nameVictim, setNameVictim] = useState("");
   const [visibleTableAddress, setVisibleTableAddress] = useToggle(false);
   const [visibleEditAddress, setVisibleEditAddress] = useToggle(false);
   const [visibleEditVictimForm, setVisibleEditVictimForm] = useToggle(false);
   const [visibleFormPhone, setVisibleFormPhone] = useToggle(false);
+  const [visibleSendMessageForm, setVisibleSendMessageForm] = useToggle(false);
   const [toggleReload, setToggleReload] = useToggle(false);
-
+  const [selectedPhoneNumber, setSelectedPhoneNumber] =
+    useState<Phone | null>();
   const { getPhonePerson, phonePerson } = useGetPhonePerson();
   const {
     deleteVictim,
@@ -58,7 +65,11 @@ export const VictimTableForms = ({
     error: errorDeletePhone,
     loading: loadingDeletePhone,
   } = useDeletePhonePerson();
-
+  const {
+    downloadFile,
+    linkDownload,
+    loading: loadingDownloadFile,
+  } = useDownloadFile();
   const onDeleteAddress = () => {
     AppToast().fire({
       title: "Deleted Address",
@@ -139,6 +150,10 @@ export const VictimTableForms = ({
       });
     }
   }, [errorDeletePhone, loadingDeletePhone]);
+  useEffect(() => {
+    if (linkDownload && linkDownload.length > 0)
+      window.open(linkDownload, "_blank");
+  }, [linkDownload]);
   return (
     <div className="w-full mt-5">
       <Disclosure defaultOpen>
@@ -190,7 +205,22 @@ export const VictimTableForms = ({
                   }
                   setToggleReload(!toggleReload);
                 }}
+                onDownloadFile={async ({ record }) => {
+                  if (record.idPerson) {
+                    await downloadFile({ idPerson: record.idPerson });
+                  }
+                }}
+                onUploadFile={({ record }) => {
+                  setVisibleUploadFileForm(true);
+                  setIdVictim(record.idPerson);
+                }}
                 loadingDeleteVictim={loadingDeleteVictim}
+                loadingDownloadFile={loadingDownloadFile}
+              />
+              <UploadFileForm
+                isVisible={visibleUploadFileForm}
+                onClose={() => setVisibleUploadFileForm(false)}
+                idDefendant={idVictim}
               />
               {visibleEditVictimForm && (
                 <EditVictimForm
@@ -242,7 +272,17 @@ export const VictimTableForms = ({
                         setToggleReload(!toggleReload);
                       }}
                       items={phonePerson}
-                      onEdit={() => {}}
+                      onSendMessage={({ record }) => {
+                        setSelectedPhoneNumber(record);
+                        setVisibleSendMessageForm(true);
+                      }}
+                    />
+                    <SendMessageForm
+                      isVisible={visibleSendMessageForm}
+                      onClose={() => {
+                        setVisibleSendMessageForm(false);
+                      }}
+                      selectedPhone={selectedPhoneNumber}
                     />
                   </div>
                   {visibleEditAddress && (
@@ -274,8 +314,6 @@ export const VictimTableForms = ({
                     <AddressForm
                       onClose={() => {
                         setVisibleFormAddress(false);
-
-                        // setIdVictim(null);
                       }}
                       onReload={() => {
                         setVisibleFormAddress(false);

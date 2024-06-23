@@ -667,10 +667,11 @@ export const DefendantForm = ({
                   <Disclosure.Panel className="text-gray-500">
                     <AppPhoneTable
                       isCreate={true}
-                      onEdit={() => {}}
+                      // onEdit={() => {}}
                       onDelete={() => {}}
                       items={phonePerson}
                       loadingDeletePhone={false}
+                      onSendMessage={() => {}}
                     />
                   </Disclosure.Panel>
                 </>

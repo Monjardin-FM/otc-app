@@ -162,4 +162,14 @@ export type DefendantRepository = {
     smsText: string;
     mailText: string;
   }) => Promise<void>;
+  sendMessageDefendant: (params: {
+    mensaje: string;
+    number: string;
+  }) => Promise<void>;
+  uploadFile: (params: {
+    idPerson: number;
+    extension: string;
+    file: string;
+  }) => Promise<void>;
+  downloadFile: (params: { idPerson: number }) => Promise<string>;
 };

@@ -141,7 +141,6 @@ MapTrackingProps) => {
   });
   return (
     <>
-      {/* {String(isPositionDefendant)} */}
       {defendantPosition ? (
         <MapContainer
           center={
