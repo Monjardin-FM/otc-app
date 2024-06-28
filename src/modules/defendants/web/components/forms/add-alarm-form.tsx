@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useToggle } from "react-use";
 import {
   AppFormField,
   AppFormHelperText,
@@ -46,9 +45,9 @@ export const AddAlarmForm = ({
   } = useAssignAlarmDefendant();
   const [parent] = useAutoAnimate();
   const [exceptionItems, setExceptionItems] = useState<AlarmException[]>([]);
-  const [visibleExceptionForm, setVisibleExceptionForm] = useToggle(false);
-  // const [fechasException, setFechasException] = useState();
+  const [visibleExceptionForm, setVisibleExceptionForm] = useState(false);
   const [alarmType, setAlarmType] = useState<number>(1);
+  const [idAlarmTypeSelected, setIdAlarmTypeSelected] = useState<number>(0);
   const [dateInit, setDateInit] = useState<Date>(new Date());
   const [dateFinish, setDateFinish] = useState<Date>(new Date());
   const [days, setDays] = useState<Selection>(new Set([]));
@@ -105,6 +104,19 @@ export const AddAlarmForm = ({
           description: nameException,
         },
       ]);
+    }
+  };
+  useEffect(() => {
+    handleVisibleExceptionForm();
+  }, [idAlarmTypeSelected]);
+  const handleVisibleExceptionForm = () => {
+    if (
+      Number(idAlarmTypeSelected) === 3 ||
+      Number(idAlarmTypeSelected) === 0
+    ) {
+      setVisibleExceptionForm(false);
+    } else {
+      setVisibleExceptionForm(true);
     }
   };
   const onSubmitHandler = async (data: AssignAlarmDefendantFormValues) => {
@@ -206,7 +218,10 @@ export const AddAlarmForm = ({
                 <AppSelect
                   name="idSpecificAlarmType"
                   value={values.idSpecificAlarmType}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    setIdAlarmTypeSelected(Number(e.target.value));
+                  }}
                 >
                   <option>Select Alarm Type</option>
                   {specificAlarm?.map((sAlarm) => (
@@ -259,9 +274,7 @@ export const AddAlarmForm = ({
               </AppFormField>
               <div className="rounded-lg bg-gray-200 col-span-12">
                 <AppGeofence
-                  handleVisibleException={(param: boolean) =>
-                    setVisibleExceptionForm(param)
-                  }
+                  handleVisibleException={() => {}}
                   setPoints={(params) => {
                     setPoints((prev) => [...prev, params]);
                   }}
@@ -272,7 +285,6 @@ export const AddAlarmForm = ({
                   <span className="col-span-12 text-center font-bold text-primary-700 ">
                     Schedules
                   </span>
-
                   <div
                     ref={parent}
                     className="col-span-12  grid grid-cols-12  gap-5"

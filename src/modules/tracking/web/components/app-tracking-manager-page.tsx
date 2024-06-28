@@ -11,12 +11,24 @@ import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
 import { Button } from "@nextui-org/react";
 import * as Icon from "react-feather";
+import { AppTrackingNotificationCenter } from "./app-tracking-notification-center";
+import { useGetNotification } from "../hooks/use-get-notification";
+import { NotificationTracking } from "../../domain/entities/notification";
+import { AppViewNotificationModal } from "./modals/app-view-notification";
 export const AppTrackingManagerPage = () => {
   const [visibleTrackingModal, setVisibleTrackingModal] = useToggle(false);
+  const [toggleReload, setToggleReload] = useToggle(false);
   const { tracking, getTracking } = useGetTracking();
   const [mute, setMute] = useState(false);
   const [audio, setAudio] = useState(new Audio("/src/assets/mp3/alarm.mp3"));
-
+  const [visibleNotificationCenter, setVisibleNotificationCenter] =
+    useToggle(false);
+  const [visibleNotificationDetailModal, setVisibleNotificationDetailModal] =
+    useToggle(false);
+  const [notificationSelected, setNotificationSelected] =
+    useState<NotificationTracking>();
+  const { getNotification, notification } = useGetNotification();
+  const [notificationCount, setNotificationCount] = useState<number>(0);
   useEffect(() => {
     getTracking();
     const intervalId = setInterval(() => {
@@ -29,6 +41,12 @@ export const AppTrackingManagerPage = () => {
       clearInterval(intervalId);
     };
   }, []);
+  useEffect(() => {
+    getNotification();
+  }, [toggleReload]);
+  useEffect(() => {
+    if (notification) setNotificationCount(notification?.length);
+  }, [notification]);
 
   useEffect(() => {
     setAudio(new Audio("/src/assets/mp3/alarm.mp3"));
@@ -57,18 +75,43 @@ export const AppTrackingManagerPage = () => {
         <AppTrackingModal
           isVisible={visibleTrackingModal}
           onClose={() => setVisibleTrackingModal(false)}
+          onReload={() => {
+            setToggleReload(!toggleReload);
+          }}
           // toggle={toggle}
         />
         <AppPageTransition>
           <div className="items-center mx-auto ">
+            <AppTrackingNotificationCenter
+              isVisible={visibleNotificationCenter}
+              onClose={() => setVisibleNotificationCenter(false)}
+              notification={notification}
+              onViewNotification={(item) => {
+                setNotificationSelected(item);
+                setVisibleNotificationDetailModal(true);
+              }}
+            />
+            <AppViewNotificationModal
+              notification={notificationSelected}
+              onClose={() => {
+                setVisibleNotificationDetailModal(false);
+              }}
+              isVisible={visibleNotificationDetailModal}
+              onReload={() => {
+                setToggleReload(!toggleReload);
+              }}
+            />
             <AppTrackingHeader
-              // setTrackingId={setTrackingId}
+              onShowNotifications={() => {
+                setVisibleNotificationCenter(true);
+              }}
               onSearch={(id: number | undefined) => {
                 if (id) {
                   localStorage.setItem("trackingId", String(id));
                 }
                 setVisibleTrackingModal(true);
               }}
+              notificationCount={notificationCount}
             />
             <div className="container mx-auto my-5 ">
               {tracking && tracking.length > 0 ? (

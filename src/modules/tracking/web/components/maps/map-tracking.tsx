@@ -19,10 +19,10 @@ import { FullscreenControl } from "react-leaflet-fullscreen";
 import { Icon } from "leaflet";
 import DefIcon from "../../../../../assets/icons/defendant-marker.png";
 // import AlarmIcon from "../../../../../assets/icons/alarm-marker.png";
+import { FlyNewPositionMarkerAlarm } from "./marker-alarm-fly-map";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc"; // Importa el plugin UTC de Day.js
 import timezone from "dayjs/plugin/timezone"; // Importa el plugin de zona horaria de Day.js
-import { FlyNewPositionMarkerAlarm } from "./marker-alarm-fly-map";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -152,15 +152,23 @@ export const MapTracking = ({
 
           {geofences &&
             geofences?.map((geofence) => {
+              const getGeofenceStyle = (idAlarmType: number) => {
+                switch (idAlarmType) {
+                  case 1:
+                    return { color: "blue" };
+                  case 2:
+                    return { color: "red" };
+                  case 3:
+                    return { color: "green" };
+                  default:
+                    return { color: "black" }; // Valor por defecto en caso de que no coincida con 1, 2, o 3
+                }
+              };
               return (
                 <GeoJSON
                   key={geofence.idGeofence}
                   data={geofence.geofence}
-                  style={
-                    geofence.idAlarmType === 1
-                      ? { color: "blue" }
-                      : { color: "red" }
-                  }
+                  style={getGeofenceStyle(geofence.idAlarmType)}
                 >
                   <Tooltip
                     permanent={true}
@@ -170,6 +178,8 @@ export const MapTracking = ({
                     className={
                       geofence.idAlarmType === 1
                         ? "font-semibold text-xl  border-0 border-none border-opacity-0 text-primaryColor-700 text-opacity-100"
+                        : geofence.idAlarmType === 3
+                        ? "font-semibold text-xl  border-0 border-none border-opacity-0 text-gray-900 text-opacity-100"
                         : "font-semibold text-xl  border-0 border-none border-opacity-0 text-red-700 text-opacity-100"
                     }
                   ></Tooltip>

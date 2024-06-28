@@ -2,11 +2,18 @@ import { AppHero } from "../../../../presentation/Components/AppHero";
 import Select from "react-select";
 import { useGetDefendants } from "../../../defendants/web/hooks/use-get-defendants";
 import { useEffect, useState } from "react";
+import { Badge, Button } from "@nextui-org/react";
+import * as Icon from "react-feather";
 type AppTrackingHeaderProps = {
-  // setTrackingId: (trackingId: number | undefined) => void;
   onSearch: (id: number | undefined) => void;
+  onShowNotifications: () => void;
+  notificationCount?: number;
 };
-export const AppTrackingHeader = ({ onSearch }: AppTrackingHeaderProps) => {
+export const AppTrackingHeader = ({
+  onSearch,
+  onShowNotifications,
+  notificationCount,
+}: AppTrackingHeaderProps) => {
   const { defendants, getDefendants } = useGetDefendants();
   const [defendantsList, setDefendantsList] =
     useState<{ value: number; label: string }[]>();
@@ -30,6 +37,7 @@ export const AppTrackingHeader = ({ onSearch }: AppTrackingHeaderProps) => {
       style={{
         background: "linear-gradient(to right, #091970, #133a94)",
       }}
+      className="relative"
     >
       <div className=" flex flex-row items-center justify-between mx-auto gap-5 w-2/3">
         <h1 className="text-xl font-semibold text-white center text-opacity-90">
@@ -43,25 +51,14 @@ export const AppTrackingHeader = ({ onSearch }: AppTrackingHeaderProps) => {
             onChange={(e) => onSearch(e?.value)}
             isSearchable={true}
           />
-          {/* <AppTextField
-            placeholder="Name"
-            type="text"
-            onChange={() => {
-              //   setSearchUser(e.target.value);
-              //   setVisible(true);
-            }}
-            // value={searchUser}
-          ></AppTextField> */}
-          {/* <AppButton
-            variant="ghost"
-            isLoading={false}
-            onClick={() => {
-              //   handleClick(fullNameUser);
-            }}
-          >
-            <Icon.Search />
-          </AppButton> */}
         </div>
+      </div>
+      <div className="absolute right-10">
+        <Badge content={notificationCount} size="lg" color="warning">
+          <Button isIconOnly color="danger" onPress={onShowNotifications}>
+            <Icon.Bell size={18} />
+          </Button>
+        </Badge>
       </div>
     </AppHero>
   );

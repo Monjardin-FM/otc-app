@@ -225,16 +225,24 @@ MapTrackingProps) => {
           <MyLayer positions={defendantPosition?.historicPersonPosition} />
 
           {geofences && geofences.length > 0
-            ? geofences.map((geo) => (
-                <>
+            ? geofences.map((geo) => {
+                const getGeofenceStyle = (idAlarmType: number) => {
+                  switch (idAlarmType) {
+                    case 1:
+                      return { color: "blue" };
+                    case 2:
+                      return { color: "red" };
+                    case 3:
+                      return { color: "green" };
+                    default:
+                      return { color: "black" }; // Valor por defecto en caso de que no coincida con 1, 2, o 3
+                  }
+                };
+                return (
                   <GeoJSON
                     key={geo.idGeofence}
                     data={JSON.parse(geo.geofence)}
-                    style={
-                      geo.idAlarmType === 1
-                        ? { color: "blue" }
-                        : { color: "red" }
-                    }
+                    style={getGeofenceStyle(geo.idAlarmType)}
                   >
                     <Tooltip
                       permanent={true}
@@ -244,12 +252,14 @@ MapTrackingProps) => {
                       className={
                         geo.idAlarmType === 1
                           ? "font-semibold text-xl  border-0 border-none border-opacity-0 text-primaryColor-700 text-opacity-100"
+                          : geo.idAlarmType === 3
+                          ? "font-semibold text-xl  border-0 border-none border-opacity-0 text-gray-900 text-opacity-100"
                           : "font-semibold text-xl  border-0 border-none border-opacity-0 text-red-700 text-opacity-100"
                       }
                     ></Tooltip>
                   </GeoJSON>
-                </>
-              ))
+                );
+              })
             : ""}
 
           {victimPosition &&

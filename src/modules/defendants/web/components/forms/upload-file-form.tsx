@@ -43,15 +43,10 @@ export const UploadFileForm = ({
       setFileExtension(extension ? `.${extension}` : "");
       const base64 = await encodeFileBase64(file);
       const split64 = base64.split(",").pop();
-      //   console.log(split64);
       if (split64) setFileBase64String(split64);
     }
   };
   const handleSubmit = async () => {
-    console.log(idDefendant);
-    console.log(fileExtension);
-    console.log(fileBase64String);
-    console.log(fileName);
     if (fileName && idDefendant) {
       await uploadFile({
         extension: fileExtension,

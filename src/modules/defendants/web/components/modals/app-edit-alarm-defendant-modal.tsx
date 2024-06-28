@@ -113,7 +113,9 @@ AppEditAlarmDefendantModalProps) => {
     }
   }, [errorDelete, loadingDelete]);
   const handleView = async (record: AlarmDefendant) => {
+    setVisibleMapGeofence(true);
     setIdAlarmDefendant(record.idPersonSpecificAlarm);
+    setVisibleMapGeofence(false);
     await getDefendantAlarmById({
       idPersonSpecificAlarm: record.idPersonSpecificAlarm,
     });

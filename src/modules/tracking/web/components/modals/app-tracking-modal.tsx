@@ -5,6 +5,7 @@ import { MapTracking } from "../maps/map-tracking";
 import { Person, PersonAlert } from "../../../domain/entities/tracking-detail";
 
 import {
+  Button,
   Chip,
   Modal,
   ModalBody,
@@ -12,19 +13,24 @@ import {
   ModalHeader,
   Tab,
   Tabs,
+  Tooltip,
 } from "@nextui-org/react";
 import * as Icon from "react-feather";
 import { AppHistoricPositionTab } from "./app-historic-position-tab";
 import { useShowAlerts } from "../../../../tracking-plus/web/hooks/use-show-alerts";
 import { AppToast } from "../../../../../presentation/Components/AppToast";
 import { GeoJSONO } from "../../../../defendants/domain/entities/geoJSON";
+import { AppAddNotification } from "./app-add-notification";
+import { useToggle } from "react-use";
 export type AppTrackingModalProps = {
   isVisible: boolean;
   onClose: () => void;
+  onReload: () => void;
 };
 export const AppTrackingModal = ({
   isVisible,
   onClose,
+  onReload,
 }: AppTrackingModalProps) => {
   const {
     trackingDetail,
@@ -34,6 +40,8 @@ export const AppTrackingModal = ({
   const [alertPerson, setAlertPerson] = useState<PersonAlert[] | null>();
   const [userId, setUserId] = useState<number | null>();
   const [defendantInfo, setDefendantInfo] = useState<Person | null>();
+  const [visibleAddNotificationModal, setVisibleAddNotificationModal] =
+    useToggle(false);
   const {
     showAlerts,
     loading: loadingShowAlerts,
@@ -189,6 +197,32 @@ export const AppTrackingModal = ({
                   Officer:
                   <b>{defendantInfo?.officer}</b>
                 </Chip>
+                <Tooltip
+                  content={"Add Notification"}
+                  color="primary"
+                  offset={1}
+                  showArrow
+                  closeDelay={10}
+                  disableAnimation
+                >
+                  <Button
+                    isIconOnly
+                    color="primary"
+                    size="sm"
+                    onPress={() => setVisibleAddNotificationModal(true)}
+                  >
+                    <Icon.PlusCircle size={20} />
+                  </Button>
+                </Tooltip>
+                <AppAddNotification
+                  isVisible={visibleAddNotificationModal}
+                  onClose={() => {
+                    setVisibleAddNotificationModal(false);
+                    onReload();
+                  }}
+                  defendantInfo={defendantInfo}
+                  userId={userId}
+                />
               </div>
               <Tabs
                 aria-label="options"
