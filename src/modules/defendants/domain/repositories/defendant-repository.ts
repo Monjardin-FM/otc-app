@@ -15,6 +15,7 @@ import { AutomaticAlarmsDefendant } from "../entities/automatic-alarm-defendant"
 import { ScheduleAlarm } from "../entities/schedule-alarm";
 import { CaseNumber } from "../entities/case-number";
 import { AlarmDefendantDetail } from "../entities/alarm-defendant-detail";
+import { ReferenceContact } from "../entities/reference-contact";
 export type createDefendantParams = {
   completeName: string;
   name: string;
@@ -172,4 +173,26 @@ export type DefendantRepository = {
     file: string;
   }) => Promise<void>;
   downloadFile: (params: { idPerson: number }) => Promise<string>;
+  getReferenceContact: (params: {
+    idDefendant: number;
+  }) => Promise<ReferenceContact[]>;
+  getReferenceContactById: (params: {
+    referenceId: number;
+  }) => Promise<ReferenceContact>;
+  createReferenceContact: (params: {
+    idPerson: number;
+    phoneNumber: string;
+    name: string;
+    relationship: string;
+    address: string;
+  }) => Promise<void>;
+  editReferenceContact: (params: {
+    idReferencePerson: number;
+    idPerson: number;
+    phoneNumber: string;
+    name: string;
+    relationship: string;
+    address: string;
+  }) => Promise<void>;
+  deleteReferencePerson: (params: { idReference: number }) => Promise<Boolean>;
 };

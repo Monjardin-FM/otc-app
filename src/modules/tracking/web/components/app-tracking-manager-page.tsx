@@ -45,7 +45,10 @@ export const AppTrackingManagerPage = () => {
     getNotification();
   }, [toggleReload]);
   useEffect(() => {
-    if (notification) setNotificationCount(notification?.length);
+    if (notification) {
+      const filterCount = notification.filter((item) => item.idStatus === 1);
+      setNotificationCount(filterCount?.length);
+    }
   }, [notification]);
 
   useEffect(() => {

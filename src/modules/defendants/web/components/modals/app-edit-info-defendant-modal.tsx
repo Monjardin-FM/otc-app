@@ -57,6 +57,10 @@ import { SendMessageForm } from "../forms/send-message-form";
 import { Phone } from "../../../domain/entities/phone";
 import { UploadFileForm } from "../forms/upload-file-form";
 import { useDownloadFile } from "../../hooks/use-get-download-file";
+import { AppReferenceContactsTable } from "../tables/app-reference-contacts-table";
+import { useGetReferenceContact } from "../../hooks/reference-contact/use-get-reference-contact";
+import { AppReferenceContactModal } from "./app-reference-contact-modal";
+import { useDeleteReferenceContact } from "../../hooks/reference-contact/use-delete-reference-contact";
 export type AppEditInfoDefendantModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -78,6 +82,7 @@ export const AppEditInfoDefendantModal = ({
   onClose,
   idDefendant,
 }: AppEditInfoDefendantModalProps) => {
+  const [isCreating, setIsCreating] = useState<boolean>(false);
   const { defendant, getDefendantById } = useGetDefendantsById();
   const [visibleDeviceForm, setVisibleDeviceForm] = useToggle(false);
   const [visibleAddressForm, setVisibleAddressForm] = useToggle(false);
@@ -88,6 +93,8 @@ export const AppEditInfoDefendantModal = ({
   const [visibleAddressEditForm, setVisibleAddressEditForm] = useToggle(false);
   const [visibleEditCaseNumberForm, setVisibleEditCaseNumberForm] =
     useToggle(false);
+  const [visibleReferenceContactModal, setVisibleReferenceContactModal] =
+    useToggle(false);
   const { getUsers, users } = useGetUsers();
   const { genders, getGenders } = useGetGenders();
   const { counties, getCounties } = useGetCounties();
@@ -95,6 +102,7 @@ export const AppEditInfoDefendantModal = ({
   const { addressPerson, getAddressPerson } = useGetAddressPerson();
   const { getCaseNumber, caseNumber } = useGetCaseNumber();
   const [idAddress, setIdAddress] = useState<number | null>();
+  const [idReference, setIdReference] = useState<number | null>();
   const [chiefs, setChiefs] = useState<{ value: number; label: string }[]>();
   const [countiesFilter, setCountiesFilter] =
     useState<{ value: number; label: string }[]>();
@@ -132,6 +140,11 @@ export const AppEditInfoDefendantModal = ({
     deleteAddressPerson,
     loading: loadingDeleteAddress,
   } = useDeleteAddressPerson();
+  const {
+    deleteReferenceContact,
+    error: errorDeleteReferenceContact,
+    loading: loadingDeleteReference,
+  } = useDeleteReferenceContact();
   const [parent] = useAutoAnimate();
   const {
     value: responseUpdateDefendant,
@@ -140,6 +153,7 @@ export const AppEditInfoDefendantModal = ({
     // error: errorDefendant,
   } = useUpdateDefendant();
   const { getPhonePerson, phonePerson } = useGetPhonePerson();
+  const { getReferenceContact, referenceContact } = useGetReferenceContact();
   const {
     deletePhonePerson,
     error: errorDeletePhone,
@@ -219,6 +233,7 @@ export const AppEditInfoDefendantModal = ({
       getAddressPerson({ idPerson: idDefendant });
       getPhonePerson({ idPerson: idDefendant });
       getCaseNumber({ idPerson: idDefendant });
+      getReferenceContact({ idDefendant: idDefendant });
     }
   }, [idDefendant, toggleReload]);
 
@@ -270,6 +285,13 @@ export const AppEditInfoDefendantModal = ({
       title: "Case Number deleted",
       icon: "success",
       text: "The case number was deleted succesfully",
+    });
+  };
+  const onDeleteReferenceContact = () => {
+    AppToast().fire({
+      title: "Reference Contact deleted",
+      icon: "success",
+      text: "The reference contact was deleted succesfully",
     });
   };
   useEffect(() => {
@@ -344,12 +366,28 @@ export const AppEditInfoDefendantModal = ({
     }
   }, [errorDeletePhone, loadingDeletePhone]);
   useEffect(() => {
+    if (errorDeleteReferenceContact) {
+      AppToast().fire({
+        title: "Error",
+        icon: "error",
+        text: "An error occurred while trying to delete the reference contact. Try again",
+      });
+    }
+    if (loadingDeleteReference) {
+      AppToast().fire({
+        title: "Deleting reference contact",
+        icon: "info",
+        text: "The reference contact is being deleted. Please Wait",
+      });
+    }
+  }, [errorDeleteReferenceContact, loadingDeleteReference]);
+  useEffect(() => {
     if (linkDownload && linkDownload.length > 0)
       window.open(linkDownload, "_blank");
   }, [linkDownload]);
   return (
     <Modal
-      size="4xl"
+      size="5xl"
       isOpen={isVisible}
       onClose={onClose}
       backdrop="blur"
@@ -357,6 +395,22 @@ export const AppEditInfoDefendantModal = ({
     >
       <ModalContent>
         <>
+          <AppReferenceContactModal
+            isCreating={isCreating}
+            isVisible={visibleReferenceContactModal}
+            onClose={() => {
+              setIdReference(null);
+              setIsCreating(true);
+              setVisibleReferenceContactModal(false);
+            }}
+            onReload={() => {
+              setToggleReload(!toggleReload);
+              setIdReference(null);
+              setIsCreating(true);
+            }}
+            idReferencePerson={idReference}
+            idDefendant={idDefendant}
+          />
           <ModalHeader className="flex flex-row items-center justify-center gap-5">
             <Chip color="primary" variant="bordered">
               <div className="flex flex-row items-center jusitfy-center gap-3">
@@ -774,6 +828,17 @@ export const AppEditInfoDefendantModal = ({
                   >
                     New Case Number
                   </Button>
+                  <Button
+                    color="warning"
+                    startContent={<Icon.PlusCircle size={18} />}
+                    onClick={() => {
+                      setIdReference(null);
+                      setIsCreating(true);
+                      setVisibleReferenceContactModal(true);
+                    }}
+                  >
+                    New Reference Contact
+                  </Button>
                 </div>
               )}
               <div className="col-span-12 w-full" ref={parent}>
@@ -1004,6 +1069,38 @@ export const AppEditInfoDefendantModal = ({
                                 />
                               )}
                             </div>
+                          </Disclosure.Panel>
+                        </>
+                      )}
+                    </Disclosure>
+                    <Disclosure>
+                      {({ open }) => (
+                        <>
+                          <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
+                            Reference Contact
+                            <Icon.ChevronRight
+                              className={open ? "rotate-90 transform" : ""}
+                            />
+                          </Disclosure.Button>
+                          <Disclosure.Panel className="text-gray-500">
+                            <AppReferenceContactsTable
+                              isCreate={false}
+                              loadingDeleteReference={loadingDeleteReference}
+                              onDelete={async ({ record }) => {
+                                await deleteReferenceContact({
+                                  idReference: record.idReferencePerson,
+                                });
+                                if (!errorDeleteReferenceContact)
+                                  onDeleteReferenceContact();
+                                setToggleReload(!toggleReload);
+                              }}
+                              items={referenceContact}
+                              onEdit={(record) => {
+                                setIsCreating(false);
+                                setIdReference(record.record.idReferencePerson);
+                                setVisibleReferenceContactModal(true);
+                              }}
+                            />
                           </Disclosure.Panel>
                         </>
                       )}

@@ -250,6 +250,7 @@ export const AppTrackingModal = ({
                         geofences={geofences}
                         onClose={onClose}
                         markerAlarmMap={markerAlarmMap}
+                        alertPerson={alertPerson}
                       />
                     </div>
 

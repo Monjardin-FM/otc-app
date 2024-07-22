@@ -35,6 +35,9 @@ import { AppPhoneTable } from "../tables/app-phone-person-table";
 import { AppCaseNumberTable } from "../tables/app-case-number-table";
 import { useGetCaseNumber } from "../../hooks/use-get-case-number";
 import { CaseNumberForm } from "./create-case-number-form";
+import { useGetReferenceContact } from "../../hooks/reference-contact/use-get-reference-contact";
+import { AppReferenceContactsTable } from "../tables/app-reference-contacts-table";
+import { AppReferenceContactModal } from "../modals/app-reference-contact-modal";
 export type DefendantFormProps = {
   onCreateDefendant: (params: createDefendantParams) => void;
   onClose: () => void;
@@ -68,6 +71,8 @@ export const DefendantForm = ({
   const [visibleAddressForm, setVisibleAddressForm] = useToggle(false);
   const [visiblePhoneForm, setVisiblePhoneForm] = useToggle(false);
   const [visibleCaseNumberForm, setVisibleCaseNumberForm] = useToggle(false);
+  const [showReferenceContactModal, setShowReferenceContactModal] =
+    useToggle(false);
   const [parent] = useAutoAnimate();
   const { getUsers, users } = useGetUsers();
   const { genders, getGenders } = useGetGenders();
@@ -83,6 +88,7 @@ export const DefendantForm = ({
   const { addressPerson, getAddressPerson } = useGetAddressPerson();
   const { getPhonePerson, phonePerson } = useGetPhonePerson();
   const { caseNumber, getCaseNumber } = useGetCaseNumber();
+  const { getReferenceContact, referenceContact } = useGetReferenceContact();
   const [toggleReload, setToggleReload] = useToggle(false);
   const [isVisiblePassword, setIsVisiblePassword] = useState(false);
   const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
@@ -164,6 +170,7 @@ export const DefendantForm = ({
       getAddressPerson({ idPerson: idDefendant });
       getPhonePerson({ idPerson: idDefendant });
       getCaseNumber({ idPerson: idDefendant });
+      getReferenceContact({ idDefendant: idDefendant });
       onReload();
     }
   }, [idDefendant, toggleReload]);
@@ -203,14 +210,7 @@ export const DefendantForm = ({
                   </span>
                 </Chip>
               </li>
-              {/* <li>
-                <Chip color="primary" variant="shadow">
-                  <span className="text-gray-300">Case Number:</span>
-                  <span className="font-semibold text-white">
-                    {` ${defendantInfo.caseNumber}`}
-                  </span>
-                </Chip>
-              </li> */}
+
               <li>
                 {" "}
                 <Chip color="primary" variant="shadow">
@@ -220,15 +220,7 @@ export const DefendantForm = ({
                   </span>
                 </Chip>
               </li>
-              {/* <li>
-                {" "}
-                <Chip color="primary" variant="shadow">
-                  <span className="text-gray-300">Offense:</span>
-                  <span className="font-semibold text-white">
-                    {` ${defendantInfo.offense}`}
-                  </span>
-                </Chip>
-              </li> */}
+
               <li>
                 {" "}
                 <Chip color="primary" variant="shadow">
@@ -253,7 +245,7 @@ export const DefendantForm = ({
                 setVisiblePhoneForm(false);
                 setVisibleCaseNumberForm(false);
               }}
-              className="w-4/12"
+              className="w-5/12"
             >
               New Device
             </Button>
@@ -268,7 +260,7 @@ export const DefendantForm = ({
                 setVisiblePhoneForm(false);
                 setVisibleCaseNumberForm(false);
               }}
-              className="w-4/12"
+              className="w-5/12"
             >
               New Address
             </Button>
@@ -284,7 +276,7 @@ export const DefendantForm = ({
                 setVisibleAddressForm(false);
                 setVisibleCaseNumberForm(false);
               }}
-              className="w-4/12"
+              className="w-5/12"
             >
               New Phone Number
             </Button>
@@ -299,10 +291,36 @@ export const DefendantForm = ({
                 setVisibleDeviceForm(false);
                 setVisiblePhoneForm(false);
               }}
-              className="w-4/12"
+              className="w-5/12"
             >
               New Case Number
             </Button>
+            <Button
+              variant="shadow"
+              size="lg"
+              color="primary"
+              startContent={<Icon.PlusCircle size={18} />}
+              onPress={() => {
+                setVisibleCaseNumberForm(false);
+                setVisibleAddressForm(false);
+                setVisibleDeviceForm(false);
+                setVisiblePhoneForm(false);
+                setShowReferenceContactModal(true);
+              }}
+              className="w-5/12"
+            >
+              New Reference Contact
+            </Button>
+            <AppReferenceContactModal
+              isCreating={true}
+              isVisible={showReferenceContactModal}
+              onClose={() => setShowReferenceContactModal(false)}
+              idDefendant={idDefendant}
+              onReload={() => {
+                setToggleReload(!toggleReload);
+                onReload();
+              }}
+            />
           </div>
         </>
       ) : (
@@ -415,19 +433,7 @@ export const DefendantForm = ({
                         onChange={(e) => setIdCounty(e?.value)}
                       />
                     </AppFormField>
-                    {/* <AppFormField className="col-span-2">
-                      <AppFormLabel>Case Number</AppFormLabel>
-                      <AppTextField
-                        name="caseNumber"
-                        value={values.caseNumber}
-                        onChange={handleChange}
-                      />
-                      {errors.caseNumber && (
-                        <AppFormHelperText colorSchema="red">
-                          {errors.caseNumber}
-                        </AppFormHelperText>
-                      )}
-                    </AppFormField> */}
+
                     <AppFormField className="col-span-2">
                       <AppFormLabel>Date of Birth</AppFormLabel>
                       <AppDatePicker
@@ -478,14 +484,10 @@ export const DefendantForm = ({
                         labelPlacement="outside"
                         value={values.password}
                         onChange={handleChange}
-                        // type="password"
-                        // isClearable
-                        // placeholder="Password"
                         defaultValue={values.password}
                         radius="sm"
                         variant="faded"
                         size="md"
-                        // onClear={() => setFieldValue("password", "")}
                         endContent={
                           <button
                             className="focus:outline-none"
@@ -693,6 +695,27 @@ export const DefendantForm = ({
                       onDelete={() => {}}
                       items={caseNumber}
                       loadingDeleteCaseNumber={false}
+                    />
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
+            <Disclosure defaultOpen>
+              {({ open }) => (
+                <>
+                  <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
+                    Reference Contact
+                    <Icon.ChevronRight
+                      className={open ? "rotate-90 transform" : ""}
+                    />
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="text-gray-500">
+                    <AppReferenceContactsTable
+                      isCreate={true}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      items={referenceContact}
+                      loadingDeleteReference={false}
                     />
                   </Disclosure.Panel>
                 </>

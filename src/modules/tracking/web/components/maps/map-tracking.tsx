@@ -23,6 +23,7 @@ import { FlyNewPositionMarkerAlarm } from "./marker-alarm-fly-map";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc"; // Importa el plugin UTC de Day.js
 import timezone from "dayjs/plugin/timezone"; // Importa el plugin de zona horaria de Day.js
+import { useEffect, useState } from "react";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -33,6 +34,7 @@ type MapTrackingProps = {
   isPositionDefendant: boolean;
   defendantItem?: Person | null;
   victims?: Person[] | null;
+  alertPerson?: PersonAlert[] | null;
   onClose: () => void;
   geofences?: {
     idGeofence: number;
@@ -49,6 +51,7 @@ export const MapTracking = ({
   victims,
   geofences,
   markerAlarmMap,
+  alertPerson,
 }: MapTrackingProps) => {
   const legalIcon = new Icon({
     iconUrl: DefIcon,
@@ -56,6 +59,22 @@ export const MapTracking = ({
     iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
     popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
   });
+  const [showVictimTracking, setShowVictimTracking] = useState(false);
+  useEffect(() => {
+    if (alertPerson) {
+      const alarmProximity = alertPerson.filter((item) =>
+        item.alarmName.includes("Proximity Alert")
+      );
+      if (
+        alarmProximity.length > 0 &&
+        alarmProximity.some((item) => item.seqMachineState) === true
+      ) {
+        setShowVictimTracking(true);
+      } else {
+        setShowVictimTracking(false);
+      }
+    }
+  }, [alertPerson]);
   return (
     <>
       {positionDefendant && defendantItem ? (
@@ -109,7 +128,7 @@ export const MapTracking = ({
           )}
 
           {victims?.map((victim) => {
-            if (victim.personPosition) {
+            if (victim.personPosition && showVictimTracking) {
               return (
                 <Marker
                   key={victim?.idPerson}

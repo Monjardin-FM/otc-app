@@ -1,7 +1,8 @@
 export type ReferenceContact = {
-  idReferenceContact: number;
-  name: string;
-  address: string;
+  idReferencePerson: number;
+  idPerson: number;
   phoneNumber: string;
+  name: string;
   relationship: string;
+  address: string;
 };

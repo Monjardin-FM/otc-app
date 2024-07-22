@@ -7,17 +7,15 @@ import {
 } from "../../../../../presentation/Components/AppDataGrid";
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
-import { AppBadge } from "../../../../../presentation/Components/AppBadge";
-import { AppButton } from "../../../../../presentation/Components/AppButton";
-import { AppTooltip } from "../../../../../presentation/Components/AppTooltip";
+import { Button, Chip, Tooltip } from "@nextui-org/react";
+import clsx from "clsx";
 
 export type ReferenceContactsTableProps = {
-  // onToggleStatus?: (index: Client) => void;
-  // onUpdateClient: (data: Client) => void;
   items?: ReferenceContact[];
   onEdit: (params: RenderFnParams<ReferenceContact>) => void;
-  // onNotification: (params: RenderFnParams<UserManage>) => void;
-  // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
+  onDelete: (params: RenderFnParams<ReferenceContact>) => void;
+  loadingDeleteReference: boolean;
+  isCreate: boolean;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -56,20 +54,18 @@ const EmailReferenceContactColumn = (
   params: RenderFnParams<ReferenceContact>
 ) => {
   return (
-    <AppBadge colorScheme="primary">
-      <div className="font-medium text-sm">{params.record.relationship}</div>
-    </AppBadge>
+    <Chip color={"warning"} variant="shadow" radius="full">
+      <span>{params.record.relationship}</span>
+    </Chip>
   );
 };
 const SIDReferenceContactColumn = (
   params: RenderFnParams<ReferenceContact>
 ) => {
   return (
-    <AppBadge>
-      <div className="font-semibold text-sm text-primary-600 tracking-wider">
-        {params.record.address}
-      </div>
-    </AppBadge>
+    <Chip color={"success"} variant="shadow" radius="full">
+      <span>{params.record.address}</span>
+    </Chip>
   );
 };
 
@@ -77,48 +73,74 @@ const CaseNumberReferenceContactColumn = (
   params: RenderFnParams<ReferenceContact>
 ) => {
   return (
-    <AppBadge>
-      <div className="font-semibold text-sm text-primary-600 tracking-wider">
-        {params.record.phoneNumber}
-      </div>
-    </AppBadge>
+    <Chip color={"primary"} variant="shadow" radius="full">
+      <span>{params.record.phoneNumber}</span>
+    </Chip>
   );
 };
 
 const ActionsColumn = ({
   onEdit,
+  onDelete,
+  loadingDeleteReference,
 }: // record,
 RenderFnParams<ReferenceContact> & {
   onEdit: () => void;
+  onDelete: () => void;
+  isCreate: boolean;
+  loadingDeleteReference: boolean;
 }) => {
   return (
-    <div className="flex flex-row items-center justify-start gap-8">
-      <div className="group relative inline-block text-center">
-        <AppButton
+    <div className="flex flex-row items-center justify-start gap-3 static -z-50">
+      <Tooltip
+        content={"Edit Reference Contact"}
+        color="primary"
+        // style={{
+        //   zIndex: 0,
+        // }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
           onClick={() => {
             onEdit();
           }}
-          title="Edit User"
+          title="Edit Reference Contact"
           size="sm"
-          variant="ghost"
+          variant="shadow"
+          isIconOnly
+          color="primary"
         >
-          <Icon.Eye size={18} />
-        </AppButton>
-        <AppTooltip>Edit ReferenceContact</AppTooltip>
-      </div>
-      <div className="group relative inline-block text-center">
-        <AppButton
+          <Icon.Edit size={18} />
+        </Button>
+      </Tooltip>
+      <Tooltip
+        content={"Delete Reference Contact"}
+        color="danger"
+        // style={{
+        //   zIndex: 0,
+        // }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
           onClick={() => {
-            onEdit();
+            onDelete();
           }}
-          title="Delete ReferenceContact"
+          title="Delete Reference Contact"
           size="sm"
-          variant="ghost"
+          variant="shadow"
+          color="danger"
+          isIconOnly
+          isDisabled={loadingDeleteReference}
         >
           <Icon.Trash size={18} />
-        </AppButton>
-        <AppTooltip>Delete ReferenceContact</AppTooltip>
-      </div>
+        </Button>
+      </Tooltip>
     </div>
   );
 };
@@ -126,6 +148,9 @@ RenderFnParams<ReferenceContact> & {
 export const AppReferenceContactsTable = ({
   items = [],
   onEdit,
+  onDelete,
+  isCreate,
+  loadingDeleteReference,
 }: ReferenceContactsTableProps) => {
   const columns: AppDataGridColumn<ReferenceContact>[] = [
     {
@@ -157,12 +182,20 @@ export const AppReferenceContactsTable = ({
       key: "actionsClient",
       dataIndex: "actionsClient",
       title: "Actions",
+      className: clsx("", {
+        hidden: isCreate,
+      }),
       render: (data) =>
         ActionsColumn({
           ...data,
           onEdit: () => {
             onEdit(data);
           },
+          onDelete: () => {
+            onDelete(data);
+          },
+          isCreate: isCreate,
+          loadingDeleteReference: loadingDeleteReference,
         }),
     },
   ];

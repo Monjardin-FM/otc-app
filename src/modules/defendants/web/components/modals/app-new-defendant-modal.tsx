@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { DefendantForm } from "../forms/defendant-form";
 import { VictimForm } from "../forms/victim-form";
 import { AlarmForm } from "../forms/alarm-form";
-import { ReferenceForm } from "../forms/reference-from";
 import { useCreateDefendant } from "../../hooks/use-create-defendant";
 import { Tab } from "@headlessui/react";
 import { useGetDefendantsById } from "../../hooks/use-get-defendants-by-id";
@@ -224,9 +223,9 @@ export const AppNewDefendantModal = ({
                     <Tab.Panel>
                       <AlarmForm idDefendant={idDefendant} onClose={onClose} />
                     </Tab.Panel>
-                    <Tab.Panel>
+                    {/* <Tab.Panel>
                       <ReferenceForm />
-                    </Tab.Panel>
+                    </Tab.Panel> */}
                   </Tab.Panels>
                 </Tab.Group>
               </div>
