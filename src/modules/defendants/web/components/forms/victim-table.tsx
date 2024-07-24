@@ -231,6 +231,7 @@ export const VictimTableForms = ({
                 onAddReferenceContact={(record) => {
                   setIdVictim(record.record.idPerson);
                   setShowReferenceContactModal(true);
+                  setIsCreating(true);
                 }}
                 onShowAddress={(record) => {
                   setIdVictim(record.record.idPerson);
@@ -261,12 +262,12 @@ export const VictimTableForms = ({
               <AppReferenceContactModal
                 isCreating={isCreating}
                 isVisible={showReferenceContactModal}
+                idDefendant={idVictim}
                 onClose={() => {
                   setIdReference(null);
                   setIsCreating(true);
                   setShowReferenceContactModal(false);
                 }}
-                idDefendant={idVictim}
                 onReload={() => {
                   setToggleReload(!toggleReload);
                   setIdReference(null);
