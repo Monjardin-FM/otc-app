@@ -23,6 +23,10 @@ import { Phone } from "../../../domain/entities/phone";
 import { SendMessageForm } from "./send-message-form";
 import { useDownloadFile } from "../../hooks/use-get-download-file";
 import { UploadFileForm } from "./upload-file-form";
+import { AppReferenceContactsTable } from "../tables/app-reference-contacts-table";
+import { useGetReferenceContact } from "../../hooks/reference-contact/use-get-reference-contact";
+import { AppReferenceContactModal } from "../modals/app-reference-contact-modal";
+import { useDeleteReferenceContact } from "../../hooks/reference-contact/use-delete-reference-contact";
 
 type VictimTableFormsProps = {
   idDefendant?: number | null;
@@ -34,16 +38,26 @@ export const VictimTableForms = ({
   idDefendant,
   victims,
 }: VictimTableFormsProps) => {
+  const [isCreating, setIsCreating] = useState<boolean>(false);
   const [idVictim, setIdVictim] = useState<number | null>();
   const [visibleFormAddress, setVisibleFormAddress] = useToggle(false);
   const [visibleUploadFileForm, setVisibleUploadFileForm] = useToggle(false);
   const { getVictimById, victim } = useGetVictimById();
+  const { getReferenceContact, referenceContact } = useGetReferenceContact();
   const [nameVictim, setNameVictim] = useState("");
   const [visibleTableAddress, setVisibleTableAddress] = useToggle(false);
   const [visibleEditAddress, setVisibleEditAddress] = useToggle(false);
   const [visibleEditVictimForm, setVisibleEditVictimForm] = useToggle(false);
   const [visibleFormPhone, setVisibleFormPhone] = useToggle(false);
   const [visibleSendMessageForm, setVisibleSendMessageForm] = useToggle(false);
+  const [idReference, setIdReference] = useState<number | null>();
+  const {
+    deleteReferenceContact,
+    error: errorDeleteReferenceContact,
+    loading: loadingDeleteReference,
+  } = useDeleteReferenceContact();
+  const [showReferenceContactModal, setShowReferenceContactModal] =
+    useToggle(false);
   const [toggleReload, setToggleReload] = useToggle(false);
   const [selectedPhoneNumber, setSelectedPhoneNumber] =
     useState<Phone | null>();
@@ -92,12 +106,19 @@ export const VictimTableForms = ({
       text: "The phone was deleted succesfully",
     });
   };
-
+  const onDeleteReferenceContact = () => {
+    AppToast().fire({
+      title: "Reference Contact deleted",
+      icon: "success",
+      text: "The reference contact was deleted succesfully",
+    });
+  };
   useEffect(() => {
     if (idVictim) {
       getAddressPerson({ idPerson: idVictim });
       getVictimById({ idPerson: idVictim, completeName: "" });
       getPhonePerson({ idPerson: idVictim });
+      getReferenceContact({ idDefendant: idVictim });
     }
   }, [idVictim, toggleReload]);
 
@@ -151,6 +172,22 @@ export const VictimTableForms = ({
     }
   }, [errorDeletePhone, loadingDeletePhone]);
   useEffect(() => {
+    if (errorDeleteReferenceContact) {
+      AppToast().fire({
+        title: "Error",
+        icon: "error",
+        text: "An error occurred while trying to delete the reference contact. Try again",
+      });
+    }
+    if (loadingDeleteReference) {
+      AppToast().fire({
+        title: "Deleting reference contact",
+        icon: "info",
+        text: "The reference contact is being deleted. Please Wait",
+      });
+    }
+  }, [errorDeleteReferenceContact, loadingDeleteReference]);
+  useEffect(() => {
     if (linkDownload && linkDownload.length > 0)
       window.open(linkDownload, "_blank");
   }, [linkDownload]);
@@ -191,6 +228,10 @@ export const VictimTableForms = ({
                   );
                   setToggleReload(!toggleReload);
                 }}
+                onAddReferenceContact={(record) => {
+                  setIdVictim(record.record.idPerson);
+                  setShowReferenceContactModal(true);
+                }}
                 onShowAddress={(record) => {
                   setIdVictim(record.record.idPerson);
                   setNameVictim(
@@ -216,6 +257,22 @@ export const VictimTableForms = ({
                 }}
                 loadingDeleteVictim={loadingDeleteVictim}
                 loadingDownloadFile={loadingDownloadFile}
+              />
+              <AppReferenceContactModal
+                isCreating={isCreating}
+                isVisible={showReferenceContactModal}
+                onClose={() => {
+                  setIdReference(null);
+                  setIsCreating(true);
+                  setShowReferenceContactModal(false);
+                }}
+                idDefendant={idVictim}
+                onReload={() => {
+                  setToggleReload(!toggleReload);
+                  setIdReference(null);
+                  setIsCreating(true);
+                }}
+                idReferencePerson={idReference}
               />
               <UploadFileForm
                 isVisible={visibleUploadFileForm}
@@ -283,6 +340,27 @@ export const VictimTableForms = ({
                         setVisibleSendMessageForm(false);
                       }}
                       selectedPhone={selectedPhoneNumber}
+                    />
+                    <span className="text-lg text-primaryColor-700 mb-5">
+                      Reference Contact of {nameVictim}
+                    </span>
+                    <AppReferenceContactsTable
+                      isCreate={false}
+                      items={referenceContact}
+                      loadingDeleteReference={loadingDeleteReference}
+                      onDelete={async ({ record }) => {
+                        await deleteReferenceContact({
+                          idReference: record.idReferencePerson,
+                        });
+                        if (!errorDeleteReferenceContact)
+                          onDeleteReferenceContact();
+                        setToggleReload(!toggleReload);
+                      }}
+                      onEdit={(record) => {
+                        setIsCreating(false);
+                        setIdReference(record.record.idReferencePerson);
+                        setShowReferenceContactModal(true);
+                      }}
                     />
                   </div>
                   {visibleEditAddress && (

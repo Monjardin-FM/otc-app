@@ -17,6 +17,7 @@ export type VictimsTableProps = {
   onShowAddress: (params: RenderFnParams<Victim>) => void;
   onDelete: (params: RenderFnParams<Victim>) => void;
   onAddPhone: (params: RenderFnParams<Victim>) => void;
+  onAddReferenceContact: (params: RenderFnParams<Victim>) => void;
   onDownloadFile: (params: RenderFnParams<Victim>) => void;
   onUploadFile: (params: RenderFnParams<Victim>) => void;
   loadingDeleteVictim: boolean;
@@ -116,6 +117,7 @@ const ActionsColumn = ({
   onDownloadFile,
   onUploadFile,
   loadingDownloadFile,
+  onAddReferenceContact,
 }: // record,
 RenderFnParams<Victim> & {
   onEdit: () => void;
@@ -125,11 +127,33 @@ RenderFnParams<Victim> & {
   loadingDeleteVictim: boolean;
   loadingDownloadFile: boolean;
   onAddPhone: () => void;
+  onAddReferenceContact: () => void;
   onDownloadFile: () => void;
   onUploadFile: () => void;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
+      <Tooltip
+        content={"Show Info"}
+        color="warning"
+        offset={5}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onShowAddress();
+          }}
+          title="Show Info"
+          size="sm"
+          variant="shadow"
+          color="warning"
+          isIconOnly
+        >
+          <Icon.Eye size={18} />
+        </Button>
+      </Tooltip>
       <Tooltip
         content={"Edit Victim"}
         color="primary"
@@ -196,8 +220,8 @@ RenderFnParams<Victim> & {
         </Button>
       </Tooltip>
       <Tooltip
-        content={"Show Address"}
-        color="warning"
+        content={"Add Reference Contact"}
+        color="success"
         offset={5}
         showArrow
         closeDelay={10}
@@ -205,15 +229,16 @@ RenderFnParams<Victim> & {
       >
         <Button
           onClick={() => {
-            onShowAddress();
+            onAddReferenceContact();
           }}
-          title="Show Address"
+          title="Add Reference Contact"
           size="sm"
           variant="shadow"
-          color="warning"
+          color="success"
           isIconOnly
         >
-          <Icon.Eye size={18} />
+          <span className="text-md"></span>
+          <Icon.UserPlus size={18} />
         </Button>
       </Tooltip>
       <Tooltip
@@ -293,6 +318,7 @@ export const AppVictimssTable = ({
   onShowAddress,
   loadingDeleteVictim,
   onAddPhone,
+  onAddReferenceContact,
   onDownloadFile,
   onUploadFile,
   loadingDownloadFile,
@@ -343,6 +369,9 @@ export const AppVictimssTable = ({
           },
           onAddPhone: () => {
             onAddPhone(data);
+          },
+          onAddReferenceContact: () => {
+            onAddReferenceContact(data);
           },
           onDownloadFile: () => {
             onDownloadFile(data);
