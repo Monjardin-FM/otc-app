@@ -82,6 +82,18 @@ export const AppEditSelectionModal = ({
             >
               Alarms
             </Button>
+            <Button
+              size="lg"
+              className="w-3/4"
+              startContent={<Icon.Edit2 size={18} />}
+              color="secondary"
+              variant="shadow"
+              onPress={() => {
+                onEditInfo("addNote");
+              }}
+            >
+              Add Note
+            </Button>
           </ModalBody>
         </>
       </ModalContent>

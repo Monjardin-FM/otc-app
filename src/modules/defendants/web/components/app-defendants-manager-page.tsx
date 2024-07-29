@@ -19,6 +19,7 @@ import { AppEditInfoDefendantModal } from "./modals/app-edit-info-defendant-moda
 import { AppEditVictimDefendantModal } from "./modals/app-edit-victim-defendant-modal";
 import { AppEditAlarmDefendantModal } from "./modals/app-edit-alarm-defendant-modal";
 import { AppAlarmsDefendantScheduleModal } from "./modals/app-alarms-defendant-schedule";
+import { AppAddNoteDefendantModal } from "./modals/app-add-note-defendant";
 export const AppDefendantsManagerPage = () => {
   const {
     defendants,
@@ -44,6 +45,8 @@ export const AppDefendantsManagerPage = () => {
   const [visibleEditAlarmDefendantModal, setVisibleEditAlarmDefendantModal] =
     useToggle(false);
   const [visibleScheduleAlarmsModal, setVisibleScheduleAlarmsModal] =
+    useToggle(false);
+  const [visibleAddNoteDefendant, setVisibleAddNoteDefendant] =
     useToggle(false);
   const onClick = (search: string) => {
     getDefendants({ completeName: search });
@@ -124,6 +127,11 @@ export const AppDefendantsManagerPage = () => {
               setVisibleScheduleAlarmsModal(true);
               break;
             }
+            case "addNote": {
+              setVIsibleEditSelectionmodal(false);
+              setVisibleAddNoteDefendant(true);
+              break;
+            }
             default:
               return null;
           }
@@ -161,6 +169,15 @@ export const AppDefendantsManagerPage = () => {
         isVisible={visibleScheduleAlarmsModal}
         onClose={() => {
           setVisibleScheduleAlarmsModal(false);
+          setVIsibleEditSelectionmodal(true);
+          setToggleReload(!toggleReload);
+        }}
+        idDefendant={idDefendant}
+      />
+      <AppAddNoteDefendantModal
+        isVisible={visibleAddNoteDefendant}
+        onClose={() => {
+          setVisibleAddNoteDefendant(false);
           setVIsibleEditSelectionmodal(true);
           setToggleReload(!toggleReload);
         }}

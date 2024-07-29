@@ -16,6 +16,7 @@ import { ScheduleAlarm } from "../entities/schedule-alarm";
 import { CaseNumber } from "../entities/case-number";
 import { AlarmDefendantDetail } from "../entities/alarm-defendant-detail";
 import { ReferenceContact } from "../entities/reference-contact";
+import { CommentDefendant } from "../entities/comment";
 export type createDefendantParams = {
   completeName: string;
   name: string;
@@ -195,4 +196,11 @@ export type DefendantRepository = {
     address: string;
   }) => Promise<void>;
   deleteReferencePerson: (params: { idReference: number }) => Promise<Boolean>;
+  postCommentDefendant: (params: {
+    idDefendant: number;
+    message: string;
+  }) => Promise<void>;
+  getCommentDefendant: (params: {
+    idPerson: number;
+  }) => Promise<CommentDefendant>;
 };
