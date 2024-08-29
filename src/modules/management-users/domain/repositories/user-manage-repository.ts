@@ -24,6 +24,7 @@ export type UserManageRepository = {
     password: string;
     idRole: number;
     phone: string;
+    userName: string;
   }): Promise<{
     statusCode: number;
     isSuccess: boolean;
@@ -44,6 +45,7 @@ export type UserManageRepository = {
     password: string;
     idRole: number;
     phone: string;
+    userName: string;
   }): Promise<{
     statusCode: number;
     isSuccess: boolean;

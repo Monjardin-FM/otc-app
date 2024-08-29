@@ -36,6 +36,7 @@ export const getUsersService: UserManageRepository["getUsers"] = async (
     deviceId: user.deviceId,
     idDeviceType: user.idDeviceType,
     sid: user.sid,
+    userName: user.userName,
     // phone: user.phone,
   }));
   return users;

@@ -34,6 +34,7 @@ type editVictimFormValue = {
   caseNumber: string;
   idGender: number;
   password: string;
+  userName: string;
 };
 export const EditVictimForm = ({
   idDefendant,
@@ -60,6 +61,7 @@ export const EditVictimForm = ({
     lastName: Yup.string().required("Required last name"),
     caseNumber: Yup.string().required("Required case number"),
     // eMail: Yup.string().required("Required email"),
+
     idGender: Yup.number()
       .moreThan(0, "Select a gender")
       .required("Select gender"),
@@ -81,6 +83,7 @@ export const EditVictimForm = ({
         idStatus: statusVictim ? 1 : 0,
         password: data.password,
         idPerson: idVictim,
+        userName: data.userName,
       });
       onReload();
     }
@@ -120,6 +123,7 @@ export const EditVictimForm = ({
         // eMail: "",
         idGender: victimInfo?.idGender ?? 0,
         password: "",
+        userName: victimInfo?.userName ?? "",
       }}
       enableReinitialize
       validationSchema={validationSchemaVictim}
@@ -128,7 +132,7 @@ export const EditVictimForm = ({
       {({ handleSubmit, handleChange, values, errors }) => (
         <form autoComplete="off" onSubmit={handleSubmit}>
           <div className="grid grid-cols-12 gap-y-4 gap-x-3 col-span-12 border border-gray-300 rounded-lg p-6 bg-gray-200">
-            <AppFormField className="col-span-4">
+            <AppFormField className="col-span-3">
               <AppFormLabel>Name</AppFormLabel>
               <AppTextField
                 name="name"
@@ -141,7 +145,7 @@ export const EditVictimForm = ({
                 </AppFormHelperText>
               )}
             </AppFormField>
-            <AppFormField className="col-span-4">
+            <AppFormField className="col-span-3">
               <AppFormLabel>Last Name</AppFormLabel>
               <AppTextField
                 name="lastName"
@@ -151,6 +155,20 @@ export const EditVictimForm = ({
               {errors.lastName && (
                 <AppFormHelperText colorSchema="red">
                   {errors.lastName}
+                </AppFormHelperText>
+              )}
+            </AppFormField>
+            <AppFormField className="col-span-3">
+              <AppFormLabel>Username</AppFormLabel>
+              <AppTextField
+                name="userName"
+                value={values.userName}
+                onChange={handleChange}
+                disabled
+              />
+              {errors.userName && (
+                <AppFormHelperText colorSchema="red">
+                  {errors.userName}
                 </AppFormHelperText>
               )}
             </AppFormField>

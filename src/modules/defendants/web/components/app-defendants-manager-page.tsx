@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import AppConfig from "../../../../settings.json";
-
 import { AppDefendantsHeader } from "./app-defendants-header";
 import * as Icon from "react-feather";
 import { useToggle } from "react-use";
@@ -20,6 +19,8 @@ import { AppEditVictimDefendantModal } from "./modals/app-edit-victim-defendant-
 import { AppEditAlarmDefendantModal } from "./modals/app-edit-alarm-defendant-modal";
 import { AppAlarmsDefendantScheduleModal } from "./modals/app-alarms-defendant-schedule";
 import { AppAddNoteDefendantModal } from "./modals/app-add-note-defendant";
+import { AppEditNoteDefendantModal } from "./modals/app-edit-note-defendant";
+import { AppSwal } from "../../../../presentation/Components/AppSwal";
 export const AppDefendantsManagerPage = () => {
   const {
     defendants,
@@ -48,15 +49,36 @@ export const AppDefendantsManagerPage = () => {
     useToggle(false);
   const [visibleAddNoteDefendant, setVisibleAddNoteDefendant] =
     useToggle(false);
+  const [visibleEditNoteDefendant, setVisibleEditNoteDefendant] =
+    useToggle(false);
   const onClick = (search: string) => {
     getDefendants({ completeName: search });
   };
-  const onDelete = () => {
-    AppToast().fire({
-      title: "Defendant deleted",
-      icon: "success",
-      text: "The defendant was deleted succesfully",
+  const askDeleteForce = () => {
+    return AppSwal().fire({
+      icon: "question",
+      title: `Are you sure to delete the defendant?`,
+      text: "This action cannot be undone",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "Cancel",
     });
+  };
+  const onDelete = async () => {
+    const result = await askDeleteForce();
+    if (result.isConfirmed && idDefendant) {
+      await deleteDefendant({ idPerson: idDefendant });
+      if (!errorDelete) {
+        AppToast().fire({
+          title: "Defendant deleted",
+          icon: "success",
+          text: "The defendant was deleted succesfully",
+        });
+        setToggleReload(!toggleReload);
+      }
+    }
   };
   useEffect(() => {
     if (search.length > 1 || search.length === 0) {
@@ -129,7 +151,7 @@ export const AppDefendantsManagerPage = () => {
             }
             case "addNote": {
               setVIsibleEditSelectionmodal(false);
-              setVisibleAddNoteDefendant(true);
+              setVisibleEditNoteDefendant(true);
               break;
             }
             default:
@@ -178,9 +200,14 @@ export const AppDefendantsManagerPage = () => {
         isVisible={visibleAddNoteDefendant}
         onClose={() => {
           setVisibleAddNoteDefendant(false);
-          setVIsibleEditSelectionmodal(true);
+          // setVIsibleEditSelectionmodal(true);
           setToggleReload(!toggleReload);
         }}
+        idDefendant={idDefendant}
+      />
+      <AppEditNoteDefendantModal
+        isVisible={visibleEditNoteDefendant}
+        onClose={() => setVisibleEditNoteDefendant(false)}
         idDefendant={idDefendant}
       />
       <AppPageTransition>
@@ -221,12 +248,18 @@ export const AppDefendantsManagerPage = () => {
               setVIsibleEditSelectionmodal(true);
             }}
             items={defendants}
-            onDelete={async ({ record }) => {
-              await deleteDefendant({ idPerson: record.idPerson });
-              if (!errorDelete) onDelete();
-              setToggleReload(!toggleReload);
+            onDelete={({ record }) => {
+              setIdDefendant(record.idPerson);
+              onDelete();
+              // await deleteDefendant({ idPerson: record.idPerson });
+              // if (!errorDelete) onDelete();
+              // setToggleReload(!toggleReload);
             }}
             loadingDeleteDefendant={loadingDeleteDefendant}
+            onAddNote={(record) => {
+              setIdDefendant(record.record.idPerson);
+              setVisibleAddNoteDefendant(true);
+            }}
           />
         </div>
       </AppPageTransition>

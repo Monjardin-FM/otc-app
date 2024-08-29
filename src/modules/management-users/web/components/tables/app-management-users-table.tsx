@@ -52,6 +52,9 @@ const NamUserColumn = (params: RenderFnParams<UserManage>) => {
             )}
           </span>
         </Chip> */}
+        <Chip color="primary" variant="shadow" radius="md">
+          <span className="text-xs">{params.record.userName}</span>
+        </Chip>
       </div>
     </div>
   );
@@ -59,7 +62,7 @@ const NamUserColumn = (params: RenderFnParams<UserManage>) => {
 
 const RoleUserColumn = (params: RenderFnParams<UserManage>) => {
   return (
-    <Chip color="primary" variant="shadow">
+    <Chip color="success" variant="shadow">
       {params.record.role}
     </Chip>
   );

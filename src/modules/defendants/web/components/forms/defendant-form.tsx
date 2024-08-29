@@ -57,6 +57,7 @@ type createDefendantFormValue = {
   offense: string;
   password: string;
   notes: string;
+  userName: string;
 };
 
 export const DefendantForm = ({
@@ -95,7 +96,10 @@ export const DefendantForm = ({
   const validationSchemaDefendant = Yup.object().shape({
     name: Yup.string().required("Required name"),
     lastName: Yup.string().required("Required last name"),
-    email: Yup.string().required("Required email"),
+    email: Yup.string().email("Invalid email"),
+    userName: Yup.string()
+      .required("Required username")
+      .max(25, "maximum 25 characters"),
     gender: Yup.number()
       .moreThan(0, "Select a gender")
       .required("Select a gender"),
@@ -123,6 +127,7 @@ export const DefendantForm = ({
       sid: data.sid,
       birthDate: dayjs(birthDate).format("YYYY-MM-DD"),
       notes: data.notes,
+      userName: data.userName,
     });
   };
 
@@ -191,6 +196,15 @@ export const DefendantForm = ({
                 </Chip>
               </li>
               {/* <Divider className="my-2" /> */}
+              <li>
+                <Chip color="primary" variant="shadow">
+                  <span className="text-gray-300">UserName:</span>
+
+                  <span className="font-semibold text-white">
+                    {` ${defendantInfo.userName}`}
+                  </span>
+                </Chip>
+              </li>
               <li>
                 <Chip color="primary" variant="shadow">
                   <span className="text-gray-300">Email:</span>
@@ -337,6 +351,7 @@ export const DefendantForm = ({
               offense: "",
               password: "",
               notes: "",
+              userName: "",
             }}
             enableReinitialize
             validationSchema={validationSchemaDefendant}
@@ -385,7 +400,7 @@ export const DefendantForm = ({
                     </AppFormField>
                   </div>
                   <div className="col-span-12 grid grid-cols-12 gap-3">
-                    <AppFormField className="col-span-4">
+                    <AppFormField className="col-span-3">
                       <AppFormLabel>Name</AppFormLabel>
                       <AppTextField
                         name="name"
@@ -398,7 +413,7 @@ export const DefendantForm = ({
                         </AppFormHelperText>
                       )}
                     </AppFormField>
-                    <AppFormField className="col-span-4">
+                    <AppFormField className="col-span-3">
                       <AppFormLabel>Last Name</AppFormLabel>
                       <AppTextField
                         name="lastName"
@@ -411,12 +426,26 @@ export const DefendantForm = ({
                         </AppFormHelperText>
                       )}
                     </AppFormField>
-                    <AppFormField className="col-span-4">
+                    <AppFormField className="col-span-3">
+                      <AppFormLabel>Username</AppFormLabel>
+                      <AppTextField
+                        name="userName"
+                        value={values.userName}
+                        onChange={handleChange}
+                      />
+                      {errors.userName && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.userName}
+                        </AppFormHelperText>
+                      )}
+                    </AppFormField>
+                    <AppFormField className="col-span-3">
                       <AppFormLabel>Email</AppFormLabel>
                       <AppTextField
                         name="email"
                         value={values.email}
                         onChange={handleChange}
+                        type="email"
                       />
                       {errors.email && (
                         <AppFormHelperText colorSchema="red">

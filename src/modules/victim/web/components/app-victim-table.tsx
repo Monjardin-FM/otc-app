@@ -47,7 +47,7 @@ const NameVictimsColumn = (params: RenderFnParams<Victim>) => {
           <Icon.User size={20} />
         </AppAvatar>
       </div>
-      <div className="flex flex-col items-start justify-center">
+      <div className="flex flex-col items-start justify-center gap-1">
         <span className="font-semibold tracking-wider">
           {`${params.record.name} ${params.record.lastName}`}
         </span>
@@ -57,6 +57,9 @@ const NameVictimsColumn = (params: RenderFnParams<Victim>) => {
               "DD-MM-YYYY"
             )}
           </span>
+        </Chip>
+        <Chip color="warning" variant="shadow" radius="md">
+          <span className="text-xs">{params.record.userName}</span>
         </Chip>
       </div>
     </div>

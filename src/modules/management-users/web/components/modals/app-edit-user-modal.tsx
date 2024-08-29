@@ -93,6 +93,7 @@ export const AppEditUserModal = ({
         idStatus: status ? 1 : 0,
         password: data.password,
         phone: data.phone,
+        userName: data.eMail,
       });
     }
   };

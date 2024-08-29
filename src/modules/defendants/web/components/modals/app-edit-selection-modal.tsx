@@ -92,7 +92,7 @@ export const AppEditSelectionModal = ({
                 onEditInfo("addNote");
               }}
             >
-              Add Note
+              Edit Note
             </Button>
           </ModalBody>
         </>

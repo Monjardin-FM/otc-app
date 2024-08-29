@@ -17,6 +17,7 @@ export type DefendantsTableProps = {
   items?: Defendant[];
   onEdit: (params: RenderFnParams<Defendant>) => void;
   onDelete: (params: RenderFnParams<Defendant>) => void;
+  onAddNote: (params: RenderFnParams<Defendant>) => void;
   // onNotification: (params: RenderFnParams<UserManage>) => void;
   // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
 };
@@ -45,7 +46,7 @@ const NamDefendantColumn = (params: RenderFnParams<Defendant>) => {
         </AppAvatar>
       </div>
       <div className="flex flex-col items-start justify-center">
-        <span className="font-semibold tracking-wider">
+        <span className="font-semibold tracking-wider text-primaryColor-700 ">
           {`${params.record.name} ${params.record.lastName}`}
         </span>
         {/* <Chip color="primary" variant="dot" radius="md">
@@ -55,6 +56,9 @@ const NamDefendantColumn = (params: RenderFnParams<Defendant>) => {
             )}
           </span>
         </Chip> */}
+        <Chip color="warning" variant="shadow" radius="md">
+          <span className="text-xs">{params.record.userName}</span>
+        </Chip>
       </div>
     </div>
   );
@@ -115,15 +119,41 @@ const StatusDefendantColumn = (params: RenderFnParams<Defendant>) => {
 const ActionsColumn = ({
   onEdit,
   onDelete,
+  onAddNote,
   loadingDeleteDefendant,
 }: // record,
 RenderFnParams<Defendant> & {
   onEdit: () => void;
   onDelete: () => void;
+  onAddNote: () => void;
   loadingDeleteDefendant: boolean;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
+      <Tooltip
+        content={"Add Note"}
+        color="warning"
+        style={{
+          zIndex: 0,
+        }}
+        offset={1}
+        showArrow
+        closeDelay={10}
+        disableAnimation
+      >
+        <Button
+          onClick={() => {
+            onAddNote();
+          }}
+          title="Add Note"
+          size="sm"
+          variant="shadow"
+          isIconOnly
+          color="warning"
+        >
+          <Icon.Book size={18} />
+        </Button>
+      </Tooltip>
       <Tooltip
         content={"Edit Defendant"}
         color="primary"
@@ -185,6 +215,7 @@ export const AppDefendantsTable = ({
   items = [],
   onEdit,
   onDelete,
+  onAddNote,
   loadingDeleteDefendant,
 }: DefendantsTableProps) => {
   const columns: AppDataGridColumn<Defendant>[] = [
@@ -230,6 +261,9 @@ export const AppDefendantsTable = ({
           },
           onDelete: () => {
             onDelete(data);
+          },
+          onAddNote: () => {
+            onAddNote(data);
           },
           loadingDeleteDefendant: loadingDeleteDefendant,
         }),

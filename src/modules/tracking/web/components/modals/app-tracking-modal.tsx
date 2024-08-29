@@ -22,6 +22,8 @@ import { AppToast } from "../../../../../presentation/Components/AppToast";
 import { GeoJSONO } from "../../../../defendants/domain/entities/geoJSON";
 import { AppAddNotification } from "./app-add-notification";
 import { useToggle } from "react-use";
+import { AppCommentModal } from "../../../../defendants/web/components/modals/app-comment-modal";
+import { AppCommunicationModal } from "./app-communication";
 export type AppTrackingModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -41,6 +43,9 @@ export const AppTrackingModal = ({
   const [userId, setUserId] = useState<number | null>();
   const [defendantInfo, setDefendantInfo] = useState<Person | null>();
   const [visibleAddNotificationModal, setVisibleAddNotificationModal] =
+    useToggle(false);
+  const [visibleCommentModal, setVisibleCommentModal] = useToggle(false);
+  const [visibleCommunicationModal, setVisibleCommunicationModal] =
     useToggle(false);
   const {
     showAlerts,
@@ -214,6 +219,7 @@ export const AppTrackingModal = ({
                     <Icon.PlusCircle size={20} />
                   </Button>
                 </Tooltip>
+
                 <AppAddNotification
                   isVisible={visibleAddNotificationModal}
                   onClose={() => {
@@ -222,6 +228,50 @@ export const AppTrackingModal = ({
                   }}
                   defendantInfo={defendantInfo}
                   userId={userId}
+                />
+                <Tooltip
+                  content={"Comment"}
+                  color="warning"
+                  offset={1}
+                  showArrow
+                  closeDelay={10}
+                  disableAnimation
+                >
+                  <Button
+                    isIconOnly
+                    color="warning"
+                    size="sm"
+                    onPress={() => setVisibleCommentModal(true)}
+                  >
+                    <Icon.Info size={20} />
+                  </Button>
+                </Tooltip>
+                <AppCommentModal
+                  isVisible={visibleCommentModal}
+                  onClose={() => setVisibleCommentModal(false)}
+                  idDefendant={userId}
+                />
+                <Tooltip
+                  content={"Communication"}
+                  color="success"
+                  offset={1}
+                  showArrow
+                  closeDelay={10}
+                  disableAnimation
+                >
+                  <Button
+                    isIconOnly
+                    color="success"
+                    size="sm"
+                    onPress={() => setVisibleCommunicationModal(true)}
+                  >
+                    <Icon.MessageCircle size={20} />
+                  </Button>
+                </Tooltip>
+                <AppCommunicationModal
+                  isVisible={visibleCommunicationModal}
+                  onClose={setVisibleCommunicationModal}
+                  idDefendant={userId}
                 />
               </div>
               <Tabs
@@ -254,7 +304,7 @@ export const AppTrackingModal = ({
                       />
                     </div>
 
-                    <div className="w-full mt-5">
+                    <div className="w-full mt-5 h-96 overflow-y-auto">
                       <AppTrackingDetailsTable
                         onShowAlerts={() => {
                           if (defendantInfo)

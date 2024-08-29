@@ -17,4 +17,5 @@ export type Victim = {
   role: number;
   deviceId: number;
   idDeviceType: number;
+  userName: string;
 };

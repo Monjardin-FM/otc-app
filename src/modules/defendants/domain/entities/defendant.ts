@@ -17,4 +17,5 @@ export type Defendant = {
   name: string;
   role: string;
   sid: string;
+  userName: string;
 };

@@ -38,6 +38,7 @@ export const getVictimsService: VictimRepository["getVictimDefendant"] = async (
     role: victim.role,
     caseNumber: victim.caseNumber,
     sid: victim.role,
+    userName: victim.userName,
   }));
   return victims;
 };

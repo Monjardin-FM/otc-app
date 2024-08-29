@@ -36,6 +36,7 @@ export const getDefendantsService: DefendantRepository["getDefendant"] = async (
     idDeviceType: defendant.idDeviceType,
     sid: defendant.sid,
     role: defendant.role,
+    userName: defendant.userName,
   }));
   return defendants;
 };

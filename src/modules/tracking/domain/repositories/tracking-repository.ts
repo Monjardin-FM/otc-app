@@ -1,5 +1,9 @@
 import { HistoricPosition } from "../entities/historic-position";
 import { NotificationTracking } from "../entities/notification";
+import {
+  PersonCommunication,
+  TypeCommunication,
+} from "../entities/person-communication";
 import { Tracking } from "../entities/tracking";
 import { TrackingDetail } from "../entities/tracking-detail";
 
@@ -17,4 +21,14 @@ export type TrackingRepository = {
   }) => Promise<void>;
   getNotification: () => Promise<NotificationTracking[]>;
   checkNotification: (params: { idNotification: number }) => Promise<void>;
+  getPersonCommunication: (params: {
+    idPerson: number;
+  }) => Promise<PersonCommunication[]>;
+  getTypeCommunication: () => Promise<TypeCommunication[]>;
+  postCommunication: (params: {
+    idPerson: number;
+    idTypeCommunication: number;
+    message: string;
+    fecAlta: string;
+  }) => Promise<void>;
 };

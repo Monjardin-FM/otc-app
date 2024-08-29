@@ -21,4 +21,5 @@ export type DefendantById = {
   phone: string;
   showalerts: boolean;
   sid: string;
+  userName: string;
 };

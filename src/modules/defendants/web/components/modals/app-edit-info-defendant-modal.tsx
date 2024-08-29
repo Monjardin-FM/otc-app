@@ -76,6 +76,7 @@ type updateDefendantFormValue = {
   offense?: string;
   password?: string;
   notes?: string;
+  userName: string;
 };
 export const AppEditInfoDefendantModal = ({
   isVisible,
@@ -177,6 +178,7 @@ export const AppEditInfoDefendantModal = ({
         birthDate: dayjs(birthDate).format("YYYY-MM-DD"),
         idPerson: idDefendant,
         notes: data.notes ?? "",
+        userName: data.userName ?? "",
       });
     }
   };
@@ -479,6 +481,7 @@ export const AppEditInfoDefendantModal = ({
                   offense: defendant?.offense,
                   password: "",
                   notes: defendant?.notes ?? "",
+                  userName: defendant?.userName ?? "",
                 }}
                 enableReinitialize
                 validationSchema={validationSchemaDefendant}
@@ -543,7 +546,7 @@ export const AppEditInfoDefendantModal = ({
                         <AppFormField className="col-span-4 z-0">
                           <Input
                             name="name"
-                            label="name"
+                            label="Name"
                             labelPlacement="outside"
                             value={values.name}
                             onChange={handleChange}
@@ -583,6 +586,23 @@ export const AppEditInfoDefendantModal = ({
                               {errors.lastName}
                             </AppFormHelperText>
                           )}
+                        </AppFormField>
+                        <AppFormField className="col-span-4 z-0">
+                          <Input
+                            name="userName"
+                            label="Username"
+                            labelPlacement="outside"
+                            value={values.userName}
+                            onChange={handleChange}
+                            type="string"
+                            isDisabled
+                            placeholder="Username"
+                            defaultValue={values.userName}
+                            radius="sm"
+                            variant="faded"
+                            size="md"
+                            // onClear={() => setFieldValue("lastName", "")}
+                          />
                         </AppFormField>
                         {/* <AppFormField className="col-span-3 z-0">
                           <Input
@@ -716,42 +736,44 @@ export const AppEditInfoDefendantModal = ({
                             otherwise it will be updated
                           </div>
                         </AppFormField>
-                        <AppFormField className="col-span-6 z-0">
-                          <Textarea
-                            name="notes"
-                            label="Notes"
-                            labelPlacement="outside"
-                            value={values.notes}
-                            onChange={handleChange}
-                            type="string"
-                            placeholder="Add notes"
-                            defaultValue={values.notes}
-                            radius="sm"
-                            variant="faded"
-                            size="md"
-                          />
-                        </AppFormField>
-                        <AppFormField className="col-span-6 z-0">
-                          <Textarea
-                            name="offense"
-                            label="Offense"
-                            labelPlacement="outside"
-                            value={values.offense}
-                            onChange={handleChange}
-                            type="string"
-                            placeholder="Offense"
-                            defaultValue={values.offense}
-                            radius="sm"
-                            variant="faded"
-                            size="md"
-                            // onClear={() => setFieldValue("offense", "")}
-                          />
-                          {errors.offense && (
-                            <AppFormHelperText colorSchema="red">
-                              {errors.offense}
-                            </AppFormHelperText>
-                          )}
-                        </AppFormField>
+                        <div className="flex gap-3 col-span-12">
+                          <AppFormField className="col-span-6 z-0">
+                            <Textarea
+                              name="notes"
+                              label="Notes"
+                              labelPlacement="outside"
+                              value={values.notes}
+                              onChange={handleChange}
+                              type="string"
+                              placeholder="Add notes"
+                              defaultValue={values.notes}
+                              radius="sm"
+                              variant="faded"
+                              size="md"
+                            />
+                          </AppFormField>
+                          <AppFormField className="col-span-6 z-0">
+                            <Textarea
+                              name="offense"
+                              label="Offense"
+                              labelPlacement="outside"
+                              value={values.offense}
+                              onChange={handleChange}
+                              type="string"
+                              placeholder="Offense"
+                              defaultValue={values.offense}
+                              radius="sm"
+                              variant="faded"
+                              size="md"
+                              // onClear={() => setFieldValue("offense", "")}
+                            />
+                            {errors.offense && (
+                              <AppFormHelperText colorSchema="red">
+                                {errors.offense}
+                              </AppFormHelperText>
+                            )}
+                          </AppFormField>
+                        </div>
                       </div>
                       <div className="col-span-12 flex flex-row items-center justify-end gap-3 ">
                         <Button

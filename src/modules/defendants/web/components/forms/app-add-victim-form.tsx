@@ -28,6 +28,7 @@ type createVictimFormValue = {
   caseNumber: string;
   idGender: number;
   password: string;
+  userName: string;
 };
 export const AddVictimForm = ({
   idDefendant,
@@ -49,7 +50,10 @@ export const AddVictimForm = ({
     name: Yup.string().required("Required name"),
     lastName: Yup.string().required("Required last name"),
     caseNumber: Yup.string().required("Required case number"),
-    eMail: Yup.string().required("Required email"),
+    eMail: Yup.string().email("Invalid email"),
+    userName: Yup.string()
+      .required("Required username")
+      .max(25, "Maximum 25 characters"),
     idGender: Yup.number()
       .moreThan(0, "Select a gender")
       .required("Select gender"),
@@ -69,6 +73,7 @@ export const AddVictimForm = ({
       idGender: data.idGender,
       idStatus: statusVictim ? 1 : 0,
       password: data.password,
+      userName: data.userName,
     });
   };
   useEffect(() => {
@@ -100,6 +105,7 @@ export const AddVictimForm = ({
         eMail: "",
         idGender: 0,
         password: "",
+        userName: "",
       }}
       enableReinitialize
       validationSchema={validationSchemaVictim}
@@ -108,7 +114,7 @@ export const AddVictimForm = ({
       {({ handleSubmit, handleChange, values, errors }) => (
         <form autoComplete="off" onSubmit={handleSubmit}>
           <div className="grid grid-cols-12 gap-y-4 gap-x-3 col-span-12 border border-gray-300 rounded-lg p-6 bg-gray-200 w-full">
-            <AppFormField className="col-span-4">
+            <AppFormField className="col-span-3">
               <AppFormLabel>Name</AppFormLabel>
               <AppTextField
                 name="name"
@@ -121,7 +127,7 @@ export const AddVictimForm = ({
                 </AppFormHelperText>
               )}
             </AppFormField>
-            <AppFormField className="col-span-4">
+            <AppFormField className="col-span-3">
               <AppFormLabel>Last Name</AppFormLabel>
               <AppTextField
                 name="lastName"
@@ -131,6 +137,19 @@ export const AddVictimForm = ({
               {errors.lastName && (
                 <AppFormHelperText colorSchema="red">
                   {errors.lastName}
+                </AppFormHelperText>
+              )}
+            </AppFormField>
+            <AppFormField className="col-span-3">
+              <AppFormLabel>Username</AppFormLabel>
+              <AppTextField
+                name="userName"
+                value={values.userName}
+                onChange={handleChange}
+              />
+              {errors.userName && (
+                <AppFormHelperText colorSchema="red">
+                  {errors.userName}
                 </AppFormHelperText>
               )}
             </AppFormField>

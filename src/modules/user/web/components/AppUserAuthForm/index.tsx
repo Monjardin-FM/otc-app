@@ -24,7 +24,7 @@ export const AppUserAuthForm = () => {
     validationSchema: Yup.object({
       email: Yup.string()
         .trim()
-        .email("Invalid email")
+        // .email("Invalid email")
         .required("An email is required"),
       password: Yup.string().trim().required("Required Password"),
     }),
@@ -43,7 +43,7 @@ export const AppUserAuthForm = () => {
         <Input
           id="email"
           name="email"
-          label="Email"
+          label="Email / Username"
           labelPlacement="inside"
           value={formik.values.email}
           onChange={formik.handleChange}
@@ -51,7 +51,7 @@ export const AppUserAuthForm = () => {
           variant="faded"
           size="md"
           startContent={<Icon.Mail size={15} />}
-          type="email"
+          // type="email"
         />
         {formik.touched.email && formik.errors.email && (
           <AppFormHelperText colorSchema="red">

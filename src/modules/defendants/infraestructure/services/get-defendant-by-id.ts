@@ -38,6 +38,7 @@ export const getDefendantByIdService: DefendantRepository["getDefendantById"] =
       phone: data.phone,
       showalerts: data.showalerts,
       sid: data.sid,
+      userName: data.userName,
     };
     return defendantByID;
   };

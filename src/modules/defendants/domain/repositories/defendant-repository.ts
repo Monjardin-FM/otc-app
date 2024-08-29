@@ -32,6 +32,7 @@ export type createDefendantParams = {
   idStatus: number;
   password: string;
   notes: string;
+  userName: string;
 };
 export type DefendantRepository = {
   getDefendant(params: { completeName: string }): Promise<Defendant[]>;
@@ -64,6 +65,7 @@ export type DefendantRepository = {
     idStatus: number;
     password: string;
     notes: string;
+    userName: string;
   }): Promise<{
     statusCode: number;
     isSuccess: boolean;
@@ -198,9 +200,13 @@ export type DefendantRepository = {
   deleteReferencePerson: (params: { idReference: number }) => Promise<Boolean>;
   postCommentDefendant: (params: {
     idDefendant: number;
-    message: string;
+    comment: string;
   }) => Promise<void>;
   getCommentDefendant: (params: {
     idPerson: number;
   }) => Promise<CommentDefendant>;
+  updateCommentDefendant: (params: {
+    idDefendant: number;
+    comment: string;
+  }) => Promise<void>;
 };

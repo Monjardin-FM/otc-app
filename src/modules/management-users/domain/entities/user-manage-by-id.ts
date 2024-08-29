@@ -15,4 +15,5 @@ export type UserManageById = {
   lastName: string;
   name: string;
   phone: string;
+  userName: string;
 };

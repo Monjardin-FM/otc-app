@@ -27,6 +27,7 @@ export type VictimRepository = {
     idGender: number;
     idStatus: number;
     password: string;
+    userName: string;
   }): Promise<{
     data: number;
     statusCode: number;
@@ -48,6 +49,7 @@ export type VictimRepository = {
     idGender: number;
     idStatus: number;
     password: string;
+    userName: string;
   }): Promise<{
     statusCode: number;
     isSuccess: boolean;

@@ -17,5 +17,6 @@ export type UserManage = {
   name: string;
   role: string;
   sid: string;
+  userName: string;
   // phone: string;
 };

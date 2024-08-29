@@ -91,6 +91,7 @@ export const AppNewUserModal = ({
       idStatus: status ? 1 : 0,
       password: data.password,
       phone: data.phone,
+      userName: data.eMail,
     });
   };
   useEffect(() => {
