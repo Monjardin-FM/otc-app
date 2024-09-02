@@ -69,7 +69,7 @@ export type AppEditInfoDefendantModalProps = {
 type updateDefendantFormValue = {
   name?: string;
   lastName?: string;
-  //   email: string;
+  eMail?: string;
   // caseNumber?: string;
   gender?: number;
   sid?: string;
@@ -166,8 +166,8 @@ export const AppEditInfoDefendantModal = ({
         name: data.name ?? "",
         lastName: data.lastName ?? "",
         completeName: `${data.name} ${data.lastName}`,
-        //   eMail: data.email,
-        caseNumber: "",
+        eMail: data.eMail ?? "",
+        // caseNumber: data.caseNumber ?? "",
         idCounty: Number(idCounty),
         idGender: Number(data.gender),
         idOfficer: Number(idOfficer),
@@ -216,7 +216,7 @@ export const AppEditInfoDefendantModal = ({
   const validationSchemaDefendant = Yup.object().shape({
     name: Yup.string().required("Required name"),
     lastName: Yup.string().required("Required last name"),
-    // email: Yup.string().required("Required email"),
+    eMail: Yup.string().email("Invalid email"),
     gender: Yup.number()
       .moreThan(0, "Select a gender")
       .required("Select a gender"),
@@ -476,12 +476,13 @@ export const AppEditInfoDefendantModal = ({
                   lastName: defendant?.lastName,
                   gender: defendant?.idGender,
                   county: defendant?.idCounty,
-                  // caseNumber: defendant?.caseNumber,
+                  eMail: defendant?.eMail,
                   sid: defendant?.sid,
                   offense: defendant?.offense,
                   password: "",
                   notes: defendant?.notes ?? "",
                   userName: defendant?.userName ?? "",
+                  // caseNumber: defendant?.caseNumber ?? "",
                 }}
                 enableReinitialize
                 validationSchema={validationSchemaDefendant}
@@ -604,28 +605,28 @@ export const AppEditInfoDefendantModal = ({
                             // onClear={() => setFieldValue("lastName", "")}
                           />
                         </AppFormField>
-                        {/* <AppFormField className="col-span-3 z-0">
+                        <AppFormField className="col-span-3 z-0">
                           <Input
-                            name="caseNumber"
-                            label="Case number"
+                            name="eMail"
+                            label="Email"
                             labelPlacement="outside"
-                            value={values.caseNumber}
+                            value={values.eMail}
                             onChange={handleChange}
                             type="string"
                             isClearable
-                            placeholder="Case Number"
-                            defaultValue={values.caseNumber}
+                            placeholder="user@mail.com"
+                            // defaultValue={values.eMail}
                             radius="sm"
                             variant="faded"
                             size="md"
-                            onClear={() => setFieldValue("caseNumber", "")}
+                            onClear={() => setFieldValue("eMail", "")}
                           />
-                          {errors.caseNumber && (
+                          {errors.eMail && (
                             <AppFormHelperText colorSchema="red">
-                              {errors.caseNumber}
+                              {errors.eMail}
                             </AppFormHelperText>
                           )}
-                        </AppFormField> */}
+                        </AppFormField>
                         <AppFormField className="col-span-3">
                           <AppFormLabel>County</AppFormLabel>
                           <Select
@@ -696,6 +697,28 @@ export const AppEditInfoDefendantModal = ({
                             </AppFormHelperText>
                           )}
                         </AppFormField>
+                        {/* <AppFormField className="col-span-3 z-0">
+                          <Input
+                            name="caseNumber"
+                            label="Case Number"
+                            labelPlacement="outside"
+                            value={values.caseNumber}
+                            onChange={handleChange}
+                            type="string"
+                            isClearable
+                            placeholder="213"
+                            defaultValue={values.caseNumber}
+                            radius="sm"
+                            variant="faded"
+                            size="md"
+                            onClear={() => setFieldValue("caseNumber", "")}
+                          />
+                          {errors.caseNumber && (
+                            <AppFormHelperText colorSchema="red">
+                              {errors.caseNumber}
+                            </AppFormHelperText>
+                          )}
+                        </AppFormField> */}
                         <AppFormField className="col-span-3 z-0 ">
                           <Input
                             name="password"

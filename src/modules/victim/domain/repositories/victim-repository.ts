@@ -50,6 +50,7 @@ export type VictimRepository = {
     idStatus: number;
     password: string;
     userName: string;
+    eMail: string;
   }): Promise<{
     statusCode: number;
     isSuccess: boolean;

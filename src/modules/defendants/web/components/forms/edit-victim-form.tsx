@@ -30,7 +30,7 @@ export type EditVictimFormProps = {
 type editVictimFormValue = {
   name: string;
   lastName: string;
-  // eMail: string;
+  eMail: string;
   caseNumber: string;
   idGender: number;
   password: string;
@@ -41,7 +41,7 @@ export const EditVictimForm = ({
   onReload,
   idVictim,
   victimInfo,
-  defendantInfo,
+  // defendantInfo,
   onClose,
 }: EditVictimFormProps) => {
   // const [visibleEditressForm, setVisibleEditressForm] = useToggle(false);
@@ -59,8 +59,8 @@ export const EditVictimForm = ({
   const validationSchemaVictim = Yup.object().shape({
     name: Yup.string().required("Required name"),
     lastName: Yup.string().required("Required last name"),
-    caseNumber: Yup.string().required("Required case number"),
-    // eMail: Yup.string().required("Required email"),
+    caseNumber: Yup.string(),
+    eMail: Yup.string(),
 
     idGender: Yup.number()
       .moreThan(0, "Select a gender")
@@ -76,7 +76,7 @@ export const EditVictimForm = ({
         name: data.name,
         lastName: data.lastName,
         idDefendant: Number(idDefendant),
-        // eMail: data.eMail,
+        eMail: data.eMail,
         caseNumber: data.caseNumber,
         birthDate: dayjs(birthDate).format("YYYY-MM-DD"),
         idGender: Number(data.idGender),
@@ -119,8 +119,8 @@ export const EditVictimForm = ({
       initialValues={{
         name: victimInfo?.name ?? "",
         lastName: victimInfo?.lastName ?? "",
-        caseNumber: defendantInfo?.caseNumber ?? "",
-        // eMail: "",
+        caseNumber: victimInfo?.caseNumber ?? "",
+        eMail: victimInfo?.eMail ?? "",
         idGender: victimInfo?.idGender ?? 0,
         password: "",
         userName: victimInfo?.userName ?? "",
@@ -193,7 +193,7 @@ export const EditVictimForm = ({
                 <span>Active</span>
               </div>
             </AppFormField>
-            {/* <AppFormField className="col-span-4">
+            <AppFormField className="col-span-4">
               <AppFormLabel>Email</AppFormLabel>
               <AppTextField
                 name="eMail"
@@ -205,7 +205,7 @@ export const EditVictimForm = ({
                   {errors.eMail}
                 </AppFormHelperText>
               )}
-            </AppFormField> */}
+            </AppFormField>
             <AppFormField className="col-span-4">
               <AppFormLabel>Case Number</AppFormLabel>
               <AppTextField

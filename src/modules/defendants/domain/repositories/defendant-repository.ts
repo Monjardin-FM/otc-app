@@ -59,13 +59,14 @@ export type DefendantRepository = {
     idOfficer: number;
     sid: string;
     offense: string;
-    caseNumber: string;
+    // caseNumber: string;
     birthDate: string;
     idGender: number;
     idStatus: number;
     password: string;
     notes: string;
     userName: string;
+    eMail: string;
   }): Promise<{
     statusCode: number;
     isSuccess: boolean;

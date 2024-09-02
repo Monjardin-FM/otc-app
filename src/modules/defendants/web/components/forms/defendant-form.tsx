@@ -346,7 +346,7 @@ export const DefendantForm = ({
               email: "",
               gender: 0,
               county: 0,
-              // caseNumber: "",
+              caseNumber: "",
               sid: "",
               offense: "",
               password: "",
@@ -506,6 +506,19 @@ export const DefendantForm = ({
                         </AppFormHelperText>
                       )}
                     </AppFormField>
+                    {/* <AppFormField className="col-span-2">
+                      <AppFormLabel>Case Number</AppFormLabel>
+                      <AppTextField
+                        name="caseNumber"
+                        value={values.caseNumber}
+                        onChange={handleChange}
+                      />
+                      {errors.caseNumber && (
+                        <AppFormHelperText colorSchema="red">
+                          {errors.caseNumber}
+                        </AppFormHelperText>
+                      )}
+                    </AppFormField> */}
                     <AppFormField className="col-span-2">
                       <Input
                         name="password"

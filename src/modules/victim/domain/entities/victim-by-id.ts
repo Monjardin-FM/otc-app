@@ -17,4 +17,5 @@ export type VicimById = {
   idDeviceType: number;
   showalerts: false;
   userName: string;
+  caseNumber: string;
 };
