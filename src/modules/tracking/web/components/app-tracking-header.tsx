@@ -53,9 +53,9 @@ export const AppTrackingHeader = ({
           />
         </div>
       </div>
-      <div className="absolute right-10">
+      <div className="absolute right-32">
         <Badge content={notificationCount} size="lg" color="warning">
-          <Button isIconOnly color="danger" onPress={onShowNotifications}>
+          <Button isIconOnly color="warning" onPress={onShowNotifications}>
             <Icon.Bell size={18} />
           </Button>
         </Badge>

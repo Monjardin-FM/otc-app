@@ -9,8 +9,8 @@ import { AppAuthorizationGuard } from "../../../../presentation/Components/AppAu
 import { UserRole } from "../../../user/domain/entities/user-role";
 import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
-import { Button } from "@nextui-org/react";
-import * as Icon from "react-feather";
+// import { Button } from "@nextui-org/react";
+// import * as Icon from "react-feather";
 import { AppTrackingNotificationCenter } from "./app-tracking-notification-center";
 import { useGetNotification } from "../hooks/use-get-notification";
 import { NotificationTracking } from "../../domain/entities/notification";
@@ -19,8 +19,8 @@ export const AppTrackingManagerPage = () => {
   const [visibleTrackingModal, setVisibleTrackingModal] = useToggle(false);
   const [toggleReload, setToggleReload] = useToggle(false);
   const { tracking, getTracking } = useGetTracking();
-  const [mute, setMute] = useState(false);
-  const [audio, setAudio] = useState(new Audio("/src/assets/mp3/alarm.mp3"));
+  // const [mute, setMute] = useState(false);
+  // const [audio, setAudio] = useState(new Audio("/src/assets/mp3/alarm.mp3"));
   const [visibleNotificationCenter, setVisibleNotificationCenter] =
     useToggle(false);
   const [visibleNotificationDetailModal, setVisibleNotificationDetailModal] =
@@ -51,22 +51,22 @@ export const AppTrackingManagerPage = () => {
     }
   }, [notification]);
 
-  useEffect(() => {
-    setAudio(new Audio("/src/assets/mp3/alarm.mp3"));
-  }, []);
-  useEffect(() => {
-    if (tracking && tracking.length > 0 && !mute) {
-      audio.loop = true; // Reproduce el audio en bucle
-      audio.play();
-    } else {
-      audio.pause(); // Pausa la reproducción si no hay tracking o si está silenciado
-    }
-    // Limpia el audio cuando se desmonta el componente para evitar fugas de memoria
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, [tracking, mute]);
+  // useEffect(() => {
+  //   setAudio(new Audio("/src/assets/mp3/alarm.mp3"));
+  // }, []);
+  // useEffect(() => {
+  //   if (tracking && tracking.length > 0 && !mute) {
+  //     audio.loop = true; // Reproduce el audio en bucle
+  //     audio.play();
+  //   } else {
+  //     audio.pause(); // Pausa la reproducción si no hay tracking o si está silenciado
+  //   }
+  //   // Limpia el audio cuando se desmonta el componente para evitar fugas de memoria
+  //   return () => {
+  //     audio.pause();
+  //     audio.currentTime = 0;
+  //   };
+  // }, [tracking, mute]);
 
   return (
     <div>
@@ -117,7 +117,7 @@ export const AppTrackingManagerPage = () => {
               notificationCount={notificationCount}
             />
             <div className="container mx-auto my-5 ">
-              {tracking && tracking.length > 0 ? (
+              {/* {tracking && tracking.length > 0 ? (
                 <div
                   className={"w-full flex flex-row items-end justify-end mb-5"}
                 >
@@ -143,7 +143,7 @@ export const AppTrackingManagerPage = () => {
                 </div>
               ) : (
                 ""
-              )}
+              )} */}
               <AppTrackingsTable
                 onEdit={({ record }) => {
                   if (record.personId) {
