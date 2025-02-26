@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import AppConfig from "../../../settings.json";
 import { AppAsideLink } from "./AppAsideLink";
@@ -10,6 +10,10 @@ import { UserRole } from "../../../modules/user/domain/entities/user-role";
 import { capitalize } from "../../../utils/capitalize";
 import OTCLogo from "../../../assets/img/otcLogo-small.png";
 import * as Icon from "react-feather";
+import SpanishIcon from "../../../assets/img/spanish.png";
+import EnglishIcon from "../../../assets/img/english.png";
+import { Switch } from "@headlessui/react";
+
 export type AppAsideV2Props = {
   isVisible?: boolean;
   onClose?: () => void;
@@ -23,7 +27,7 @@ export const AppAsideV2 = ({
   useClickAway(ref, onClose);
 
   const { signOut, user } = useUser();
-
+  const [language, setLanguage] = useState(false);
   return (
     <AnimatePresence>
       {isVisible && (
@@ -156,7 +160,7 @@ export const AppAsideV2 = ({
             </AppAuthorizationGuard>
           </div>
 
-          <div className="mt-14">
+          <div className="mt-14 flex flex-col items-center jusitfy-content-center gap-8">
             <AppButton
               className="flex items-center text-white p-3  rounded-lg"
               onClick={() => {
@@ -170,6 +174,23 @@ export const AppAsideV2 = ({
               </div>
               <div className="ml-3 text-sm font-medium text-white">Logout</div>
             </AppButton>
+            <div className="flex flex-row items-center justify-center gap-2">
+              <img src={SpanishIcon} className="w-14" />
+              <Switch
+                checked={language}
+                onChange={setLanguage}
+                className={`${
+                  language ? "bg-primaryColor-600" : "bg-success-600"
+                } relative inline-flex h-6 w-11 items-center rounded-full`}
+              >
+                <span
+                  className={`${
+                    language ? "translate-x-6" : "translate-x-1"
+                  } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                />
+              </Switch>
+              <img src={EnglishIcon} className="w-14" />
+            </div>
           </div>
         </motion.aside>
       )}
