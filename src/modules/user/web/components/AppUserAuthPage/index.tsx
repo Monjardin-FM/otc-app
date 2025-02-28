@@ -5,8 +5,10 @@ import { AppPageTransition } from "../../../../../presentation/Components/AppPag
 import { AppBackgroundImageMotion } from "../../../../../presentation/Components/AppBackgroundImageMotion";
 import { AppUserAuthForm } from "../AppUserAuthForm";
 import { useUser } from "../../hooks/use-user";
+import { useTranslation } from "react-i18next";
 
 export const AppUserAuth = () => {
+  const { t } = useTranslation(["Login"]);
   const { user } = useUser();
   return (
     <>
@@ -28,7 +30,7 @@ export const AppUserAuth = () => {
                       alt="OTC Logo"
                     />
                     <div className="text-primary-900 text-center mt-5 text-lg">
-                      Welcome
+                      {t("Welcome")}
                     </div>
                   </div>
                   <AppUserAuthForm />

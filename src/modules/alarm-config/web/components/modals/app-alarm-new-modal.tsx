@@ -22,11 +22,13 @@ import {
 import AppTextField from "../../../../../presentation/Components/AppTextField";
 import { AppButton } from "../../../../../presentation/Components/AppButton";
 import { Switch } from "@headlessui/react";
+import { TFunction } from "i18next";
 
 export type AppNewAlarmModalProps = {
   isVisible: boolean;
   onClose: () => void;
   onReload: () => void;
+  translation: TFunction<[string], undefined>;
 };
 type AlarmCreateFormValues = {
   name: string;
@@ -42,6 +44,7 @@ export const AppNewAlarmModal = ({
   isVisible,
   onClose,
   onReload,
+  translation,
 }: AppNewAlarmModalProps) => {
   const { createAlarm } = useCreateAlarm();
   const { responsiveDevices, getResponsiveDevices } = useGetResponsiveDevices();
@@ -57,6 +60,7 @@ export const AppNewAlarmModal = ({
   const onSubmitHandler = async (data: AlarmCreateFormValues) => {
     await createAlarm({
       automatic: status,
+
       callText: data.callResponse,
       enableResponseCall: data.callResponse.length > 0,
       description: data.name,
@@ -130,13 +134,15 @@ export const AppNewAlarmModal = ({
               <form onSubmit={handleSubmit}>
                 <AppModalHeader>
                   <AppModalCloseButton />
-                  New Alarm
+                  {translation("ModalNewAlarmTitle")}
                 </AppModalHeader>
                 <AppModalBody>
                   <div className="grid grid-cols-12 gap-y-4 gap-x-3">
                     <div className="grid grid-cols-12 col-span-6 gap-x-3 gap-y-4">
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Name</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelAlarmName")}
+                        </AppFormLabel>
                         <AppTextField
                           name="name"
                           value={values.name}
@@ -145,9 +151,11 @@ export const AppNewAlarmModal = ({
                       </AppFormField>
 
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Automatic</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelAutomaticAlarm")}
+                        </AppFormLabel>
                         <div className="flex flex-row items-center justify-start gap-5">
-                          <span>Inactive</span>
+                          <span>{translation("TooltipActiveAlarm")}</span>
                           <Switch
                             checked={status}
                             onChange={setStatus}
@@ -166,11 +174,13 @@ export const AppNewAlarmModal = ({
                               } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                             />
                           </Switch>
-                          <span>Active</span>
+                          <span>{translation("TooltipInactiveAlarm")}</span>
                         </div>
                       </AppFormField>
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Response Devices</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelResponseDevices")}
+                        </AppFormLabel>
                         <Multiselect
                           displayValue="responseDevice"
                           showCheckbox={true}
@@ -179,7 +189,9 @@ export const AppNewAlarmModal = ({
                         />
                       </AppFormField>
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Assigned Devices</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelAssignedDevices")}
+                        </AppFormLabel>
                         <Multiselect
                           displayValue="deviceType"
                           showCheckbox={true}
@@ -188,7 +200,9 @@ export const AppNewAlarmModal = ({
                         />
                       </AppFormField>
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Interval</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelInterval")}
+                        </AppFormLabel>
                         <AppTextField
                           name="interval"
                           value={values.interval}
@@ -196,7 +210,9 @@ export const AppNewAlarmModal = ({
                         />
                       </AppFormField>
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Geocoordinate Timeout</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelGeocoordinates")}
+                        </AppFormLabel>
                         <AppTextField
                           name="geocordinateTimeout"
                           value={values.geocordinateTimeout}
@@ -204,7 +220,9 @@ export const AppNewAlarmModal = ({
                         />
                       </AppFormField>
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Restraining Distance</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelRestrainingDistance")}
+                        </AppFormLabel>
                         <AppTextField
                           name="restrainingDistance"
                           value={values.restrainingDistance}
@@ -212,7 +230,9 @@ export const AppNewAlarmModal = ({
                         />
                       </AppFormField>
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Automatic Cancellation Time</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelCancellationTime")}
+                        </AppFormLabel>
                         <AppTextField
                           name="cancellationTime"
                           value={values.cancellationTime}
@@ -222,7 +242,9 @@ export const AppNewAlarmModal = ({
                     </div>
                     <div className="grid grid-cols-12 col-span-6 gap-x-3 gap-y-5">
                       <AppFormField className="col-span-6 ">
-                        <AppFormLabel>Text SMS</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelTextSMS")}
+                        </AppFormLabel>
                         <textarea
                           name="textSMS"
                           value={values.textSMS}
@@ -231,7 +253,9 @@ export const AppNewAlarmModal = ({
                         ></textarea>
                       </AppFormField>
                       <AppFormField className="col-span-6">
-                        <AppFormLabel>Text Mail</AppFormLabel>
+                        <AppFormLabel>
+                          {translation("LabelTextEmail")}
+                        </AppFormLabel>
                         <textarea
                           name="textMail"
                           value={values.textMail}
@@ -240,7 +264,7 @@ export const AppNewAlarmModal = ({
                         ></textarea>
                       </AppFormField>
                       <AppFormField className="col-span-6 ">
-                        <AppFormLabel>Call</AppFormLabel>
+                        <AppFormLabel>{translation("LabelCall")}</AppFormLabel>
                         <textarea
                           name="callResponse"
                           value={values.callResponse}
@@ -252,9 +276,11 @@ export const AppNewAlarmModal = ({
                   </div>
                 </AppModalBody>
                 <AppModalFooter>
-                  <AppButton onClick={onClose}>Cancel</AppButton>
+                  <AppButton onClick={onClose}>
+                    {translation("ButtonCancel")}
+                  </AppButton>
                   <AppButton colorScheme="primary" type="submit">
-                    Save
+                    {translation("ButtonSave")}
                   </AppButton>
                 </AppModalFooter>
               </form>

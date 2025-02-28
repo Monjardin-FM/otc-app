@@ -36,7 +36,6 @@ export const AppAlertButton = () => {
     setAudio(new Audio("/src/assets/mp3/alarm.mp3"));
   }, []);
   useEffect(() => {
-    console.log(mute);
     if (tracking && tracking.length > 0 && !mute) {
       audio.loop = true; // Reproduce el audio en bucle
       audio.play();

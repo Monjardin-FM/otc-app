@@ -14,8 +14,10 @@ import { AppLoading } from "../../../../presentation/Components/AppLoading";
 import { AppPageTransition } from "../../../../presentation/Components/AppPageTransition";
 import { AppToast } from "../../../../presentation/Components/AppToast";
 import { Button, Tooltip } from "@nextui-org/react";
+import { useTranslation } from "react-i18next";
 
 export const AppAlarmConfigManagerPage = () => {
+  const { t } = useTranslation(["AutomaticAlarms"]);
   const [visibleNewAlarmModal, setVisibleNewAlarmModal] = useToggle(false);
   const [visibleEditAlarmModal, setVisibleEditAlarmModal] = useToggle(false);
   const [toggleReload, setToggleReload] = useToggle(false);
@@ -34,7 +36,7 @@ export const AppAlarmConfigManagerPage = () => {
     AppToast().fire({
       title: "Alarm deleted",
       icon: "success",
-      text: "The alarm was deleted succesfully",
+      text: t("onDeleteToast"),
     });
   };
   useEffect(() => {
@@ -54,7 +56,7 @@ export const AppAlarmConfigManagerPage = () => {
       AppToast().fire({
         title: "Error",
         icon: "error",
-        text: "An error occurred while trying to delete the user",
+        text: t("onDeleteToastError"),
       });
     }
   }, [errorDelete]);
@@ -68,12 +70,14 @@ export const AppAlarmConfigManagerPage = () => {
         isVisible={visibleNewAlarmModal}
         onClose={() => setVisibleNewAlarmModal(false)}
         onReload={() => setToggleReload(!toggleReload)}
+        translation={t}
       />
       <AppEditAlarmModal
         isVisible={visibleEditAlarmModal}
         onClose={() => setVisibleEditAlarmModal(false)}
         onReload={() => setToggleReload(!toggleReload)}
         idAlarm={idAlarm}
+        translation={t}
       />
       <AppPageTransition>
         <div className="items-center mx-auto mb-5">
@@ -86,7 +90,7 @@ export const AppAlarmConfigManagerPage = () => {
         </div>
         <div className="container mx-auto flex flex-col items-end jusitfy-center">
           <Tooltip
-            content={"New Alarm"}
+            content={t("TooltipNewAlarm")}
             color="warning"
             offset={1}
             showArrow
@@ -121,6 +125,7 @@ export const AppAlarmConfigManagerPage = () => {
             }}
             items={alarms}
             loadingDeleteAlarm={loadingDeleteAlarm}
+            translation={t}
           />
         </div>
       </AppPageTransition>

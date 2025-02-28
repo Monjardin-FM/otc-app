@@ -7,6 +7,7 @@ import {
 import { User } from "../domain/entities/user";
 import { userModule } from "../infrastructure/user.module";
 import { RootState } from "../../../utils/store";
+import i18next from "i18next";
 
 export interface UserState {
   value?: User | null;
@@ -29,6 +30,15 @@ export const signIn = createAsyncThunk(
   async ({ email, password }: { email: string; password: string }) => {
     const data = await userModule().signIn.execute({ email, password });
     localStorage.setItem("user", JSON.stringify(data));
+    const language = localStorage.getItem("language");
+    if (language === null) {
+      localStorage.setItem("language", "es");
+    } else if (language === "en") {
+      i18next.changeLanguage("en");
+    } else if (language === "es") {
+      i18next.changeLanguage("es");
+    }
+
     return data;
   }
 );

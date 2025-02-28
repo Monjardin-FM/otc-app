@@ -10,13 +10,15 @@ import { useUser } from "../../hooks/use-user";
 import * as Icon from "react-feather";
 import { useFormik } from "formik";
 import { Input } from "@nextui-org/react";
+import { useTranslation } from "react-i18next";
 export const AppUserAuthForm = () => {
+  const { t } = useTranslation(["Login"]);
   const { signIn, loading, error } = useUser();
   const [isVisiblePassword, setIsVisiblePassword] = useState(false);
   const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
   useEffect(() => {
     if (error) {
-      AppToast().fire({ icon: "info", title: "Failed authentication" });
+      AppToast().fire({ icon: "info", title: t("ToastErrorAuth") });
     }
   }, [error]);
 
@@ -25,8 +27,8 @@ export const AppUserAuthForm = () => {
       email: Yup.string()
         .trim()
         // .email("Invalid email")
-        .required("An email is required"),
-      password: Yup.string().trim().required("Required Password"),
+        .required(t("ValidateMail")),
+      password: Yup.string().trim().required(t("ValidatePassword")),
     }),
     initialValues: {
       email: "",
@@ -43,7 +45,7 @@ export const AppUserAuthForm = () => {
         <Input
           id="email"
           name="email"
-          label="Email / Username"
+          label={t("LabelMail")}
           labelPlacement="inside"
           value={formik.values.email}
           onChange={formik.handleChange}
@@ -64,7 +66,7 @@ export const AppUserAuthForm = () => {
         <Input
           id="password"
           name="password"
-          label="Password"
+          label={t("LabelPassword")}
           labelPlacement="inside"
           value={formik.values.password}
           onChange={formik.handleChange}
@@ -99,10 +101,10 @@ export const AppUserAuthForm = () => {
           isLoading={loading === "pending"}
           type="submit"
           colorScheme="primary"
-          className="w-1/2 mt-10"
+          className="w-3/4 mt-10"
           size="base"
         >
-          Sign In
+          {t("ButtonSignIn")}
         </AppButton>
       </div>
     </form>

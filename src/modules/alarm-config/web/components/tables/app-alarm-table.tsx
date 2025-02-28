@@ -8,12 +8,13 @@ import {
 import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
 import { Button, Chip, Tooltip } from "@nextui-org/react";
-
+import { TFunction } from "i18next";
 export type AlarmsTableProps = {
   items?: Alarm[];
   onEdit: (params: RenderFnParams<Alarm>) => void;
   onDelete: (params: RenderFnParams<Alarm>) => void;
   loadingDeleteAlarm: boolean;
+  translation: TFunction<[string], undefined>;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -48,10 +49,24 @@ const NameAlarmsColumn = (params: RenderFnParams<Alarm>) => {
   );
 };
 
-const StatusAlarmsColumn = (params: RenderFnParams<Alarm>) => {
+const StatusAlarmsColumn = ({
+  translation,
+  record,
+}: // record,
+RenderFnParams<Alarm> & {
+  onEdit: () => void;
+  onDelete: () => void;
+  loadingDeleteAlarm: boolean;
+  translation: TFunction<[string], undefined>;
+  record: Alarm;
+}) => {
   return (
     <Tooltip
-      content={params.record.idStatus === 1 ? "Active" : "Inactive"}
+      content={
+        record.idStatus === 1
+          ? translation("TooltipActiveAlarm")
+          : translation("TooltipInactiveAlarm")
+      }
       color="primary"
       offset={15}
       showArrow
@@ -59,11 +74,11 @@ const StatusAlarmsColumn = (params: RenderFnParams<Alarm>) => {
       disableAnimation
     >
       <Chip
-        color={params.record.idStatus === 1 ? "success" : "danger"}
+        color={record.idStatus === 1 ? "success" : "danger"}
         variant="shadow"
         radius="full"
       >
-        {params.record.idStatus === 1 ? (
+        {record.idStatus === 1 ? (
           <Icon.Circle size={12} />
         ) : (
           <Icon.AlertTriangle size={12} />
@@ -77,16 +92,18 @@ const ActionsColumn = ({
   onEdit,
   onDelete,
   loadingDeleteAlarm,
+  translation,
 }: // record,
 RenderFnParams<Alarm> & {
   onEdit: () => void;
   onDelete: () => void;
   loadingDeleteAlarm: boolean;
+  translation: TFunction<[string], undefined>;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-8">
       <Tooltip
-        content={"Edit Alarm"}
+        content={translation("TooltipEditAlarm")}
         color="primary"
         style={{
           zIndex: 0,
@@ -110,7 +127,7 @@ RenderFnParams<Alarm> & {
         </Button>
       </Tooltip>
       <Tooltip
-        content={"Delete Alarm"}
+        content={translation("TooltipDeleteAlarm")}
         color="danger"
         style={{
           zIndex: 0,
@@ -143,25 +160,37 @@ export const AppAlarmssTable = ({
   onEdit,
   onDelete,
   loadingDeleteAlarm,
+  translation,
 }: AlarmsTableProps) => {
   const columns: AppDataGridColumn<Alarm>[] = [
     {
       key: "AlarmsName",
       dataIndex: "AlarmsName",
-      title: "Name",
+      title: translation("ColumnAlarmName"),
       render: NameAlarmsColumn,
     },
     {
       key: "AlarmsStatus",
       dataIndex: "AlarmsStatus",
-      title: "Status",
-      render: StatusAlarmsColumn,
+      title: translation("ColumnAlarmStatus"),
+      render: (data) =>
+        StatusAlarmsColumn({
+          ...data,
+          onEdit: () => {
+            onEdit(data);
+          },
+          onDelete: () => {
+            onDelete(data);
+          },
+          translation: translation,
+          loadingDeleteAlarm: loadingDeleteAlarm,
+        }),
     },
 
     {
       key: "actionsClient",
       dataIndex: "actionsClient",
-      title: "Actions",
+      title: translation("ColumnAlarmActions"),
       render: (data) =>
         ActionsColumn({
           ...data,
@@ -172,6 +201,7 @@ export const AppAlarmssTable = ({
             onDelete(data);
           },
           loadingDeleteAlarm: loadingDeleteAlarm,
+          translation: translation,
         }),
     },
   ];
