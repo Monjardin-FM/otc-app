@@ -9,6 +9,7 @@ import { ReferenceContact } from "../../../domain/entities/reference-contact";
 import { useCreateReferenceContact } from "../../hooks/reference-contact/use-post-reference-contact";
 import { useEditReferenceContact } from "../../hooks/reference-contact/use-edit-reference-contact";
 import { AppToast } from "../../../../../presentation/Components/AppToast";
+import { TFunction } from "i18next";
 
 type ReferenceContactFormValue = {
   name: string;
@@ -23,6 +24,7 @@ type ReferenceFormProps = {
   isCreating: boolean;
   onClose: () => void;
   onReload: () => void;
+  translation: TFunction<[string], undefined>;
 };
 export const ReferenceForm = ({
   referenceContact,
@@ -31,6 +33,7 @@ export const ReferenceForm = ({
   idReferencePerson,
   onClose,
   onReload,
+  translation,
 }: ReferenceFormProps) => {
   const {
     createReferenceContact,
@@ -43,8 +46,10 @@ export const ReferenceForm = ({
     loading: loadingEditReferenceContact,
   } = useEditReferenceContact();
   const validationSchemaReferenceContact = Yup.object().shape({
-    name: Yup.string().required("Required name"),
-    phoneNumber: Yup.string().required("Required phone number"),
+    name: Yup.string().required(translation("ValidationNameReferenceContact")),
+    phoneNumber: Yup.string().required(
+      translation("ValidationPhoneReferenceContact")
+    ),
   });
   const onSubmitHandler = async (data: ReferenceContactFormValue) => {
     if (idDefendant) {
@@ -58,9 +63,9 @@ export const ReferenceForm = ({
         });
         if (!errorCreateReference) {
           AppToast().fire({
-            title: "Success",
+            title: translation("SwalReferenceContactTitle"),
             icon: "success",
-            text: "The information was saved successfully",
+            text: translation("SwalReferenceContactText"),
           });
           onClose();
           onReload();
@@ -77,9 +82,9 @@ export const ReferenceForm = ({
           });
           if (!errorEditReference) {
             AppToast().fire({
-              title: "Success",
+              title: translation("SwalReferenceContactTitle"),
               icon: "success",
-              text: "The information was saved successfully",
+              text: translation("SwalReferenceContactEditText"),
             });
             onClose();
             onReload();
@@ -107,13 +112,13 @@ export const ReferenceForm = ({
               <AppFormField className="col-span-4 ">
                 <Input
                   name="name"
-                  label="Name"
+                  label={translation("LabelnameReferenceContact")}
                   labelPlacement="outside"
                   value={values.name}
                   onChange={handleChange}
                   type="string"
                   isClearable
-                  placeholder="Name"
+                  placeholder={translation("LabelnameReferenceContact")}
                   defaultValue={values.name}
                   radius="sm"
                   variant="faded"

@@ -20,7 +20,7 @@
   "LabelGeocoordinates": "Tiempo de Espera de Geocoordenadas",
   "LabelRestrainingDistance": "Distancia de Restricción",
   "LabelCancellationTime": "Tiempo de Cancelación Automática",
-  "LabelTextSMS": "Text SMS",
+  "LabelTextSMS": "Texto SMS",
   "LabelTextEmail": "Texto de Correo Electrónico",
   "LabelCall": "Llamada",
   "ButtonCancel": "Cancelar",

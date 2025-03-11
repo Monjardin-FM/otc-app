@@ -19,6 +19,7 @@ import {
 import { useGetDefendantDevice } from "../../hooks/use-get-defendant-device";
 import { useToggle } from "react-use";
 import { DefendantById } from "../../../domain/entities/defendant-by-id";
+import { TFunction } from "i18next";
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
@@ -26,12 +27,14 @@ export type AppNewDefendantModalProps = {
   isVisible: boolean;
   onClose: () => void;
   onReload: () => void;
+  translation: TFunction<[string], undefined>;
 };
 
 export const AppNewDefendantModal = ({
   isVisible,
   onClose,
   onReload,
+  translation,
 }: AppNewDefendantModalProps) => {
   const {
     createDefendant,
@@ -64,8 +67,8 @@ export const AppNewDefendantModal = ({
       responseCreateDefendant?.statusCode === 200
     ) {
       AppToast().fire({
-        title: "Success",
-        text: "The defendant was created successfully",
+        title: translation("SwalCreateDefendantTitle"),
+        text: translation("SwalCreateDefendantText"),
         icon: "success",
       });
       setIdDefendant(Number(responseCreateDefendant.data));
@@ -76,8 +79,8 @@ export const AppNewDefendantModal = ({
   useEffect(() => {
     if (loadingDefendant) {
       AppToast().fire({
-        title: "Creating defendant",
-        text: "The defendant is being created. Please wait",
+        title: translation("SwalCreatingDefendant"),
+        text: translation("SwalCreatingDefendantText"),
         icon: "info",
       });
     }
@@ -115,14 +118,16 @@ export const AppNewDefendantModal = ({
             <ModalHeader>
               <div className="w-full flex flex-row items-center justify-evenly gap-5 relative">
                 <span className="text-primaryColor-700 absolute left-0">
-                  New Defendant
+                  {translation("NewDefendantModalTitle")}
                 </span>
                 <Chip
                   color="warning"
                   variant="shadow"
                   className="flex flex-row gap-2"
                 >
-                  <span className="text-gray-200">Defendant Name: </span>
+                  <span className="text-gray-200">
+                    {translation("DefendantNameInfo")}
+                  </span>
                   <span className="text-white font-semibold">
                     {defendantHeaderInfo
                       ? `${defendantHeaderInfo?.name} ${defendantHeaderInfo?.lastName} `
@@ -134,7 +139,9 @@ export const AppNewDefendantModal = ({
                   variant="shadow"
                   className="flex flex-row gap-2"
                 >
-                  <span className="text-gray-200">SID: </span>
+                  <span className="text-gray-200">
+                    {translation("DefendantSIDInfo")}{" "}
+                  </span>
                   <span className="text-white font-semibold">
                     {defendantHeaderInfo?.sid}
                   </span>
@@ -160,7 +167,7 @@ export const AppNewDefendantModal = ({
                         )
                       }
                     >
-                      Defendant
+                      {translation("DefendantTabDefendant")}
                     </Tab>
                     <Tab
                       disabled={isCreatedDefendant}
@@ -174,7 +181,7 @@ export const AppNewDefendantModal = ({
                         )
                       }
                     >
-                      Victims
+                      {translation("DefendantTabVictims")}
                     </Tab>
                     <Tab
                       disabled={isCreatedDefendant}
@@ -188,7 +195,7 @@ export const AppNewDefendantModal = ({
                         )
                       }
                     >
-                      Alarms
+                      {translation("DefendantTabAlarms")}
                     </Tab>
                     <Tab
                       hidden
@@ -215,6 +222,7 @@ export const AppNewDefendantModal = ({
                         idDefendant={idDefendant}
                         loadingDefendant={loadingDefendant}
                         onReload={() => setToggleReload(!toggleReload)}
+                        translation={translation}
                       />
                     </Tab.Panel>
                     <Tab.Panel>

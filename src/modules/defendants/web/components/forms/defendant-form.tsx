@@ -38,6 +38,7 @@ import { CaseNumberForm } from "./create-case-number-form";
 import { useGetReferenceContact } from "../../hooks/reference-contact/use-get-reference-contact";
 import { AppReferenceContactsTable } from "../tables/app-reference-contacts-table";
 import { AppReferenceContactModal } from "../modals/app-reference-contact-modal";
+import { TFunction } from "i18next";
 export type DefendantFormProps = {
   onCreateDefendant: (params: createDefendantParams) => void;
   onClose: () => void;
@@ -45,6 +46,7 @@ export type DefendantFormProps = {
   loadingDefendant: boolean;
   onReload: () => void;
   defendantInfo?: DefendantById;
+  translation: TFunction<[string], undefined>;
 };
 
 type createDefendantFormValue = {
@@ -67,6 +69,7 @@ export const DefendantForm = ({
   idDefendant,
   onReload,
   defendantInfo,
+  translation,
 }: DefendantFormProps) => {
   const [visibleDeviceForm, setVisibleDeviceForm] = useToggle(false);
   const [visibleAddressForm, setVisibleAddressForm] = useToggle(false);
@@ -94,21 +97,21 @@ export const DefendantForm = ({
   const [isVisiblePassword, setIsVisiblePassword] = useState(false);
   const toggleVisibility = () => setIsVisiblePassword(!isVisiblePassword);
   const validationSchemaDefendant = Yup.object().shape({
-    name: Yup.string().required("Required name"),
-    lastName: Yup.string().required("Required last name"),
-    email: Yup.string().email("Invalid email"),
+    name: Yup.string().required(translation("NameValidationDefendant")),
+    lastName: Yup.string().required(translation("LastNameValidationDefendant")),
+    email: Yup.string().email(translation("EmailValidationDefendant")),
     userName: Yup.string()
-      .required("Required username")
-      .max(25, "maximum 25 characters"),
+      .required(translation("UserNameValidationDefendant"))
+      .max(25, translation("UserNameLengthValidationDefendant")),
     gender: Yup.number()
-      .moreThan(0, "Select a gender")
-      .required("Select a gender"),
+      .moreThan(0, translation("GenderValidationDefendant"))
+      .required(translation("GenderValidationDefendant")),
     password: Yup.string()
-      .required("Required password")
-      .min(10, "Minimum length 10 characters"),
+      .required(translation("PasswordValidationDefendant"))
+      .min(10, translation("PasswordLengthValidationDefendant")),
     // caseNumber: Yup.string().required("Required case number"),
-    sid: Yup.string().required("Required sid"),
-    offense: Yup.string().required("Required offense"),
+    sid: Yup.string().required(translation("SIDValidationDefendant")),
+    offense: Yup.string().required(translation("OffenseValidationDefendant")),
   });
   // function to create defendant
   const onSubmitHandler = (data: createDefendantFormValue) => {
@@ -162,9 +165,9 @@ export const DefendantForm = ({
   useEffect(() => {
     if (loadingDefendant) {
       AppToast().fire({
-        title: "Creating Defendant",
+        title: translation("SwalCreatingDefendant"),
         icon: "info",
-        text: "Creating defendant. Please wait",
+        text: translation("SwalCreatingDefendantText"),
       });
     }
   }, [loadingDefendant]);
@@ -189,7 +192,9 @@ export const DefendantForm = ({
             <ul className="flex flex-col gap-4">
               <li>
                 <Chip color="primary" variant="shadow">
-                  <span className="text-gray-300">Name:</span>
+                  <span className="text-gray-300">
+                    {translation("SpanNameDefendant")}
+                  </span>
                   <span className="font-semibold text-white">
                     {` ${defendantInfo.name}  ${defendantInfo.lastName}`}
                   </span>
@@ -198,7 +203,9 @@ export const DefendantForm = ({
               {/* <Divider className="my-2" /> */}
               <li>
                 <Chip color="primary" variant="shadow">
-                  <span className="text-gray-300">UserName:</span>
+                  <span className="text-gray-300">
+                    {translation("SpanUserNameDefendant")}
+                  </span>
 
                   <span className="font-semibold text-white">
                     {` ${defendantInfo.userName}`}
@@ -207,7 +214,9 @@ export const DefendantForm = ({
               </li>
               <li>
                 <Chip color="primary" variant="shadow">
-                  <span className="text-gray-300">Email:</span>
+                  <span className="text-gray-300">
+                    {translation("SpanEmailDefendant")}
+                  </span>
 
                   <span className="font-semibold text-white">
                     {` ${defendantInfo.eMail}`}
@@ -216,7 +225,9 @@ export const DefendantForm = ({
               </li>
               <li>
                 <Chip color="primary" variant="shadow">
-                  <span className="text-gray-300">Birth Date:</span>
+                  <span className="text-gray-300">
+                    {translation("SpanBirthDateDefendant")}
+                  </span>
                   <span className="font-semibold text-white">
                     {` ${dayjs(defendantInfo.birthDate).format(
                       "MMMM - DD - YYYY"
@@ -228,9 +239,13 @@ export const DefendantForm = ({
               <li>
                 {" "}
                 <Chip color="primary" variant="shadow">
-                  <span className="text-gray-300">Status:</span>
+                  <span className="text-gray-300">
+                    {translation("SpanStatusDefendant")}
+                  </span>
                   <span className="font-semibold text-white">
-                    {defendantInfo.idStatus === 1 ? " Active" : " Inactive"}
+                    {defendantInfo.idStatus === 1
+                      ? translation("TooltipStatusDefendantActive")
+                      : translation("TooltipStatusDefendantInactive")}
                   </span>
                 </Chip>
               </li>
@@ -238,7 +253,9 @@ export const DefendantForm = ({
               <li>
                 {" "}
                 <Chip color="primary" variant="shadow">
-                  <span className="text-gray-300">SID:</span>
+                  <span className="text-gray-300">
+                    {translation("SpanSIDDefendant")}
+                  </span>
                   <span className="font-semibold text-white">
                     {` ${defendantInfo.sid}`}
                   </span>
@@ -261,7 +278,7 @@ export const DefendantForm = ({
               }}
               className="w-5/12"
             >
-              New Device
+              {translation("NewDeviceButton")}
             </Button>
             <Button
               variant="shadow"
@@ -276,7 +293,7 @@ export const DefendantForm = ({
               }}
               className="w-5/12"
             >
-              New Address
+              {translation("NewAddressButton")}
             </Button>
             <Button
               hidden={true}
@@ -292,7 +309,7 @@ export const DefendantForm = ({
               }}
               className="w-5/12"
             >
-              New Phone Number
+              {translation("NewPhoneButton")}
             </Button>
             <Button
               variant="shadow"
@@ -307,7 +324,7 @@ export const DefendantForm = ({
               }}
               className="w-5/12"
             >
-              New Case Number
+              {translation("NewCaseButton")}
             </Button>
             <Button
               variant="shadow"
@@ -323,7 +340,7 @@ export const DefendantForm = ({
               }}
               className="w-5/12"
             >
-              New Reference Contact
+              {translation("NewReferenceButton")}
             </Button>
             <AppReferenceContactModal
               isCreating={true}
@@ -334,6 +351,7 @@ export const DefendantForm = ({
                 setToggleReload(!toggleReload);
                 onReload();
               }}
+              translation={translation}
             />
           </div>
         </>
@@ -369,17 +387,20 @@ export const DefendantForm = ({
                 >
                   <div className="col-span-12 grid grid-cols-12 items-center justify-center mb-3 gap-4 ">
                     <AppFormField className="col-span-4">
-                      <AppFormLabel>Officer</AppFormLabel>
+                      <AppFormLabel>{translation("LabelOfficer")}</AppFormLabel>
                       <Select
                         options={chiefs}
                         isSearchable={true}
                         onChange={(e) => setIdOfficer(e?.value)}
+                        placeholder={translation("PlaceholderSelectOfficer")}
                       />
                     </AppFormField>
                     <AppFormField className="col-span-4">
-                      <AppFormLabel>Status</AppFormLabel>
+                      <AppFormLabel>{translation("LabelStatus")}</AppFormLabel>
                       <div className="flex flex-row items-center justify-start gap-3">
-                        <span>Inactive</span>{" "}
+                        <span>
+                          {translation("TooltipStatusDefendantInactive")}
+                        </span>{" "}
                         <Switch
                           checked={statusOfficer}
                           onChange={setStatusOfficer}
@@ -395,13 +416,15 @@ export const DefendantForm = ({
                             } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                           />
                         </Switch>
-                        <span>Active</span>
+                        <span>
+                          {translation("TooltipStatusDefendantActive")}
+                        </span>
                       </div>
                     </AppFormField>
                   </div>
                   <div className="col-span-12 grid grid-cols-12 gap-3">
                     <AppFormField className="col-span-3">
-                      <AppFormLabel>Name</AppFormLabel>
+                      <AppFormLabel>{translation("LabelName")}</AppFormLabel>
                       <AppTextField
                         name="name"
                         value={values.name}
@@ -414,7 +437,9 @@ export const DefendantForm = ({
                       )}
                     </AppFormField>
                     <AppFormField className="col-span-3">
-                      <AppFormLabel>Last Name</AppFormLabel>
+                      <AppFormLabel>
+                        {translation("LabelLastName")}
+                      </AppFormLabel>
                       <AppTextField
                         name="lastName"
                         value={values.lastName}
@@ -427,7 +452,9 @@ export const DefendantForm = ({
                       )}
                     </AppFormField>
                     <AppFormField className="col-span-3">
-                      <AppFormLabel>Username</AppFormLabel>
+                      <AppFormLabel>
+                        {translation("LabelUserName")}
+                      </AppFormLabel>
                       <AppTextField
                         name="userName"
                         value={values.userName}
@@ -440,7 +467,7 @@ export const DefendantForm = ({
                       )}
                     </AppFormField>
                     <AppFormField className="col-span-3">
-                      <AppFormLabel>Email</AppFormLabel>
+                      <AppFormLabel>{translation("LabelEmail")}</AppFormLabel>
                       <AppTextField
                         name="email"
                         value={values.email}
@@ -454,7 +481,7 @@ export const DefendantForm = ({
                       )}
                     </AppFormField>
                     <AppFormField className="col-span-2">
-                      <AppFormLabel>County</AppFormLabel>
+                      <AppFormLabel>{translation("LabelCounty")}</AppFormLabel>
                       <Select
                         name="county"
                         options={countiesFilter}
@@ -464,7 +491,9 @@ export const DefendantForm = ({
                     </AppFormField>
 
                     <AppFormField className="col-span-2">
-                      <AppFormLabel>Date of Birth</AppFormLabel>
+                      <AppFormLabel>
+                        {translation("LabelBirthDate")}
+                      </AppFormLabel>
                       <AppDatePicker
                         selected={birthDate}
                         onChange={(date: Date) => {
@@ -474,13 +503,15 @@ export const DefendantForm = ({
                       />
                     </AppFormField>
                     <AppFormField className="col-span-2">
-                      <AppFormLabel>Gender</AppFormLabel>
+                      <AppFormLabel>{translation("LabelGender")}</AppFormLabel>
                       <AppSelect
                         name="gender"
                         value={values.gender}
                         onChange={handleChange}
                       >
-                        <option value="">Select Gender</option>
+                        <option value="">
+                          {translation("LabelSelectGender")}
+                        </option>
                         {genders?.map((gender) => (
                           <option key={gender.idGender} value={gender.idGender}>
                             {gender.gender}
@@ -494,7 +525,7 @@ export const DefendantForm = ({
                       )}
                     </AppFormField>
                     <AppFormField className="col-span-2">
-                      <AppFormLabel>SID</AppFormLabel>
+                      <AppFormLabel>{translation("LabelSID")}</AppFormLabel>
                       <AppTextField
                         name="sid"
                         value={values.sid}
@@ -522,7 +553,7 @@ export const DefendantForm = ({
                     <AppFormField className="col-span-2">
                       <Input
                         name="password"
-                        label="Password"
+                        label={translation("LabelPassword")}
                         labelPlacement="outside"
                         value={values.password}
                         onChange={handleChange}
@@ -555,12 +586,12 @@ export const DefendantForm = ({
                     <AppFormField className="col-span-6 z-0">
                       <Textarea
                         name="notes"
-                        label="Notes"
+                        label={translation("LabelNotes")}
                         labelPlacement="outside"
                         value={values.notes}
                         onChange={handleChange}
                         type="string"
-                        placeholder="Add notes"
+                        placeholder={translation("PlaceholderNotes")}
                         defaultValue={values.notes}
                         radius="sm"
                         variant="faded"
@@ -570,7 +601,7 @@ export const DefendantForm = ({
                     <AppFormField className="col-span-6">
                       <Textarea
                         name="offense"
-                        label="Offense"
+                        label={translation("LabelOffense")}
                         labelPlacement="outside"
                         value={values.offense}
                         onChange={handleChange}
@@ -589,14 +620,16 @@ export const DefendantForm = ({
                     </AppFormField>
                   </div>
                   <div className="col-span-12 flex flex-row items-center justify-end gap-3 ">
-                    <AppButton onClick={onClose}>Cancel</AppButton>
+                    <AppButton onClick={onClose}>
+                      {translation("ButtonCancel")}
+                    </AppButton>
                     <AppButton
                       colorScheme="primary"
                       type="submit"
                       isLoading={loadingDefendant}
                       isDisabled={loadingDefendant}
                     >
-                      Create Defendant
+                      {translation("ButtonCreateDefendant")}
                     </AppButton>
                   </div>
                 </div>
@@ -661,7 +694,7 @@ export const DefendantForm = ({
               {({ open }) => (
                 <>
                   <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
-                    Devices
+                    {translation("DisclosureDevices")}
                     <Icon.ChevronRight
                       className={open ? "rotate-90 transform" : ""}
                     />
@@ -682,7 +715,8 @@ export const DefendantForm = ({
               {({ open }) => (
                 <>
                   <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
-                    Addresses
+                    {translation("DisclosureAddresses")}
+
                     <Icon.ChevronRight
                       className={open ? "rotate-90 transform" : ""}
                     />
@@ -703,7 +737,8 @@ export const DefendantForm = ({
               {({ open }) => (
                 <>
                   <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
-                    Phone Number
+                    {translation("DisclosurePhones")}
+
                     <Icon.ChevronRight
                       className={open ? "rotate-90 transform" : ""}
                     />
@@ -725,7 +760,8 @@ export const DefendantForm = ({
               {({ open }) => (
                 <>
                   <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
-                    Case Number
+                    {translation("DisclosureCases")}
+
                     <Icon.ChevronRight
                       className={open ? "rotate-90 transform" : ""}
                     />
@@ -746,7 +782,8 @@ export const DefendantForm = ({
               {({ open }) => (
                 <>
                   <Disclosure.Button className="flex w-full justify-between rounded-lg bg-info-100 px-4 py-2 text-left text-sm font-medium text-info-900 hover:bg-info-200 focus:outline-none focus-visible:ring focus-visible:primary">
-                    Reference Contact
+                    {translation("DisclosureReferences")}
+
                     <Icon.ChevronRight
                       className={open ? "rotate-90 transform" : ""}
                     />

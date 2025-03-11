@@ -3,6 +3,7 @@ import { ReferenceForm } from "../forms/reference-from";
 import { useGetReferenceContactById } from "../../hooks/reference-contact/use-get-reference-contact-by-id";
 import { useEffect, useState } from "react";
 import { ReferenceContact } from "../../../domain/entities/reference-contact";
+import { TFunction } from "i18next";
 
 type AppReferenceContactModalProps = {
   isVisible: boolean;
@@ -11,6 +12,7 @@ type AppReferenceContactModalProps = {
   idReferencePerson?: number | null;
   isCreating: boolean;
   onReload: () => void;
+  translation: TFunction<[string], undefined>;
 };
 
 export const AppReferenceContactModal = ({
@@ -20,6 +22,7 @@ export const AppReferenceContactModal = ({
   idReferencePerson,
   isCreating,
   onReload,
+  translation,
 }: AppReferenceContactModalProps) => {
   const [data, setData] = useState<ReferenceContact | null>();
   const { getReferenceContactById, referenceContactById } =
@@ -42,7 +45,7 @@ export const AppReferenceContactModal = ({
       <ModalContent>
         <>
           <ModalHeader className="flex flex-col gap-1 items-center">
-            Reference Contact
+            {translation("ModalReferenceContactTitle")}
           </ModalHeader>
           <ModalBody className="flex flex-col items-center justify-center w-full p-5">
             <ReferenceForm
@@ -52,6 +55,7 @@ export const AppReferenceContactModal = ({
               idReferencePerson={idReferencePerson}
               onReload={onReload}
               referenceContact={data}
+              translation={translation}
             />
           </ModalBody>
         </>

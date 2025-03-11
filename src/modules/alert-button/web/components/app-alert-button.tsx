@@ -7,7 +7,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AppAlertCard } from "./app-alert-card";
 import { Tracking } from "../../../tracking/domain/entities/tracking";
 import { AppTrackingModal } from "../../../tracking/web/components/modals/app-tracking-modal";
+import { useTranslation } from "react-i18next";
 export const AppAlertButton = () => {
+  const { t: translation } = useTranslation("AlertNotification");
   const { tracking, getTracking } = useGetTracking();
   const [mute, setMute] = useState(false);
   const [audio, setAudio] = useState(new Audio("/src/assets/mp3/alarm.mp3"));
@@ -83,7 +85,7 @@ export const AppAlertButton = () => {
                 {mute ? <Icon.Volume2 size={15} /> : <Icon.VolumeX size={15} />}
               </Button>
               <h1 className="font-bold text-white place-self-center justify-self-center w-full text-center ">
-                Alerts
+                {translation("Title")}
               </h1>
               <Button
                 onPress={() => setIsVisible(false)}
@@ -100,6 +102,7 @@ export const AppAlertButton = () => {
               handleClick={(item) => {
                 handleClick(item);
               }}
+              translation={translation}
             />
           </motion.aside>
         )}

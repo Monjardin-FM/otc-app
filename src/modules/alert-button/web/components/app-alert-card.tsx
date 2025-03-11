@@ -9,18 +9,24 @@ import {
 } from "@nextui-org/react";
 import { Tracking } from "../../../tracking/domain/entities/tracking";
 import * as Icon from "react-feather";
-import { useEffect } from "react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc"; // Importa el plugin UTC de Day.js
 import timezone from "dayjs/plugin/timezone"; // Importa el plugin de zona horaria de Day.js
+import { TFunction } from "i18next";
+import { useEffect } from "react";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 export type AppAlertCardProps = {
   alert?: Tracking[];
   handleClick: (item: Tracking) => void;
+  translation: TFunction;
 };
-export const AppAlertCard = ({ alert, handleClick }: AppAlertCardProps) => {
+export const AppAlertCard = ({
+  alert,
+  handleClick,
+  translation,
+}: AppAlertCardProps) => {
   useEffect(() => {}, [alert]);
   return (
     <div className="flex flex-col items-center justify-items-center gap-3 mt-5 w-72">
@@ -64,7 +70,7 @@ export const AppAlertCard = ({ alert, handleClick }: AppAlertCardProps) => {
           <Divider />
           <CardFooter className="flex flex-col items-center justify-center">
             <Tooltip
-              content={"Tracking"}
+              content={translation("CardTooltip")}
               showArrow
               color="warning"
               disableAnimation

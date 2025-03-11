@@ -9,17 +9,14 @@ import { UIColorScheme } from "../../../../../presentation/types/UIColorScheme";
 import { AppAvatar } from "../../../../../presentation/Components/AppAvatar";
 import { Button, Chip, Tooltip } from "@nextui-org/react";
 import { AppAuthorizationGuard } from "../../../../../presentation/Components/AppAuthorizationGuard";
-// import dayjs from "dayjs";
+import { TFunction } from "i18next";
 export type DefendantsTableProps = {
-  // onToggleStatus?: (index: Client) => void;
-  // onUpdateClient: (data: Client) => void;
   loadingDeleteDefendant: boolean;
   items?: Defendant[];
   onEdit: (params: RenderFnParams<Defendant>) => void;
   onDelete: (params: RenderFnParams<Defendant>) => void;
   onAddNote: (params: RenderFnParams<Defendant>) => void;
-  // onNotification: (params: RenderFnParams<UserManage>) => void;
-  // onUpdateAlmacen: (params: RenderFnParams<UserManage>) => void;
+  translation: TFunction<[string], undefined>;
 };
 const getRandomColorSchema = (params: { length: number }) => {
   const colors: UIColorScheme[] = [
@@ -81,20 +78,19 @@ const SIDDefendantColumn = (params: RenderFnParams<Defendant>) => {
   );
 };
 
-// const CaseNumberDefendantColumn = (params: RenderFnParams<Defendant>) => {
-//   return (
-//     <Chip color="success" variant="dot">
-//       <div className="font-semibold text-sm text-primary-600 tracking-wider">
-//         {params.record.caseNumber}
-//       </div>
-//     </Chip>
-//   );
-// };
-
-const StatusDefendantColumn = (params: RenderFnParams<Defendant>) => {
+const StatusDefendantColumn = ({
+  record,
+  translation,
+}: RenderFnParams<Defendant> & {
+  translation: TFunction<[string], undefined>;
+}) => {
   return (
     <Tooltip
-      content={params.record.idStatus === 1 ? "Active" : "Inactive"}
+      content={
+        record.idStatus === 1
+          ? translation("TooltipStatusDefendantActive")
+          : translation("TooltipStatusDefendantInactive")
+      }
       color="primary"
       offset={15}
       showArrow
@@ -102,11 +98,11 @@ const StatusDefendantColumn = (params: RenderFnParams<Defendant>) => {
       disableAnimation
     >
       <Chip
-        color={params.record.idStatus === 1 ? "success" : "danger"}
+        color={record.idStatus === 1 ? "success" : "danger"}
         variant="shadow"
         radius="full"
       >
-        {params.record.idStatus === 1 ? (
+        {record.idStatus === 1 ? (
           <Icon.Circle size={12} />
         ) : (
           <Icon.AlertTriangle size={12} />
@@ -121,17 +117,19 @@ const ActionsColumn = ({
   onDelete,
   onAddNote,
   loadingDeleteDefendant,
+  translation,
 }: // record,
 RenderFnParams<Defendant> & {
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: () => void;
   loadingDeleteDefendant: boolean;
+  translation: TFunction<[string], undefined>;
 }) => {
   return (
     <div className="flex flex-row items-center justify-start gap-3 static -z-50">
       <Tooltip
-        content={"Add Note"}
+        content={translation("TooltipAddNote")}
         color="warning"
         style={{
           zIndex: 0,
@@ -155,7 +153,7 @@ RenderFnParams<Defendant> & {
         </Button>
       </Tooltip>
       <Tooltip
-        content={"Edit Defendant"}
+        content={translation("TooltipEditDefendant")}
         color="primary"
         style={{
           zIndex: 0,
@@ -182,7 +180,7 @@ RenderFnParams<Defendant> & {
         roles={["County Administrator", "OTC Administrator"]}
       >
         <Tooltip
-          content={"Delete Defendant"}
+          content={translation("TooltipDeleteDefendant")}
           color="danger"
           style={{
             zIndex: 0,
@@ -217,24 +215,25 @@ export const AppDefendantsTable = ({
   onDelete,
   onAddNote,
   loadingDeleteDefendant,
+  translation,
 }: DefendantsTableProps) => {
   const columns: AppDataGridColumn<Defendant>[] = [
     {
       key: "defendantName",
       dataIndex: "defendantName",
-      title: "Name",
+      title: translation("NameDefendantColumn"),
       render: NamDefendantColumn,
     },
     {
       key: "defendantEmail",
       dataIndex: "defendantEmail",
-      title: "Email",
+      title: translation("EmailDefendantColumn"),
       render: EmailDefendantColumn,
     },
     {
       key: "defendantSID",
       dataIndex: "defendantSID",
-      title: "SID",
+      title: translation("SIDDefendantColumn"),
       render: SIDDefendantColumn,
     },
     // {
@@ -246,13 +245,14 @@ export const AppDefendantsTable = ({
     {
       key: "defendantStatus",
       dataIndex: "defendantStatus",
-      title: "Status",
-      render: StatusDefendantColumn,
+      title: translation("StatusDefendantColumn"),
+      render: (data) =>
+        StatusDefendantColumn({ ...data, translation: translation }),
     },
     {
       key: "actionsClient",
       dataIndex: "actionsClient",
-      title: "Actions",
+      title: translation("ActionsDefendantColumn"),
       render: (data) =>
         ActionsColumn({
           ...data,
@@ -266,6 +266,7 @@ export const AppDefendantsTable = ({
             onAddNote(data);
           },
           loadingDeleteDefendant: loadingDeleteDefendant,
+          translation: translation,
         }),
     },
   ];

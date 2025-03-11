@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import AppConfig from "../../../../settings.json";
 import { useToggle } from "react-use";
 import * as Icon from "react-feather";
@@ -61,74 +61,78 @@ export const AppAlarmConfigManagerPage = () => {
     }
   }, [errorDelete]);
   return (
-    <AppAuthorizationGuard
-      roles={AppConfig["alarm.config.managerPage.authorization"] as UserRole[]}
-      redirect={{ to: "/" }}
-    >
-      {!alarms && <AppLoading />}
-      <AppNewAlarmModal
-        isVisible={visibleNewAlarmModal}
-        onClose={() => setVisibleNewAlarmModal(false)}
-        onReload={() => setToggleReload(!toggleReload)}
-        translation={t}
-      />
-      <AppEditAlarmModal
-        isVisible={visibleEditAlarmModal}
-        onClose={() => setVisibleEditAlarmModal(false)}
-        onReload={() => setToggleReload(!toggleReload)}
-        idAlarm={idAlarm}
-        translation={t}
-      />
-      <AppPageTransition>
-        <div className="items-center mx-auto mb-5">
-          <AppAlarmsHeader
-            onClick={onClick}
-            loadingAlarms={loadingAlarms}
-            search={search}
-            setSearch={setSearch}
-          />
-        </div>
-        <div className="container mx-auto flex flex-col items-end jusitfy-center">
-          <Tooltip
-            content={t("TooltipNewAlarm")}
-            color="warning"
-            offset={1}
-            showArrow
-            closeDelay={10}
-            style={{
-              zIndex: 0,
-            }}
-            disableAnimation
-          >
-            <Button
+    <Suspense fallback="loading">
+      <AppAuthorizationGuard
+        roles={
+          AppConfig["alarm.config.managerPage.authorization"] as UserRole[]
+        }
+        redirect={{ to: "/" }}
+      >
+        {!alarms && <AppLoading />}
+        <AppNewAlarmModal
+          isVisible={visibleNewAlarmModal}
+          onClose={() => setVisibleNewAlarmModal(false)}
+          onReload={() => setToggleReload(!toggleReload)}
+          translation={t}
+        />
+        <AppEditAlarmModal
+          isVisible={visibleEditAlarmModal}
+          onClose={() => setVisibleEditAlarmModal(false)}
+          onReload={() => setToggleReload(!toggleReload)}
+          idAlarm={idAlarm}
+          translation={t}
+        />
+        <AppPageTransition>
+          <div className="items-center mx-auto mb-5">
+            <AppAlarmsHeader
+              onClick={onClick}
+              loadingAlarms={loadingAlarms}
+              search={search}
+              setSearch={setSearch}
+            />
+          </div>
+          <div className="container mx-auto flex flex-col items-end jusitfy-center">
+            <Tooltip
+              content={t("TooltipNewAlarm")}
               color="warning"
-              onClick={() => setVisibleNewAlarmModal(true)}
-              isIconOnly
-              size="md"
+              offset={1}
+              showArrow
+              closeDelay={10}
+              style={{
+                zIndex: 0,
+              }}
+              disableAnimation
             >
-              <Icon.PlusCircle color="white" />
-            </Button>
-          </Tooltip>
-        </div>
-        <div className="container mx-auto mt-5">
-          <AppAlarmssTable
-            onEdit={({ record }) => {
-              setIdAlarm(record.idAlarmType);
-              setVisibleEditAlarmModal(true);
-            }}
-            onDelete={async (record) => {
-              if (record.record.idAlarmType) {
-                await deleteAlarm({ idAlarmType: record.record.idAlarmType });
-                if (!errorDelete) onDelete();
-              }
-              setToggleReload(!toggleReload);
-            }}
-            items={alarms}
-            loadingDeleteAlarm={loadingDeleteAlarm}
-            translation={t}
-          />
-        </div>
-      </AppPageTransition>
-    </AppAuthorizationGuard>
+              <Button
+                color="warning"
+                onClick={() => setVisibleNewAlarmModal(true)}
+                isIconOnly
+                size="md"
+              >
+                <Icon.PlusCircle color="white" />
+              </Button>
+            </Tooltip>
+          </div>
+          <div className="container mx-auto mt-5">
+            <AppAlarmssTable
+              onEdit={({ record }) => {
+                setIdAlarm(record.idAlarmType);
+                setVisibleEditAlarmModal(true);
+              }}
+              onDelete={async (record) => {
+                if (record.record.idAlarmType) {
+                  await deleteAlarm({ idAlarmType: record.record.idAlarmType });
+                  if (!errorDelete) onDelete();
+                }
+                setToggleReload(!toggleReload);
+              }}
+              items={alarms}
+              loadingDeleteAlarm={loadingDeleteAlarm}
+              translation={t}
+            />
+          </div>
+        </AppPageTransition>
+      </AppAuthorizationGuard>
+    </Suspense>
   );
 };

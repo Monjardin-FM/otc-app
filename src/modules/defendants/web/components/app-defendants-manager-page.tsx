@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import AppConfig from "../../../../settings.json";
 import { AppDefendantsHeader } from "./app-defendants-header";
 import * as Icon from "react-feather";
@@ -21,7 +21,9 @@ import { AppAlarmsDefendantScheduleModal } from "./modals/app-alarms-defendant-s
 import { AppAddNoteDefendantModal } from "./modals/app-add-note-defendant";
 import { AppEditNoteDefendantModal } from "./modals/app-edit-note-defendant";
 import { AppSwal } from "../../../../presentation/Components/AppSwal";
+import { useTranslation } from "react-i18next";
 export const AppDefendantsManagerPage = () => {
+  const { t: translation } = useTranslation("Defendants");
   const {
     defendants,
     getDefendants,
@@ -57,13 +59,13 @@ export const AppDefendantsManagerPage = () => {
   const askDeleteForce = () => {
     return AppSwal().fire({
       icon: "question",
-      title: `Are you sure to delete the defendant?`,
-      text: "This action cannot be undone",
+      title: translation("SwalDeleteDefendantTitle"),
+      text: translation("SwalDeleteDefendantText"),
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete!",
-      cancelButtonText: "Cancel",
+      confirmButtonText: translation("SwalDeleteDefendantConfirmButtonText"),
+      cancelButtonText: translation("SwalDeleteDefendantCancelButtonText"),
     });
   };
   const onDelete = async () => {
@@ -72,9 +74,9 @@ export const AppDefendantsManagerPage = () => {
       await deleteDefendant({ idPerson: idDefendant });
       if (!errorDelete) {
         AppToast().fire({
-          title: "Defendant deleted",
+          title: translation("SwalDeleteDefendantDeleted"),
           icon: "success",
-          text: "The defendant was deleted succesfully",
+          text: translation("SwalDeleteDefendantDeletedText"),
         });
         setToggleReload(!toggleReload);
       }
@@ -94,175 +96,180 @@ export const AppDefendantsManagerPage = () => {
   useEffect(() => {
     if (errorDelete) {
       AppToast().fire({
-        title: "Error",
+        title: translation("SwalDeleteDefendantError"),
         icon: "error",
-        text: "An error occurred while trying to delete the defendant",
+        text: translation("SwalDeleteDefendantErrorText"),
       });
     }
     if (loadingDeleteDefendant) {
       AppToast().fire({
-        title: "Deleting Defendant",
+        title: translation("SwalLoadingDeleteDefendant"),
         icon: "info",
-        text: "The defendant is being deleted. Please wait",
+        text: translation("SwalLoadingDeleteDefendantText"),
       });
     }
   }, [errorDelete, loadingDeleteDefendant]);
   return (
-    <AppAuthorizationGuard
-      roles={AppConfig["defendants.managerPage.authorization"] as UserRole[]}
-      redirect={{ to: "/" }}
-    >
-      {!defendants && <AppLoading />}
-      <AppNewDefendantModal
-        isVisible={visibleNewDefendantModal}
-        onClose={() => setVisibleNewDefendantModal(false)}
-        onReload={() => {
-          setToggleReload(!toggleReload);
-        }}
-      />
-      <AppEditSelectionModal
-        isVisible={visibleEditSelectionModal}
-        onClose={() => {
-          setVIsibleEditSelectionmodal(false);
-          setIdDefendant(null);
-        }}
-        onEditInfo={(param: string) => {
-          switch (param) {
-            case "editInfo": {
-              setVIsibleEditSelectionmodal(false);
-              setVisibleEditDefendantInfoModal(true);
-              break;
-            }
+    <Suspense fallback="loading">
+      <AppAuthorizationGuard
+        roles={AppConfig["defendants.managerPage.authorization"] as UserRole[]}
+        redirect={{ to: "/" }}
+      >
+        {!defendants && <AppLoading />}
+        <AppNewDefendantModal
+          isVisible={visibleNewDefendantModal}
+          onClose={() => setVisibleNewDefendantModal(false)}
+          onReload={() => {
+            setToggleReload(!toggleReload);
+          }}
+          translation={translation}
+        />
+        <AppEditSelectionModal
+          isVisible={visibleEditSelectionModal}
+          onClose={() => {
+            setVIsibleEditSelectionmodal(false);
+            setIdDefendant(null);
+          }}
+          onEditInfo={(param: string) => {
+            switch (param) {
+              case "editInfo": {
+                setVIsibleEditSelectionmodal(false);
+                setVisibleEditDefendantInfoModal(true);
+                break;
+              }
 
-            case "victims": {
-              setVIsibleEditSelectionmodal(false);
-              setVisibleEditVictimDefendantModal(true);
-              break;
+              case "victims": {
+                setVIsibleEditSelectionmodal(false);
+                setVisibleEditVictimDefendantModal(true);
+                break;
+              }
+              case "editAlarm": {
+                setVIsibleEditSelectionmodal(false);
+                setVisibleEditAlarmDefendantModal(true);
+                break;
+              }
+              case "scheduleAlarms": {
+                setVIsibleEditSelectionmodal(false);
+                setVisibleScheduleAlarmsModal(true);
+                break;
+              }
+              case "addNote": {
+                setVIsibleEditSelectionmodal(false);
+                setVisibleEditNoteDefendant(true);
+                break;
+              }
+              default:
+                return null;
             }
-            case "editAlarm": {
-              setVIsibleEditSelectionmodal(false);
-              setVisibleEditAlarmDefendantModal(true);
-              break;
-            }
-            case "scheduleAlarms": {
-              setVIsibleEditSelectionmodal(false);
-              setVisibleScheduleAlarmsModal(true);
-              break;
-            }
-            case "addNote": {
-              setVIsibleEditSelectionmodal(false);
-              setVisibleEditNoteDefendant(true);
-              break;
-            }
-            default:
-              return null;
-          }
-        }}
-        idDefendant={idDefendant}
-      />
-      <AppEditInfoDefendantModal
-        isVisible={visibleEditDefendantInfoModal}
-        onClose={() => {
-          setVisibleEditDefendantInfoModal(false);
-          setVIsibleEditSelectionmodal(true);
-          setToggleReload(!toggleReload);
-        }}
-        idDefendant={idDefendant}
-      />
-      <AppEditVictimDefendantModal
-        isVisible={visibleEditVictimDefendantModal}
-        onClose={() => {
-          setVisibleEditVictimDefendantModal(false);
-          setVIsibleEditSelectionmodal(true);
-          setToggleReload(!toggleReload);
-        }}
-        idDefendant={idDefendant}
-      />
-      <AppEditAlarmDefendantModal
-        isVisible={visibleEditAlarmDefendantModal}
-        onClose={() => {
-          setVisibleEditAlarmDefendantModal(false);
-          setVIsibleEditSelectionmodal(true);
-          setToggleReload(!toggleReload);
-        }}
-        idDefendant={idDefendant}
-      />
-      <AppAlarmsDefendantScheduleModal
-        isVisible={visibleScheduleAlarmsModal}
-        onClose={() => {
-          setVisibleScheduleAlarmsModal(false);
-          setVIsibleEditSelectionmodal(true);
-          setToggleReload(!toggleReload);
-        }}
-        idDefendant={idDefendant}
-      />
-      <AppAddNoteDefendantModal
-        isVisible={visibleAddNoteDefendant}
-        onClose={() => {
-          setVisibleAddNoteDefendant(false);
-          // setVIsibleEditSelectionmodal(true);
-          setToggleReload(!toggleReload);
-        }}
-        idDefendant={idDefendant}
-      />
-      <AppEditNoteDefendantModal
-        isVisible={visibleEditNoteDefendant}
-        onClose={() => setVisibleEditNoteDefendant(false)}
-        idDefendant={idDefendant}
-      />
-      <AppPageTransition>
-        <div className="items-center mx-auto mb-10">
-          <AppDefendantsHeader
-            onClick={onClick}
-            loadingDefendants={loadingDefendants}
-            search={search}
-            setSearch={setSearch}
-          />
-        </div>
-        <div className="container mx-auto flex flex-col items-end jusitfy-center mt-5">
-          <Tooltip
-            content={"New Defendant"}
-            color="warning"
-            offset={1}
-            showArrow
-            closeDelay={10}
-            style={{
-              zIndex: 0,
-            }}
-            disableAnimation
-          >
-            <Button
+          }}
+          idDefendant={idDefendant}
+        />
+        <AppEditInfoDefendantModal
+          isVisible={visibleEditDefendantInfoModal}
+          onClose={() => {
+            setVisibleEditDefendantInfoModal(false);
+            setVIsibleEditSelectionmodal(true);
+            setToggleReload(!toggleReload);
+          }}
+          idDefendant={idDefendant}
+        />
+        <AppEditVictimDefendantModal
+          isVisible={visibleEditVictimDefendantModal}
+          onClose={() => {
+            setVisibleEditVictimDefendantModal(false);
+            setVIsibleEditSelectionmodal(true);
+            setToggleReload(!toggleReload);
+          }}
+          idDefendant={idDefendant}
+        />
+        <AppEditAlarmDefendantModal
+          isVisible={visibleEditAlarmDefendantModal}
+          onClose={() => {
+            setVisibleEditAlarmDefendantModal(false);
+            setVIsibleEditSelectionmodal(true);
+            setToggleReload(!toggleReload);
+          }}
+          idDefendant={idDefendant}
+        />
+        <AppAlarmsDefendantScheduleModal
+          isVisible={visibleScheduleAlarmsModal}
+          onClose={() => {
+            setVisibleScheduleAlarmsModal(false);
+            setVIsibleEditSelectionmodal(true);
+            setToggleReload(!toggleReload);
+          }}
+          idDefendant={idDefendant}
+        />
+        <AppAddNoteDefendantModal
+          isVisible={visibleAddNoteDefendant}
+          onClose={() => {
+            setVisibleAddNoteDefendant(false);
+            // setVIsibleEditSelectionmodal(true);
+            setToggleReload(!toggleReload);
+          }}
+          idDefendant={idDefendant}
+        />
+        <AppEditNoteDefendantModal
+          isVisible={visibleEditNoteDefendant}
+          onClose={() => setVisibleEditNoteDefendant(false)}
+          idDefendant={idDefendant}
+        />
+        <AppPageTransition>
+          <div className="items-center mx-auto mb-10">
+            <AppDefendantsHeader
+              onClick={onClick}
+              loadingDefendants={loadingDefendants}
+              search={search}
+              setSearch={setSearch}
+              translation={translation}
+            />
+          </div>
+          <div className="container mx-auto flex flex-col items-end jusitfy-center mt-5">
+            <Tooltip
+              content={"New Defendant"}
               color="warning"
-              onClick={() => setVisibleNewDefendantModal(true)}
-              isIconOnly
-              size="md"
+              offset={1}
+              showArrow
+              closeDelay={10}
+              style={{
+                zIndex: 0,
+              }}
+              disableAnimation
             >
-              <Icon.PlusCircle color="white" />
-            </Button>
-          </Tooltip>
-        </div>
-        <div className="container mx-auto mt-5 mb-14">
-          <AppDefendantsTable
-            onEdit={(record) => {
-              setIdDefendant(record.record.idPerson);
-              setVIsibleEditSelectionmodal(true);
-            }}
-            items={defendants}
-            onDelete={({ record }) => {
-              setIdDefendant(record.idPerson);
-              onDelete();
-              // await deleteDefendant({ idPerson: record.idPerson });
-              // if (!errorDelete) onDelete();
-              // setToggleReload(!toggleReload);
-            }}
-            loadingDeleteDefendant={loadingDeleteDefendant}
-            onAddNote={(record) => {
-              setIdDefendant(record.record.idPerson);
-              setVisibleAddNoteDefendant(true);
-            }}
-          />
-        </div>
-      </AppPageTransition>
-    </AppAuthorizationGuard>
+              <Button
+                color="warning"
+                onClick={() => setVisibleNewDefendantModal(true)}
+                isIconOnly
+                size="md"
+              >
+                <Icon.PlusCircle color="white" />
+              </Button>
+            </Tooltip>
+          </div>
+          <div className="container mx-auto mt-5 mb-14">
+            <AppDefendantsTable
+              onEdit={(record) => {
+                setIdDefendant(record.record.idPerson);
+                setVIsibleEditSelectionmodal(true);
+              }}
+              items={defendants}
+              onDelete={({ record }) => {
+                setIdDefendant(record.idPerson);
+                onDelete();
+                // await deleteDefendant({ idPerson: record.idPerson });
+                // if (!errorDelete) onDelete();
+                // setToggleReload(!toggleReload);
+              }}
+              loadingDeleteDefendant={loadingDeleteDefendant}
+              onAddNote={(record) => {
+                setIdDefendant(record.record.idPerson);
+                setVisibleAddNoteDefendant(true);
+              }}
+              translation={translation}
+            />
+          </div>
+        </AppPageTransition>
+      </AppAuthorizationGuard>
+    </Suspense>
   );
 };
