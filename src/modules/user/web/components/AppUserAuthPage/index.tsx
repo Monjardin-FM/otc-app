@@ -21,7 +21,7 @@ export const AppUserAuth = () => {
               duration={18}
               backgroundImage={AuthPageBackground}
             >
-              <div className="max-w-4xl flex py-8 px-36 bg-white bg-opacity-60 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-sm border border-white border-opacity-10 shadow-xl">
+              <div className="app-glass app-border max-w-4xl flex py-8 px-36 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-sm border shadow-xl">
                 <div className="w-full max-w-md ">
                   <div className="rounded-xl">
                     <img
@@ -29,7 +29,7 @@ export const AppUserAuth = () => {
                       src={OTCLogo}
                       alt="OTC Logo"
                     />
-                    <div className="text-primary-900 text-center mt-5 text-lg">
+                    <div className="text-primary-900 dark:text-primary-100 text-center mt-5 text-lg">
                       {t("Welcome")}
                     </div>
                   </div>

@@ -25,12 +25,12 @@ export const AppLayout = () => {
       {!user ? (
         <Navigate to={"/sign"} />
       ) : (
-        <div className="w-full min-h-screen  overflow-hidden absolute">
+        <div className="app-shell w-full min-h-screen overflow-hidden absolute">
           <AppPageTransition>
             <button
               onClick={() => toggle(true)}
               style={{ left: margin }}
-              className="p-3 rounded-full bg-gray-100 text-gray-700 top-6 inline-block absolute shadow appearance-none focus:outline-none z-30"
+              className="app-surface-muted app-border border p-3 rounded-full top-6 inline-block absolute shadow appearance-none focus:outline-none z-30"
             >
               <Icon.Menu size={20} />
             </button>

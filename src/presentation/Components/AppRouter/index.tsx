@@ -14,7 +14,7 @@ export interface AppRouterProps {
 export const AppRouter = ({ routes }: AppRouterProps) => {
   let location = useLocation();
   return (
-    <>
+    <div className="app-shell">
       {/* <TransitionGroup> */}
       {/* <CSSTransition key={location.pathname} classNames="fade" timeout={500}> */}
       {routes && routes.length > 0 && (
@@ -34,6 +34,6 @@ export const AppRouter = ({ routes }: AppRouterProps) => {
       )}
       {/* </CSSTransition> */}
       {/* </TransitionGroup> */}
-    </>
+    </div>
   );
 };

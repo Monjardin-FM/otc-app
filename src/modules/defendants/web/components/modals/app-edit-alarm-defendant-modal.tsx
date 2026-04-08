@@ -67,16 +67,17 @@ AppEditAlarmDefendantModalProps) => {
 
   useEffect(() => {
     if (defendantAlarmById) {
-      const geofenceJSON: GeoJSONO[] = defendantAlarmById?.lGeofence.map(
-        (item) => JSON.parse(item.geofence)
-      );
+      const geofenceJSON: GeoJSONO[] =
+        defendantAlarmById.lGeofence?.map((item) => JSON.parse(item.geofence)) ??
+        [];
       setGeofence(geofenceJSON);
-      const items = defendantAlarmById.alarmException.map((item) => ({
-        alarmExceptionType: item.alarmExceptionType,
-        dateInit: item.dateInit,
-        dateFinish: item.dateFinish,
-        strDays: item.strDays,
-      }));
+      const items =
+        defendantAlarmById.alarmException?.map((item) => ({
+          alarmExceptionType: item.alarmExceptionType,
+          dateInit: item.dateInit,
+          dateFinish: item.dateFinish,
+          strDays: item.strDays,
+        })) ?? [];
       setItemsScheduleException(items);
     }
   }, [defendantAlarmById]);

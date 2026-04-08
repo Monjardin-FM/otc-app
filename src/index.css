@@ -1,6 +1,91 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 transition-colors duration-300;
+}
+
+html.dark body {
+  @apply bg-black text-gray-100;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  @apply min-h-screen bg-gray-50 text-gray-900 transition-colors duration-300;
+}
+
+html.dark .app-shell {
+  @apply bg-black text-gray-100;
+}
+
+.app-surface {
+  @apply bg-white text-gray-900 transition-colors duration-300;
+}
+
+html.dark .app-surface {
+  @apply bg-gray-900 text-gray-100;
+}
+
+.app-surface-muted {
+  @apply bg-gray-100 text-gray-800 transition-colors duration-300;
+}
+
+html.dark .app-surface-muted {
+  @apply bg-gray-800 text-gray-100;
+}
+
+.app-border {
+  @apply border-gray-200 transition-colors duration-300;
+}
+
+html.dark .app-border {
+  @apply border-gray-700;
+}
+
+.app-text-muted {
+  @apply text-gray-600 transition-colors duration-300;
+}
+
+html.dark .app-text-muted {
+  @apply text-gray-300;
+}
+
+.app-glass {
+  @apply bg-white/75 text-gray-900 backdrop-blur-sm transition-colors duration-300;
+}
+
+html.dark .app-glass {
+  @apply bg-gray-900/85 text-gray-100;
+}
+
+.theme-toggle-track {
+  @apply bg-gray-300 transition-colors duration-300;
+}
+
+html.dark .theme-toggle-track {
+  @apply bg-gray-600;
+}
+
+.theme-toggle-on {
+  @apply bg-primaryColor-600;
+}
+
+.theme-toggle-off {
+  @apply bg-success-600;
+}
+
 .leaflet-container {
   width: 100wh;
   height: 100vh;

@@ -41,6 +41,9 @@ export const AppUserAuthForm = () => {
 
   return (
     <form onSubmit={formik.handleSubmit} className="w-full " autoComplete="off">
+      <div className="mt-6 rounded-lg border border-warning-200 bg-warning-50 px-4 py-3 text-sm text-warning-800 dark:border-warning-700 dark:bg-warning-900/30 dark:text-warning-100">
+        Modo demo activo: puedes iniciar sesión con cualquier correo y cualquier contraseña.
+      </div>
       <AppFormField className="mt-7" isRequired>
         <Input
           id="email"

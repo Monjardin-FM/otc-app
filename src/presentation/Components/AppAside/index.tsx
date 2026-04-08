@@ -15,6 +15,7 @@ import EnglishIcon from "../../../assets/img/english.png";
 import { Switch } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import { Suspense } from "react";
+import { useTheme } from "../../../utils/context/theme.context";
 export type AppAsideV2Props = {
   isVisible?: boolean;
   onClose?: () => void;
@@ -29,6 +30,7 @@ export const AppAsideV2 = ({
   useClickAway(ref, onClose);
 
   const { signOut, user } = useUser();
+  const { isDark, toggleTheme } = useTheme();
   const [language, setLanguage] = useState(
     localStorage.getItem("language") === "en" ? true : false
   );
@@ -55,7 +57,7 @@ export const AppAsideV2 = ({
               opacity: 0,
               x: -20,
             }}
-            className="fixed z-40 inline-block px-8 py-12 overflow-y-auto bg-white shadow-lg inset-y-8 left-8 rounded-xl bg-opacity-75 filter backdrop-filter backdrop-blur-sm hover:bg-white hover:bg-opacity-100 transition ease-in-out duration-700"
+            className="app-glass app-border fixed z-40 inline-block px-8 py-12 overflow-y-auto shadow-lg inset-y-8 left-8 rounded-xl border hover:bg-white hover:bg-opacity-100 transition ease-in-out duration-700 dark:hover:bg-gray-900 dark:hover:bg-opacity-100"
           >
             <div className="flex justify-center w-full">
               <img className="h-20" src={OTCLogo} alt="OTC Logo" />
@@ -179,6 +181,37 @@ export const AppAsideV2 = ({
             </div>
 
             <div className="mt-14 flex flex-col items-center jusitfy-content-center gap-8">
+              <div className="w-full rounded-xl border app-border app-surface-muted px-4 py-3">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-semibold">
+                      {isDark ? "Dark theme" : "Light theme"}
+                    </div>
+                    <div className="app-text-muted text-xs">
+                      {isDark
+                        ? "Reduce glare for low-light presentations"
+                        : "Bright interface for daytime demos"}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon.Sun size={16} className="text-warn-600" />
+                    <Switch
+                      checked={isDark}
+                      onChange={toggleTheme}
+                      className={`${
+                        isDark ? "theme-toggle-on" : "theme-toggle-off"
+                      } relative inline-flex h-6 w-11 items-center rounded-full`}
+                    >
+                      <span
+                        className={`${
+                          isDark ? "translate-x-6" : "translate-x-1"
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                      />
+                    </Switch>
+                    <Icon.Moon size={16} className="text-primaryColor-600" />
+                  </div>
+                </div>
+              </div>
               <AppButton
                 className="flex items-center text-white p-3  rounded-lg"
                 onClick={() => {
@@ -202,7 +235,7 @@ export const AppAsideV2 = ({
                     setLanguage(!language);
                   }}
                   className={`${
-                    language ? "bg-primaryColor-600" : "bg-success-600"
+                    language ? "theme-toggle-on" : "theme-toggle-off"
                   } relative inline-flex h-6 w-11 items-center rounded-full`}
                 >
                   <span
@@ -212,7 +245,9 @@ export const AppAsideV2 = ({
                   />
                 </Switch>
                 <img src={EnglishIcon} className="w-14" />
-                {language ? "english" : "español"}
+                <span className="app-text-muted">
+                  {language ? "english" : "español"}
+                </span>
               </div>
             </div>
           </motion.aside>

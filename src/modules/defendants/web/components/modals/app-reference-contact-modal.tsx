@@ -12,7 +12,7 @@ type AppReferenceContactModalProps = {
   idReferencePerson?: number | null;
   isCreating: boolean;
   onReload: () => void;
-  translation: TFunction<[string], undefined>;
+  translation?: TFunction<[string], undefined>;
 };
 
 export const AppReferenceContactModal = ({
@@ -22,7 +22,7 @@ export const AppReferenceContactModal = ({
   idReferencePerson,
   isCreating,
   onReload,
-  translation,
+  translation = ((key: string) => key) as TFunction<[string], undefined>,
 }: AppReferenceContactModalProps) => {
   const [data, setData] = useState<ReferenceContact | null>();
   const { getReferenceContactById, referenceContactById } =

@@ -15,9 +15,10 @@ type AppGeofenceViewProps = {
 
 export const AppGeofenceView = ({ geofence }: AppGeofenceViewProps) => {
   const mapRef = useRef<any>();
+  const geofenceList = Array.isArray(geofence) ? geofence : [];
   return (
     <div className="flex flex-col w-full col-span-12">
-      {!geofence ? (
+      {!geofenceList.length ? (
         ""
       ) : (
         <MapContainer
@@ -46,13 +47,12 @@ export const AppGeofenceView = ({ geofence }: AppGeofenceViewProps) => {
             </LayersControl.BaseLayer>
           </LayersControl>
           <MapFlyCenter />
-          {geofence &&
-            geofence.map((geo: any) => (
+          {geofenceList.map((geo: any, index: number) => (
               <GeoJSON
-                key={"geofence-defendant"}
+                key={`geofence-defendant-${geo?.idGeofence ?? geo?.idAlarmType ?? index}`}
                 data={geo}
                 style={
-                  geofence.idAlarmType === 1
+                  geo?.idAlarmType === 1
                     ? { color: "red" }
                     : { color: "blue" }
                 }

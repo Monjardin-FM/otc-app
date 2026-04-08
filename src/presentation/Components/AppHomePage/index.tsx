@@ -8,8 +8,8 @@ export const AppHomePage = () => (
   <AppPageTransition>
     <div className="">
       <div className="w-full min-h-screen flex items-center justify-center flex-col">
-        <div className=" bg-primary-500 bg-opacity-5 rounded-lg mx-2">
-          <div className="flex items-center justify-center flex-col bg-clip-padding backdrop-filter backdrop-blur-md border p-14 max-w-3xl rounded-lg border-gray-500 border-opacity-30">
+        <div className="bg-primary-500 bg-opacity-5 rounded-lg mx-2">
+          <div className="app-glass app-border flex items-center justify-center flex-col bg-clip-padding backdrop-filter backdrop-blur-md border p-14 max-w-3xl rounded-lg">
             <div className="w-full max-w-md">
               {/* <Player
                 autoplay
@@ -30,15 +30,15 @@ export const AppHomePage = () => (
                 }}
               />
             </div>
-            <h2 className="text-gray-800 text-xl mt-10 text-center">
+            <h2 className="text-gray-800 dark:text-gray-100 text-xl mt-10 text-center">
               On Time Connect
             </h2>
-            <p className="text-gray-700 mt-2 text-center max-w-3xl">
+            <p className="text-gray-700 dark:text-gray-300 mt-2 text-center max-w-3xl">
               We are working to improve the experience of our users.
             </p>
 
             <div className="mt-12 flex items-center space-x-4 text-center">
-              <div className="text-center text-sm font-semibold text-gray-600">
+              <div className="text-center text-sm font-semibold text-gray-600 dark:text-gray-300">
                 Developed by
               </div>
 
