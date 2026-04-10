@@ -191,19 +191,82 @@ type DemoStore = {
 
 const nowIso = () => new Date().toISOString();
 
-const encodeGeoFence = (centerLat: number, centerLon: number) =>
+const earthRadiusMeters = 6378137;
+
+const toRadians = (value: number) => (value * Math.PI) / 180;
+const toDegrees = (value: number) => (value * 180) / Math.PI;
+
+const moveCoordinate = (
+  centerLat: number,
+  centerLon: number,
+  distanceMeters: number,
+  bearingDegrees: number
+) => {
+  const angularDistance = distanceMeters / earthRadiusMeters;
+  const bearing = toRadians(bearingDegrees);
+  const latitude = toRadians(centerLat);
+  const longitude = toRadians(centerLon);
+
+  const movedLat = Math.asin(
+    Math.sin(latitude) * Math.cos(angularDistance) +
+      Math.cos(latitude) * Math.sin(angularDistance) * Math.cos(bearing)
+  );
+  const movedLon =
+    longitude +
+    Math.atan2(
+      Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(latitude),
+      Math.cos(angularDistance) - Math.sin(latitude) * Math.sin(movedLat)
+    );
+
+  return [toDegrees(movedLon), toDegrees(movedLat)] as [number, number];
+};
+
+const buildCircularPolygon = (
+  centerLat: number,
+  centerLon: number,
+  radiusMeters: number,
+  points = 48
+) => {
+  const coordinates = Array.from({ length: points }, (_, index) =>
+    moveCoordinate(centerLat, centerLon, radiusMeters, (360 / points) * index)
+  );
+  coordinates.push(coordinates[0]);
+  return coordinates;
+};
+
+const exclusionCenterOffset = {
+  lat: 0.0048,
+  lon: 0.0056,
+};
+
+const encodeGeoFence = (
+  centerLat: number,
+  centerLon: number,
+  options?: {
+    name?: string;
+    radius?: number;
+    category?: "inclusion" | "exclusion";
+  }
+) =>
   JSON.stringify({
     type: "FeatureCollection",
     features: [
       {
         type: "Feature",
         properties: {
-          radius: 180,
-          name: "Zona de seguridad demo",
+          name: options?.name || "Zona de seguridad demo",
+          radius: options?.radius ?? 180,
+          category: options?.category || "inclusion",
         },
         geometry: {
-          type: "Point",
-          coordinates: [centerLon, centerLat],
+          type: "Polygon",
+          coordinates: [
+            buildCircularPolygon(
+              centerLat,
+              centerLon,
+              options?.radius ?? 180
+            ),
+          ],
         },
       },
     ],
@@ -235,38 +298,64 @@ const makePosition = (
   };
 };
 
-const makeRoute = (params: {
+const makeWaveRoute = (params: {
   idPerson: number;
   startLat: number;
   startLon: number;
   steps: number;
-  latStep: number;
-  lonStep: number;
+  amplitudeLat: number;
+  amplitudeLon: number;
+  driftLat?: number;
+  driftLon?: number;
   iddeviceType?: number;
   startMinutesAgo?: number;
   minuteStep?: number;
+  cardioBase?: number;
+  bloodOxygenBase?: number;
+  batteryStart?: number;
 }) => {
   const {
     idPerson,
     startLat,
     startLon,
     steps,
-    latStep,
-    lonStep,
+    amplitudeLat,
+    amplitudeLon,
+    driftLat = 0,
+    driftLon = 0,
     iddeviceType = 1,
-    startMinutesAgo = 180,
-    minuteStep = 8,
+    startMinutesAgo = 300,
+    minuteStep = 3,
+    cardioBase = 74,
+    bloodOxygenBase = 98,
+    batteryStart = 97,
   } = params;
 
-  return Array.from({ length: steps }, (_, index) =>
-    makePosition(
-      idPerson,
-      startLat + latStep * index,
-      startLon + lonStep * index,
-      iddeviceType,
-      startMinutesAgo - minuteStep * index
-    )
-  );
+  return Array.from({ length: steps }, (_, index) => {
+    const progress = index / Math.max(steps - 1, 1);
+    const minutesAgo = Math.max(0, startMinutesAgo - minuteStep * index);
+    const lat =
+      startLat +
+      driftLat * progress +
+      Math.sin(index / 6) * amplitudeLat +
+      Math.cos(index / 13) * amplitudeLat * 0.35;
+    const lon =
+      startLon +
+      driftLon * progress +
+      Math.cos(index / 7) * amplitudeLon +
+      Math.sin(index / 11) * amplitudeLon * 0.4;
+    const position = makePosition(idPerson, lat, lon, iddeviceType, minutesAgo);
+
+    return {
+      ...position,
+      cardioFrequency: Math.round(cardioBase + Math.sin(index / 5) * 8),
+      bloodOxygen: Math.max(
+        92,
+        Math.min(100, Math.round(bloodOxygenBase + Math.cos(index / 9) * 2))
+      ),
+      battery: Math.max(18, Math.round(batteryStart - index * 0.45)),
+    };
+  });
 };
 
 const baseUsers: RawPerson[] = [
@@ -630,95 +719,169 @@ const store: DemoStore = {
     },
   ],
   positionsByPerson: {
-    101: makeRoute({
+    101: makeWaveRoute({
       idPerson: 101,
       startLat: 25.6802,
       startLon: -100.3258,
-      steps: 18,
-      latStep: 0.00045,
-      lonStep: 0.0007,
+      steps: 120,
+      amplitudeLat: 0.00032,
+      amplitudeLon: 0.00048,
+      driftLat: 0.0105,
+      driftLon: 0.0175,
       iddeviceType: 1,
-      startMinutesAgo: 210,
-      minuteStep: 10,
+      startMinutesAgo: 720,
+      minuteStep: 6,
+      cardioBase: 76,
     }),
-    102: makeRoute({
+    102: makeWaveRoute({
       idPerson: 102,
       startLat: 20.6695,
       startLon: -103.352,
-      steps: 16,
-      latStep: 0.00038,
-      lonStep: 0.00066,
+      steps: 115,
+      amplitudeLat: 0.00028,
+      amplitudeLon: 0.00052,
+      driftLat: 0.009,
+      driftLon: 0.015,
       iddeviceType: 3,
-      startMinutesAgo: 180,
-      minuteStep: 9,
+      startMinutesAgo: 690,
+      minuteStep: 6,
+      cardioBase: 79,
     }),
-    103: makeRoute({
+    103: makeWaveRoute({
       idPerson: 103,
       startLat: 25.693,
       startLon: -100.321,
-      steps: 12,
-      latStep: 0.00032,
-      lonStep: 0.0005,
+      steps: 105,
+      amplitudeLat: 0.00025,
+      amplitudeLon: 0.00038,
+      driftLat: 0.006,
+      driftLon: 0.011,
       iddeviceType: 1,
-      startMinutesAgo: 240,
-      minuteStep: 12,
+      startMinutesAgo: 630,
+      minuteStep: 6,
+      cardioBase: 73,
+      batteryStart: 84,
     }),
-    201: makeRoute({
+    201: makeWaveRoute({
       idPerson: 201,
-      startLat: 25.6868,
-      startLon: -100.318,
-      steps: 8,
-      latStep: 0.00016,
-      lonStep: 0.00022,
+      startLat: 25.6805,
+      startLon: -100.3254,
+      steps: 120,
+      amplitudeLat: 0.0002,
+      amplitudeLon: 0.00025,
+      driftLat: 0.0035,
+      driftLon: 0.006,
       iddeviceType: 0,
-      startMinutesAgo: 120,
-      minuteStep: 10,
-    }),
-    202: makeRoute({
+      startMinutesAgo: 720,
+      minuteStep: 6,
+      cardioBase: 81,
+      batteryStart: 88,
+    }).map((position, index) => ({
+      ...position,
+      lat:
+        index < 45
+          ? position.lat + 0.00012
+          : index < 85
+          ? position.lat + 0.0018
+          : position.lat + 0.0026,
+      lon:
+        index < 45
+          ? position.lon + 0.00014
+          : index < 85
+          ? position.lon + 0.0013
+          : position.lon + 0.0022,
+    })),
+    202: makeWaveRoute({
       idPerson: 202,
-      startLat: 20.6728,
-      startLon: -103.345,
-      steps: 8,
-      latStep: 0.00014,
-      lonStep: 0.0002,
+      startLat: 20.6762,
+      startLon: -103.3476,
+      steps: 110,
+      amplitudeLat: 0.00019,
+      amplitudeLon: 0.00024,
+      driftLat: 0.0048,
+      driftLon: 0.0084,
       iddeviceType: 0,
-      startMinutesAgo: 120,
-      minuteStep: 10,
-    }),
+      startMinutesAgo: 660,
+      minuteStep: 6,
+      cardioBase: 77,
+      batteryStart: 90,
+    }).map((position, index) => ({
+      ...position,
+      lat: position.lat + (index < 35 ? 0.0048 : 0.0072),
+      lon: position.lon + (index < 35 ? 0.0042 : 0.0069),
+    })),
   },
   devicePositionsByKey: {
-    "865440030123451": makeRoute({
+    "865440030123451": makeWaveRoute({
       idPerson: 101,
       startLat: 25.6802,
       startLon: -100.3258,
-      steps: 18,
-      latStep: 0.00045,
-      lonStep: 0.0007,
+      steps: 120,
+      amplitudeLat: 0.00032,
+      amplitudeLon: 0.00048,
+      driftLat: 0.0105,
+      driftLon: 0.0175,
       iddeviceType: 1,
-      startMinutesAgo: 210,
-      minuteStep: 10,
+      startMinutesAgo: 720,
+      minuteStep: 6,
+      cardioBase: 76,
     }),
-    "42000102": makeRoute({
+    "42000102": makeWaveRoute({
       idPerson: 102,
       startLat: 20.6695,
       startLon: -103.352,
-      steps: 16,
-      latStep: 0.00038,
-      lonStep: 0.00066,
+      steps: 115,
+      amplitudeLat: 0.00028,
+      amplitudeLon: 0.00052,
+      driftLat: 0.009,
+      driftLon: 0.015,
       iddeviceType: 3,
-      startMinutesAgo: 180,
-      minuteStep: 9,
+      startMinutesAgo: 690,
+      minuteStep: 6,
+      cardioBase: 79,
     }),
-    "103": makeRoute({
+    "103": makeWaveRoute({
       idPerson: 103,
       startLat: 25.693,
       startLon: -100.321,
-      steps: 12,
-      latStep: 0.00032,
-      lonStep: 0.0005,
+      steps: 105,
+      amplitudeLat: 0.00025,
+      amplitudeLon: 0.00038,
+      driftLat: 0.006,
+      driftLon: 0.011,
       iddeviceType: 1,
-      startMinutesAgo: 240,
-      minuteStep: 12,
+      startMinutesAgo: 630,
+      minuteStep: 6,
+      cardioBase: 73,
+      batteryStart: 84,
+    }),
+    "101": makeWaveRoute({
+      idPerson: 101,
+      startLat: 25.6802,
+      startLon: -100.3258,
+      steps: 120,
+      amplitudeLat: 0.00032,
+      amplitudeLon: 0.00048,
+      driftLat: 0.0105,
+      driftLon: 0.0175,
+      iddeviceType: 1,
+      startMinutesAgo: 720,
+      minuteStep: 6,
+      cardioBase: 76,
+    }),
+    "102": makeWaveRoute({
+      idPerson: 102,
+      startLat: 20.6695,
+      startLon: -103.352,
+      steps: 115,
+      amplitudeLat: 0.00028,
+      amplitudeLon: 0.00052,
+      driftLat: 0.009,
+      driftLon: 0.015,
+      iddeviceType: 3,
+      startMinutesAgo: 690,
+      minuteStep: 6,
+      cardioBase: 79,
     }),
   },
   caseNumbersByPerson: {
@@ -861,15 +1024,24 @@ const trackingDetail = (idPerson: number) => {
   const person = findPerson(idPerson);
   if (!person) return null;
 
-  const defendantPosition = store.positionsByPerson[idPerson]?.[0] || makePosition(idPerson, 25.68, -100.31);
+  const defendantHistory = store.positionsByPerson[idPerson] || [];
+  const defendantPosition =
+    defendantHistory[defendantHistory.length - 1] ||
+    makePosition(idPerson, 25.68, -100.31);
   const victims = store.victimAssignments[idPerson] || [];
   const relatedVictims = victims
     .map((victimId) => store.victims.find((victim) => victim.idPerson === victimId))
     .filter(Boolean)
     .map((victim) => {
+      const victimHistory = store.positionsByPerson[victim!.idPerson] || [];
       const victimPosition =
-        store.positionsByPerson[victim!.idPerson]?.[0] ||
-        makePosition(victim!.idPerson, defendantPosition.lat + 0.001, defendantPosition.lon + 0.001, 0);
+        victimHistory[victimHistory.length - 1] ||
+        makePosition(
+          victim!.idPerson,
+          defendantPosition.lat + 0.001,
+          defendantPosition.lon + 0.001,
+          0
+        );
       return {
         ...victim,
         personPosition: {
@@ -888,9 +1060,27 @@ const trackingDetail = (idPerson: number) => {
           geofences: [
             {
               idGeofence: 1,
-              geofence: encodeGeoFence(defendantPosition.lat, defendantPosition.lon),
+              geofence: encodeGeoFence(defendantPosition.lat, defendantPosition.lon, {
+                name: "Zona de inclusión",
+                radius: 220,
+                category: "inclusion",
+              }),
               idAlarmType: 3,
-              name: "Domicilio principal",
+              name: "Zona de inclusión",
+            },
+            {
+              idGeofence: 2,
+              geofence: encodeGeoFence(
+                defendantPosition.lat + exclusionCenterOffset.lat,
+                defendantPosition.lon + exclusionCenterOffset.lon,
+                {
+                  name: "Zona de exclusión",
+                  radius: 110,
+                  category: "exclusion",
+                }
+              ),
+              idAlarmType: 2,
+              name: "Zona de exclusión",
             },
           ],
         },
@@ -1444,19 +1634,62 @@ const handlePost = (path: string, options?: ApiOptions) => {
     const idPerson = Number(body.idPerson || body.idDefendant || 0);
     const person = findPerson(idPerson);
     const history = store.positionsByPerson[idPerson] || [];
+    const relatedVictims = (store.victimAssignments[idPerson] || [])
+      .map((victimId) => store.victims.find((victim) => victim.idPerson === victimId))
+      .filter(Boolean)
+      .map((victim) => ({
+        ...victim,
+        completeName: `${victim!.name} ${victim!.lastName}`,
+        historicPersonPosition: store.positionsByPerson[victim!.idPerson] || [],
+        geofences: [],
+        showalerts: false,
+      }));
+
     return success([
       {
         ...person,
         completeName: person ? `${person.name} ${person.lastName}` : "Demo User",
         historicPersonPosition: history,
-        geofences: [],
+        geofences: [
+          {
+            idGeofence: 1,
+            idAlarmType: 3,
+            name: "Zona de inclusión",
+            geofence: encodeGeoFence(
+              history[history.length - 1]?.lat || 25.6866,
+              history[history.length - 1]?.lon || -100.3161,
+              {
+                name: "Zona de inclusión",
+                radius: 220,
+                category: "inclusion",
+              }
+            ),
+          },
+          {
+            idGeofence: 2,
+            idAlarmType: 2,
+            name: "Zona de exclusión",
+            geofence: encodeGeoFence(
+              (history[history.length - 1]?.lat || 25.6866) +
+                exclusionCenterOffset.lat,
+              (history[history.length - 1]?.lon || -100.3161) +
+                exclusionCenterOffset.lon,
+              {
+                name: "Zona de exclusión",
+                radius: 110,
+                category: "exclusion",
+              }
+            ),
+          },
+        ],
         showalerts: person?.showalerts ?? false,
       },
+      ...relatedVictims,
     ]);
   }
 
   if (path === "Device/HistoricPosition") {
-    const key = String(body.imei || body.idPerson || "");
+    const key = String(body.deviceId || body.imei || body.idPerson || "");
     return success(store.devicePositionsByKey[key] || []);
   }
 

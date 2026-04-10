@@ -16,14 +16,13 @@ import { Card, Skeleton } from "@nextui-org/react";
 import { Player } from "@lottiefiles/react-lottie-player";
 import MapPositon from "../../../../../assets/json/position.json";
 import { FullscreenControl } from "react-leaflet-fullscreen";
-import { Icon } from "leaflet";
+import { divIcon, Icon } from "leaflet";
 import DefIcon from "../../../../../assets/icons/defendant-marker.png";
 // import AlarmIcon from "../../../../../assets/icons/alarm-marker.png";
 import { FlyNewPositionMarkerAlarm } from "./marker-alarm-fly-map";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc"; // Importa el plugin UTC de Day.js
 import timezone from "dayjs/plugin/timezone"; // Importa el plugin de zona horaria de Day.js
-import { useEffect, useState } from "react";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -59,22 +58,14 @@ export const MapTracking = ({
     iconAnchor: [17.5, 35], // point of the icon which will correspond to marker's location
     popupAnchor: [0, -35], // point from which the popup should open relative to the iconAnchor
   });
-  const [showVictimTracking, setShowVictimTracking] = useState(false);
-  useEffect(() => {
-    if (alertPerson) {
-      const alarmProximity = alertPerson.filter((item) =>
-        item.alarmName.includes("Proximity Alert")
-      );
-      if (
-        alarmProximity.length > 0 &&
-        alarmProximity.some((item) => item.seqMachineState) === true
-      ) {
-        setShowVictimTracking(true);
-      } else {
-        setShowVictimTracking(false);
-      }
-    }
-  }, [alertPerson]);
+  const victimIcon = divIcon({
+    className: "victim-tracking-marker",
+    html: `
+      <div style="display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:9999px;background:#1d4ed8;border:3px solid #ffffff;box-shadow:0 0 0 3px rgba(29,78,216,0.18);"></div>
+    `,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+  });
   return (
     <>
       {positionDefendant && defendantItem ? (
@@ -128,7 +119,7 @@ export const MapTracking = ({
           )}
 
           {victims?.map((victim) => {
-            if (victim.personPosition && showVictimTracking) {
+            if (victim.personPosition) {
               return (
                 <Marker
                   key={victim?.idPerson}
@@ -136,7 +127,12 @@ export const MapTracking = ({
                     victim.personPosition.lat,
                     victim.personPosition.lon,
                   ]}
+                  icon={victimIcon}
+                  zIndexOffset={1200}
                 >
+                  <Tooltip direction="top" offset={[0, -10]} permanent>
+                    {`Victima: ${victim?.name} ${victim?.lastName}`}
+                  </Tooltip>
                   <Popup>
                     <div className="flex flex-col gap-2">
                       <h1 className="text-primaryColor-700 text-center font-semibold">{`Victim: ${victim?.name} ${victim?.lastName}`}</h1>
@@ -166,7 +162,7 @@ export const MapTracking = ({
                   </Popup>
                 </Marker>
               );
-            } else return "";
+            } else return null;
           })}
 
           {geofences &&
